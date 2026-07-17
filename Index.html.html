@@ -71,6 +71,26 @@ body:active #custom-cursor img{transform:scale(0.88)}
 /* ══ CART DRAWER ══ */
 #cart-drawer{position:fixed;top:0;right:-100%;width:360px;max-width:100vw;height:100vh;background:rgba(0,0,0,0.96);border-left:1px solid rgba(0,255,65,0.15);z-index:600;backdrop-filter:blur(20px);transition:right .4s ease;display:flex;flex-direction:column}
 #cart-drawer.open{right:0}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:700;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+#product-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:640px;max-height:86vh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:701;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow-y:auto}
+#product-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal-close{position:sticky;top:12px;left:100%;transform:translateX(-100%);margin-right:12px;margin-top:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.7);border:1px solid rgba(0,255,65,0.3);color:var(--accent);font-size:15px;cursor:none;z-index:5;display:flex;align-items:center;justify-content:center}
+.modal-img-wrap{width:100%;aspect-ratio:16/10;background:rgba(0,20,8,0.6);overflow:hidden;margin-top:-46px}
+.modal-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-img-wrap .product-img-placeholder{font-size:96px}
+.modal-body{padding:26px 30px 34px}
+.modal-collection{font-size:9px;letter-spacing:3px;color:var(--accent-dim);text-transform:uppercase;margin-bottom:8px}
+.modal-name{font-family:'Cinzel',serif;font-size:22px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:16px;line-height:1.3}
+.modal-desc p{margin-bottom:12px;line-height:1.75;font-size:13px;color:#c8ffda}
+.modal-desc .m-quote{font-style:italic;color:var(--accent);border-left:2px solid rgba(0,255,65,0.3);padding-left:12px;margin:16px 0}
+.modal-desc ul{margin:6px 0 16px 0;padding-left:0;list-style:none}
+.modal-desc li{margin-bottom:7px;padding-left:18px;position:relative;font-size:13px;line-height:1.65;color:#c8ffda}
+.modal-desc li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
+.modal-desc .m-sub{font-family:'VT323',monospace;font-size:16px;letter-spacing:1px;color:var(--accent);margin:18px 0 6px}
+.modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,255,65,0.12)}
+.modal-price{font-family:'VT323',monospace;font-size:26px;color:#fff;text-shadow:0 0 8px rgba(0,255,65,0.3)}
+@media(max-width:600px){.modal-body{padding:22px 20px 28px}.modal-name{font-size:18px}}
 .cart-header{padding:24px 20px;border-bottom:1px solid rgba(0,255,65,0.12);display:flex;justify-content:space-between;align-items:center}
 .cart-header-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
 .cart-close{background:none;border:none;color:rgba(0,255,65,0.5);font-size:22px;cursor:none;padding:4px 8px}
@@ -291,8 +311,25 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeProductModal()"></div>
+<div id="product-modal">
+  <button class="modal-close" onclick="closeProductModal()">✕</button>
+  <div class="modal-img-wrap" id="modalImgWrap"></div>
+  <div class="modal-body">
+    <div class="modal-collection" id="modalCollection"></div>
+    <h3 class="modal-name" id="modalName"></h3>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-footer">
+      <span class="modal-price" id="modalPrice"></span>
+      <button class="product-btn" id="modalAddBtn">В корзину</button>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN -->
 <div id="main">
+
 
 <!-- HERO -->
 <section class="hero" style="padding-top:56px">
@@ -364,7 +401,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <div class="product-grid" id="productGrid">
 
     <!-- JOTUN VIBE -->
-    <div class="product-card glass show" data-tags="jotun-vibe bracelet" data-id="1" data-price="7900" data-name="Браслет Jotun Vibe">
+    <div class="product-card glass show" data-tags="jotun-vibe bracelet" data-id="1" data-price="7900" data-name="Браслет Jotun Vibe" onclick="openProductModal(1)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Топ продаж</span></div>
@@ -375,12 +412,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Северная устойчивость · Внутренний стержень · Защита от откатов</div>
         <div class="product-price-row">
           <span class="product-price">7 900 ₽</span>
-          <button class="product-btn" onclick="addToCart(1,'Браслет Jotun Vibe',7900,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(1,'Браслет Jotun Vibe',7900,'ᚨ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="prime pendant" data-id="2" data-price="12000" data-name="Кулон Prime">
+    <div class="product-card glass show" data-tags="prime pendant" data-id="2" data-price="12000" data-name="Кулон Prime" onclick="openProductModal(2)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Хит</span></div>
@@ -391,12 +428,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ясность направления · Курс не теряется · Лучшая версия себя</div>
         <div class="product-price-row">
           <span class="product-price">12 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(2,'Кулон Prime',12000,'ᛏ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(2,'Кулон Prime',12000,'ᛏ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="prime bracelet" data-id="3" data-price="9500" data-name="Браслет Prime">
+    <div class="product-card glass show" data-tags="prime bracelet" data-id="3" data-price="9500" data-name="Браслет Prime" onclick="openProductModal(3)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/prime-bracelet.jpg" alt="Браслет Prime" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -407,12 +444,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Энергия движения · Поток возможностей · Действие без остановки</div>
         <div class="product-price-row">
           <span class="product-price">9 500 ₽</span>
-          <button class="product-btn" onclick="addToCart(3,'Браслет Prime',9500,'ᚱ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(3,'Браслет Prime',9500,'ᚱ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="7" data-price="8800" data-name="Возвращение к жизни">
+    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="7" data-price="8800" data-name="Возвращение к жизни" onclick="openProductModal(7)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy">
       </div>
@@ -422,12 +459,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Пробуждает тело от оцепенения · Очищает от застойных энергий · Возвращает вкус — к себе, к моменту, к миру</div>
         <div class="product-price-row">
           <span class="product-price">8 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(7,'Возвращение к жизни',8800,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(7,'Возвращение к жизни',8800,'ᛉ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="8" data-price="7800" data-name="Эльфийская защита">
+    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="8" data-price="7800" data-name="Эльфийская защита" onclick="openProductModal(8)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy">
         
@@ -438,12 +475,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">В центре формулы — эльфийская семиконечная звезда. Невидимый барьер от зависти, сглаза и чужого негатива — лёгкая и незаметная защита на каждый день</div>
         <div class="product-price-row">
           <span class="product-price">7 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(8,'Эльфийская защита',7800,'ᚢ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(8,'Эльфийская защита',7800,'ᚢ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="9" data-price="13000" data-name="Осознанная удача">
+    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="9" data-price="13000" data-name="Осознанная удача" onclick="openProductModal(9)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Топ продаж</span></div>
@@ -454,12 +491,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Магнит твоего везения · Помогает вовремя оказаться в нужном месте и удержать шанс, а не просто дождаться его. «Не туда где легко, а туда где победа»</div>
         <div class="product-price-row">
           <span class="product-price">13 000 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">2 шт за 20 000 ₽</div>
-          <button class="product-btn" onclick="addToCart(9,'Осознанная удача',13000,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(9,'Осознанная удача',13000,'ᚨ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="авторская браслет" data-id="10" data-price="0" data-name="Лёгкий путь">
+    <div class="product-card glass show" data-tags="авторская браслет" data-id="10" data-price="0" data-name="Лёгкий путь" onclick="openProductModal(10)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᛉ</div>
         
@@ -471,12 +508,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div style="font-size:10px;line-height:1.6;color:var(--accent-dim);font-style:italic;margin-bottom:10px;border-left:2px solid rgba(0,255,65,0.25);padding-left:8px">«Сразу почувствовала лёгкость и ясность ума — решения принимаются быстро, но взвешенно» — из отзыва клиентки</div>
         <div class="product-price-row">
           <span class="product-price" style="font-size:14px">Цена уточняется</span>
-          <button class="product-btn" onclick="addToCart(10,'Лёгкий путь',0,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(10,'Лёгкий путь',0,'ᛉ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="11" data-price="8800" data-name="Алая ведьма">
+    <div class="product-card glass show" data-tags="лита авторская браслет" data-id="11" data-price="8800" data-name="Алая ведьма" onclick="openProductModal(11)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy">
         
@@ -487,12 +524,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ключ к первородной огненной силе. Будит сексуальность, зажигает харизму — ты становишься магнитом для желаний, людей и возможностей. «Не зови силу. Стань ею»</div>
         <div class="product-price-row">
           <span class="product-price">8 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(11,'Алая ведьма',8800,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(11,'Алая ведьма',8800,'ᚨ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="мабон кулон" data-id="12" data-price="15900" data-name="Глаз Одина">
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="12" data-price="15900" data-name="Глаз Одина" onclick="openProductModal(12)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/glaz-odina.jpg" alt="Глаз Одина" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
@@ -503,12 +540,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Открывает внутренний «второй глаз» · Усиливает интуицию и связь с мудростью рода. Соединяет с Высшим «Я» и защищает от самообмана</div>
         <div class="product-price-row">
           <span class="product-price">15 900 ₽</span>
-          <button class="product-btn" onclick="addToCart(12,'Глаз Одина',15900,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(12,'Глаз Одина',15900,'ᚨ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="мабон кулон" data-id="13" data-price="15900" data-name="Печать Короля">
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="13" data-price="15900" data-name="Печать Короля" onclick="openProductModal(13)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/pechat-korolya.jpg" alt="Печать Короля" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
@@ -519,12 +556,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Закрепляет удачу без застоя — превращает случайные шансы в прочные результаты. Идеален в паре с «Осознанной удачей»</div>
         <div class="product-price-row">
           <span class="product-price">15 900 ₽</span>
-          <button class="product-btn" onclick="addToCart(13,'Печать Короля',15900,'ᚠ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(13,'Печать Короля',15900,'ᚠ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="мабон кулон" data-id="14" data-price="15900" data-name="Яблочный Пентакль">
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="14" data-price="15900" data-name="Яблочный Пентакль" onclick="openProductModal(14)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/yablochny-pentakl.jpg" alt="Яблочный Пентакль" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
@@ -535,12 +572,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Снимает напряжение и улаживает конфликты в семье и коллективе · Мягко защищает от чужой агрессии, удерживает мир и равновесие</div>
         <div class="product-price-row">
           <span class="product-price">15 900 ₽</span>
-          <button class="product-btn" onclick="addToCart(14,'Яблочный Пентакль',15900,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(14,'Яблочный Пентакль',15900,'ᛉ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="мабон браслет" data-id="15" data-price="13900" data-name="Мать Теней (браслет)">
+    <div class="product-card glass show" data-tags="мабон браслет" data-id="15" data-price="13900" data-name="Мать Теней (браслет)" onclick="openProductModal(15)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/mother-teney-bracelet.jpg" alt="Мать Теней — браслет" loading="lazy">
         
@@ -551,12 +588,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Для тех, кто работает с тёмной энергией — ведьм, жрецов, практиков. Держит союз тёмных богинь (Хель, Геката, Морриган и др.), защищает от хаоса чужих энергий</div>
         <div class="product-price-row">
           <span class="product-price">13 900 ₽</span>
-          <button class="product-btn" onclick="addToCart(15,'Мать Теней (браслет)',13900,'ᚦ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(15,'Мать Теней (браслет)',13900,'ᚦ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="мабон кулон" data-id="16" data-price="13900" data-name="Мать Теней (кулон)">
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="16" data-price="13900" data-name="Мать Теней (кулон)" onclick="openProductModal(16)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/mother-teney-pendant.jpg" alt="Мать Теней — кулон" loading="lazy">
         
@@ -567,12 +604,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Проводник в ту часть тебя, которую давно ощущаешь, но не решаешься раскрыть. Тьма не убивает свет — она рождает его</div>
         <div class="product-price-row">
           <span class="product-price">13 900 ₽</span>
-          <button class="product-btn" onclick="addToCart(16,'Мать Теней (кулон)',13900,'ᚦ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(16,'Мать Теней (кулон)',13900,'ᚦ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="самайн кулон" data-id="17" data-price="29900" data-name="Весы Осириса">
+    <div class="product-card glass show" data-tags="самайн кулон" data-id="17" data-price="29900" data-name="Весы Осириса" onclick="openProductModal(17)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᛁ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
@@ -583,12 +620,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Амулет суда и правды · Замораживает чужое, отсекает паразитов, возвращает равновесие. «Твоё сердце лёгкое — всё чужое возвращено мёртвым»</div>
         <div class="product-price-row">
           <span class="product-price">29 900 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">55 900 ₽ за пару с «Плодом Вечности» · заряжен в некрополе (Египет) · до 26 октября</div>
-          <button class="product-btn" onclick="addToCart(17,'Весы Осириса',29900,'ᛁ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(17,'Весы Осириса',29900,'ᛁ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="самайн кулон" data-id="18" data-price="29900" data-name="Плод Вечности">
+    <div class="product-card glass show" data-tags="самайн кулон" data-id="18" data-price="29900" data-name="Плод Вечности" onclick="openProductModal(18)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᛜ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
@@ -600,7 +637,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Амулет сохранения и раскрытия · Укореняет твоё внутреннее «зерно судьбы» в родовой силе. «В сердце хранится плод, что переживёт все смерти»</div>
         <div class="product-price-row">
           <span class="product-price">29 900 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">55 900 ₽ за пару с «Весами Осириса» · заряжен в некрополе (Египет) · до 26 октября</div>
-          <button class="product-btn" onclick="addToCart(18,'Плод Вечности',29900,'ᛜ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(18,'Плод Вечности',29900,'ᛜ')">В корзину</button>
         </div>
       </div>
     </div>
@@ -613,7 +650,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="йоль браслет" data-id="19" data-price="20333" data-name="Аттаракс">
+    <div class="product-card glass show" data-tags="йоль браслет" data-id="19" data-price="20333" data-name="Аттаракс" onclick="openProductModal(19)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/attarax.jpg" alt="Аттаракс" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -624,12 +661,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Рунический браслет-антидепрессант · Выводит из клинической депрессии любой тяжести, без побочных эффектов таблеток. «Тьма уходит. Свет возвращается. Я оживаю»</div>
         <div class="product-price-row">
           <span class="product-price">20 333 ₽</span>
-          <button class="product-btn" onclick="addToCart(19,'Аттаракс',20333,'ᚾ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(19,'Аттаракс',20333,'ᚾ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="йоль кулон" data-id="20" data-price="19666" data-name="РСБ — Руническая Служба Безопасности">
+    <div class="product-card glass show" data-tags="йоль кулон" data-id="20" data-price="19666" data-name="РСБ — Руническая Служба Безопасности" onclick="openProductModal(20)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/rsb.jpg" alt="РСБ — Руническая Служба Безопасности" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -640,12 +677,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Кулон-невидимка · Ставит тебя и твои доходы вне радара налоговой, банков, силовиков. «Я и всё моё — вне радара»</div>
         <div class="product-price-row">
           <span class="product-price">19 666 ₽</span>
-          <button class="product-btn" onclick="addToCart(20,'РСБ — Руническая Служба Безопасности',19666,'ᛃ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(20,'РСБ — Руническая Служба Безопасности',19666,'ᛃ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="йоль кулон" data-id="21" data-price="12000" data-name="Золотая Пирамида">
+    <div class="product-card glass show" data-tags="йоль кулон" data-id="21" data-price="12000" data-name="Золотая Пирамида" onclick="openProductModal(21)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᚠ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -656,12 +693,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Перековка в денежного человека · Строит внутреннюю структуру, через которую доход растёт кратно — ×5–×50 за год</div>
         <div class="product-price-row">
           <span class="product-price">12 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(21,'Золотая Пирамида',12000,'ᚠ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(21,'Золотая Пирамида',12000,'ᚠ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="йоль кулон" data-id="22" data-price="10333" data-name="Прорыв">
+    <div class="product-card glass show" data-tags="йоль кулон" data-id="22" data-price="10333" data-name="Прорыв" onclick="openProductModal(22)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/proryv.jpg" alt="Прорыв" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -672,12 +709,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Разрыв любого тупика · Как запуск ракеты — резкий выход на новую орбиту дохода и возможностей: ×3–×10 за 3–6 месяцев</div>
         <div class="product-price-row">
           <span class="product-price">10 333 ₽</span>
-          <button class="product-btn" onclick="addToCart(22,'Прорыв',10333,'ᛗ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(22,'Прорыв',10333,'ᛗ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="йоль браслет" data-id="23" data-price="9800" data-name="Анти-Лариса">
+    <div class="product-card glass show" data-tags="йоль браслет" data-id="23" data-price="9800" data-name="Анти-Лариса" onclick="openProductModal(23)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/anti-larisa.jpg" alt="Анти-Лариса" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -688,12 +725,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Щит от мошенников и токсиков · Видит ложь насквозь ещё до того, как она сказана · Оставляет рядом только чистое окружение</div>
         <div class="product-price-row">
           <span class="product-price">9 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(23,'Анти-Лариса',9800,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(23,'Анти-Лариса',9800,'ᛉ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="остара браслет" data-id="24" data-price="5555" data-name="Амулет Остары">
+    <div class="product-card glass show" data-tags="остара браслет" data-id="24" data-price="5555" data-name="Амулет Остары" onclick="openProductModal(24)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/ostara-3-colors.jpg" alt="Амулет Остары — серебро, жёлтое золото, розовое золото" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -704,12 +741,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ясность ума · Защита от негатива · Денежный поток. Заряжен в Карелии на весеннее равноденствие. 3 цвета: серебро, жёлтое золото, розовое золото</div>
         <div class="product-price-row">
           <span class="product-price">5 555 ₽</span>
-          <button class="product-btn" onclick="addToCart(24,'Амулет Остары',5555,'ᛒ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(24,'Амулет Остары',5555,'ᛒ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="ламмас браслет" data-id="25" data-price="7800" data-name="Плод земли">
+    <div class="product-card glass show" data-tags="ламмас браслет" data-id="25" data-price="7800" data-name="Плод земли" onclick="openProductModal(25)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/plod-zemli.jpg" alt="Плод земли" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -720,12 +757,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Заземляет всё, над чем ты работал(а), чтобы результат стал ощутимым — в деньгах, здоровье, доме. Для фазы жатвы, когда устал(а), но нужно дожать</div>
         <div class="product-price-row">
           <span class="product-price">7 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(25,'Плод земли',7800,'ᛟ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(25,'Плод земли',7800,'ᛟ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="ламмас браслет" data-id="26" data-price="11800" data-name="Золотое зерно">
+    <div class="product-card glass show" data-tags="ламмас браслет" data-id="26" data-price="11800" data-name="Золотое зерно" onclick="openProductModal(26)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/zolotoe-zerno.jpg" alt="Золотое зерно" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -736,12 +773,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Не просто про удачу, а про благородство потока — раскрывает щедрость и делает магнитом для изобилия. Хорош в моменты запусков, сделок, подписаний</div>
         <div class="product-price-row">
           <span class="product-price">11 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(26,'Золотое зерно',11800,'ᛃ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(26,'Золотое зерно',11800,'ᛃ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="ламмас браслет" data-id="27" data-price="8800" data-name="Хранитель урожая">
+    <div class="product-card glass show" data-tags="ламмас браслет" data-id="27" data-price="8800" data-name="Хранитель урожая" onclick="openProductModal(27)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/hranitel-urozhaya.jpg" alt="Хранитель урожая" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -752,12 +789,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Защищает твой труд и плоды от утечек, зависти и краж энергии. Не пускает разрушение в твой урожайный цикл — амулет уверенного «я заслужил»</div>
         <div class="product-price-row">
           <span class="product-price">8 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(27,'Хранитель урожая',8800,'ᛞ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(27,'Хранитель урожая',8800,'ᛞ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="врата-льва браслет" data-id="28" data-price="10000" data-name="Лев среди людей">
+    <div class="product-card glass show" data-tags="врата-льва браслет" data-id="28" data-price="10000" data-name="Лев среди людей" onclick="openProductModal(28)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/lev-sredi-lyudey.jpg" alt="Лев среди людей" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -768,12 +805,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Возвращает внутреннее достоинство · Пробуждает уверенность · Делает видимым без крика — просто своим присутствием</div>
         <div class="product-price-row">
           <span class="product-price">10 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(28,'Лев среди людей',10000,'ᛋ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(28,'Лев среди людей',10000,'ᛋ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="врата-льва браслет" data-id="29" data-price="15000" data-name="Страж сердца">
+    <div class="product-card glass show" data-tags="врата-льва браслет" data-id="29" data-price="15000" data-name="Страж сердца" onclick="openProductModal(29)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/strazh-serdtsa.jpg" alt="Страж сердца" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -784,12 +821,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Оберегает внутренний мир от вторжений · Закрывает энергетические дыры · Возвращает личные границы</div>
         <div class="product-price-row">
           <span class="product-price">15 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(29,'Страж сердца',15000,'ᛖ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(29,'Страж сердца',15000,'ᛖ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="врата-льва браслет" data-id="30" data-price="8800" data-name="Путь Солнца">
+    <div class="product-card glass show" data-tags="врата-льва браслет" data-id="30" data-price="8800" data-name="Путь Солнца" onclick="openProductModal(30)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/put-solntsa.jpg" alt="Путь Солнца" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -800,12 +837,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Мягкое пробуждение изнутри · Усиливает интуицию · Даёт устойчивую уверенность в своём пути</div>
         <div class="product-price-row">
           <span class="product-price">8 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(30,'Путь Солнца',8800,'ᛞ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(30,'Путь Солнца',8800,'ᛞ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="31" data-price="7800" data-name="Огненная Жатва I — Огонь пробуждения">
+    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="31" data-price="7800" data-name="Огненная Жатва I — Огонь пробуждения" onclick="openProductModal(31)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/ogon-probuzhdeniya.jpg" alt="Огненная Жатва I — Огонь пробуждения" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Огненная жатва</span></div>
@@ -816,12 +853,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Первая ступень. Мягко запускает пробуждение · Возвращает вкус к жизни · Даёт силу для первых шагов</div>
         <div class="product-price-row">
           <span class="product-price">7 800 ₽</span>
-          <button class="product-btn" onclick="addToCart(31,'Огненная Жатва I — Огонь пробуждения',7800,'ᚠ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(31,'Огненная Жатва I — Огонь пробуждения',7800,'ᚠ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="32" data-price="10000" data-name="Огненная Жатва II — Путь силы">
+    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="32" data-price="10000" data-name="Огненная Жатва II — Путь силы" onclick="openProductModal(32)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/put-sily.jpg" alt="Огненная Жатва II — Путь силы" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Огненная жатва</span></div>
@@ -832,12 +869,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Вторая ступень. Закрепляет на пути перемен · Возвращает ощущение ценности · Питает энергией</div>
         <div class="product-price-row">
           <span class="product-price">10 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(32,'Огненная Жатва II — Путь силы',10000,'ᚢ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(32,'Огненная Жатва II — Путь силы',10000,'ᚢ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="33" data-price="13000" data-name="Огненная Жатва III — Огненный феникс">
+    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="33" data-price="13000" data-name="Огненная Жатва III — Огненный феникс" onclick="openProductModal(33)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/ognenny-feniks.jpg" alt="Огненная Жатва III — Огненный феникс" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Огненная жатва</span></div>
@@ -848,12 +885,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Третья ступень. Архетип перерождения · Раскрывает обновлённое «я» · Рывок в самореализации</div>
         <div class="product-price-row">
           <span class="product-price">13 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(33,'Огненная Жатва III — Огненный феникс',13000,'ᚱ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(33,'Огненная Жатва III — Огненный феникс',13000,'ᚱ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="34" data-price="15000" data-name="Огненная Жатва IV — Время сиять">
+    <div class="product-card glass show" data-tags="огненная-жатва браслет" data-id="34" data-price="15000" data-name="Огненная Жатва IV — Время сиять" onclick="openProductModal(34)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/vremya-siyat.jpg" alt="Огненная Жатва IV — Время сиять" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Огненная жатва</span></div>
@@ -864,12 +901,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Финальная ступень. Усиливает внутренний стержень · Притягивает внимание и возможности · Для тех, кто уже знает, кто он</div>
         <div class="product-price-row">
           <span class="product-price">15 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(34,'Огненная Жатва IV — Время сиять',15000,'ᛊ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(34,'Огненная Жатва IV — Время сиять',15000,'ᛊ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="путь bracelet" data-id="4" data-price="8500" data-name="Путь ясной мысли">
+    <div class="product-card glass show" data-tags="путь bracelet" data-id="4" data-price="8500" data-name="Путь ясной мысли" onclick="openProductModal(4)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᚺ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-season">Авторская</span></div>
@@ -880,12 +917,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ясность в решениях · Спокойствие ума · Точность действий</div>
         <div class="product-price-row">
           <span class="product-price">8 500 ₽</span>
-          <button class="product-btn" onclick="addToCart(4,'Путь ясной мысли',8500,'ᚺ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(4,'Путь ясной мысли',8500,'ᚺ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="lotus pendant" data-id="5" data-price="11000" data-name="Лотос души">
+    <div class="product-card glass show" data-tags="lotus pendant" data-id="5" data-price="11000" data-name="Лотос души" onclick="openProductModal(5)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᛖ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-season">Авторская</span></div>
@@ -896,12 +933,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Раскрытие потенциала · Внутренняя красота · Самопринятие</div>
         <div class="product-price-row">
           <span class="product-price">11 000 ₽</span>
-          <button class="product-btn" onclick="addToCart(5,'Лотос души',11000,'ᛖ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(5,'Лотос души',11000,'ᛖ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="jotun-vibe pendant" data-id="6" data-price="13500" data-name="Счастье — кулон">
+    <div class="product-card glass show" data-tags="jotun-vibe pendant" data-id="6" data-price="13500" data-name="Счастье — кулон" onclick="openProductModal(6)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᚹ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -912,7 +949,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Радость · Гармония · Привлечение светлых событий</div>
         <div class="product-price-row">
           <span class="product-price">13 500 ₽</span>
-          <button class="product-btn" onclick="addToCart(6,'Кулон Счастье',13500,'ᚹ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(6,'Кулон Счастье',13500,'ᚹ')">В корзину</button>
         </div>
       </div>
     </div>
@@ -992,6 +1029,197 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 </footer>
 
 </div><!-- /main -->
+
+<div id="fullDescriptions" style="display:none">
+<div data-desc-id="7"><p>Этот браслет — не про выживание. Он про возвращение к себе: к силе, чувствам, желаниям и внутреннему потоку.</p>
+<p>Формула пробуждает тело от оцепенения, очищает от застойных энергий и помогает восстановить ресурс — душевный, физический, ментальный. Она запускает процессы обновления, мягко, но уверенно выталкивая из апатии, страха или опустошения.</p>
+<p>«Возвращение к жизни» возвращает вкус — к себе, к моменту, к миру. Помогает пройти сквозь внутреннюю зиму и снова почувствовать движение, рост, интерес.</p>
+<div class="m-quote">Формула для тех, кто устал держаться, но хочет снова жить — не автоматически, а ярко, с чувствами, с мечтой</div>
+<p>Она активирует стержень, даёт ресурс для выхода из тупика и пробуждает то живое, что внутри всегда было — просто спало.</p></div>
+<div data-desc-id="8"><p>Изначально этот браслет назывался «Щит эльфов». Лёгкая, изящная, но невероятно мощная защита, которую вы чувствуете с первого дня.</p>
+<p>В центре формулы — эльфийская семиконечная звезда: древний символ света, баланса и магии. Она мягко охватывает ваше энергетическое поле, выстраивая вокруг невидимый барьер, который не пропускает чужую зависть, сглаз, негатив, магические влияния и всякий бытовой шум, прилипший в транспорте или на работе.</p>
+<p>Это универсальная, умная защита на каждый день. Она не делает вас «тяжёлой» или закрытой — наоборот, вы остаётесь лёгкой, сияющей, привлекательной. Просто вас больше не пробивают.</p>
+<div class="m-quote">Надели — и можете не думать: защита уже работает</div>
+<p>Идеально подходит как для повседневной жизни, так и для практик, общения, поездок и работы в коллективе.</p></div>
+<div data-desc-id="9"><p>Твоя жизнь — не случайность. А удача — не каприз судьбы. Это формула для тех, кто готов не просто ждать везения, а создать его своими руками.</p>
+<p>Ты ведь знаешь это чувство? Когда вроде бы всё готово — но момент проходит. Возможность ускользает. Шанс был — а результат снова мимо. Этот браслет помогает не просто привлечь такие моменты, а войти в них, реализовать и удержать удачу.</p>
+<div class="m-sub">Магнит твоего везения, заряженный на:</div>
+<ul>
+<li>Вовремя оказаться в нужном месте</li>
+<li>Услышать свой шанс, когда он рядом</li>
+<li>Притягивать людей, встречи, возможности, которые раньше проходили мимо</li>
+<li>Действовать уверенно, когда этот шанс уже рядом</li>
+</ul>
+<div class="m-quote">Это не формула случайного везения. Это удача, которая с тобой в каждом моменте, где ты решаешь не ждать — а брать</div></div>
+<div data-desc-id="11"><p>Алая Ведьма — не просто браслет. Это ключ к твоей первородной огненной силе, скрытой под слоями усталости, сомнений и чужих ожиданий. Он не выбирается — он находит свою хозяйку.</p>
+<p>Этот амулет заряжен формулой, которая будит сексуальность, зажигает харизму, возвращает вкус к жизни. Ты не просто становишься ярче — ты становишься магнитом для желаний, людей и возможностей.</p>
+<p>Его действие — не показное, а глубокое: изнутри пробуждает внутренний огонь, возвращая уверенность и внутреннюю власть.</p>
+<div class="m-quote">Он работает только с теми, кто готов нести этот свет. Если ты чувствуешь отклик — значит, он твой</div></div>
+<div data-desc-id="12"><p>Амулет для тех, кто готов смотреть вглубь, видеть больше, чем очевидное, и соединяться с мудростью, спрятанной за пределами обычного взгляда.</p>
+<p>Это артефакт сакрального видения и силы духа. Он открывает внутренний «второй глаз» и помогает удерживать ясность даже там, где для других — лишь туман.</p>
+<ul>
+<li>Усиливает интуицию и помогает видеть знаки судьбы</li>
+<li>Даёт связь с мудростью рода и богов</li>
+<li>Раскрывает силу слова и вдохновения</li>
+<li>Учит принимать правильные решения без страха ошибок</li>
+</ul>
+<p>Идеален для тех, кто работает с энергиями, практиками, поиском пути, а также для тех, кто хочет укрепить веру в себя и способность «слышать знаки».</p>
+<div class="m-quote">Ты не просто смотришь на мир — ты смотришь в его глубину</div>
+<p>Отлично сочетается с «Яблочным пентаклем», а также с браслетами «Осознанная удача» и «Возвращение к жизни».</p></div>
+<div data-desc-id="13"><p>Амулет силы, стабильности и уверенного удержания удачи. Создан для тех, кто готов жить в потоке возможностей, но хочет, чтобы этот поток не ускользал сквозь пальцы, а превращался в реальные результаты.</p>
+<p>Его действие — мягкое закрепление удачи без застойности и остановки развития. Он удерживает благополучие рядом с тобой, но не замораживает движение вперёд — помогает шаг за шагом накапливать силу и ресурсы.</p>
+<ul>
+<li>Укрепляет внутренний стержень</li>
+<li>Создаёт «ауру стабильности» вокруг тебя</li>
+<li>Делает результаты предсказуемыми и долговечными</li>
+<li>Помогает не зависеть от внешних обстоятельств</li>
+</ul>
+<p>Для тех, кто уже носит браслет «Осознанная удача» — идеальное дополнение: «Печать короля» стабилизирует и удерживает то, что «Осознанная удача» открывает.</p>
+<div class="m-quote">С «Печатью Короля» удача становится твоим постоянным союзником, а не случайным гостем</div></div>
+<div data-desc-id="14"><p>Уникальный амулет-кулон, рождённый из древнего ритуала разреза яблока, где на срезе проявлялась сакральная звезда. Символ гармонии, защиты и умения находить золотую середину в самых острых ситуациях.</p>
+<p>Его сила — в умении снимать напряжение и улаживать конфликты: в семье, с партнёрами, на работе или в коллективе. Там, где раньше были ссоры, появляются понимание и диалог.</p>
+<ul>
+<li>Мягко защищает от чужой агрессии</li>
+<li>Помогает сохранять мир и равновесие в отношениях</li>
+<li>Поддерживает тех, кто чувствует себя без опоры рода</li>
+<li>Учит видеть возможности там, где другие видят тупик</li>
+</ul>
+<p>Идеально подходит для мужчин и женщин любого возраста, особенно для семейных людей, руководителей, тех, кто много общается и часто решает сложные вопросы.</p>
+<div class="m-quote">Ты — центр гармонии. Там, где ты, любые споры превращаются в союз</div></div>
+<div data-desc-id="15"><p>Тьма для многих — страх. Но не для тебя. Для тебя она как дом. Как ночь для кошки, ты видишь в ней даже лучше, чем при свете дня.</p>
+<p>Этот амулет создан для тех, кто работает или хочет начать работать с тёмной энергией — ведьм, жрецов и практиков, кто знает цену истинной глубине. А также для тех, кто хочет познать свою «тень». Без тьмы нет света, а света без тьмы. Раскрыв свою тень, ты обретаешь истинного себя, без масок.</p>
+<ul>
+<li>Помогает услышать шёпот невидимых сил</li>
+<li>Принять свою тёмную сторону без страха и сопротивления</li>
+<li>Работать с энергиями смерти, трансформации и перерождения</li>
+<li>Держать рядом союз тёмных богинь: Хель, Мара, Лилит, Геката, Морриган, Кали, Немезида и другие</li>
+</ul>
+<p>Защищает от хаоса чужих энергий, даёт устойчивость при работе с миром мёртвых, делает практику глубже и сильнее.</p>
+<div class="m-quote">Тьма не убивает свет, она рождает его</div>
+<p>Версия: браслет.</p></div>
+<div data-desc-id="16"><p>Тьма для многих — страх. Но не для тебя. Для тебя она как дом. Как ночь для кошки, ты видишь в ней даже лучше, чем при свете дня.</p>
+<p>Этот амулет создан для тех, кто работает или хочет начать работать с тёмной энергией — ведьм, жрецов и практиков, кто знает цену истинной глубине. А также для тех, кто хочет познать свою «тень». Без тьмы нет света, а света без тьмы. Раскрыв свою тень, ты обретаешь истинного себя, без масок.</p>
+<ul>
+<li>Помогает услышать шёпот невидимых сил</li>
+<li>Принять свою тёмную сторону без страха и сопротивления</li>
+<li>Работать с энергиями смерти, трансформации и перерождения</li>
+<li>Держать рядом союз тёмных богинь: Хель, Мара, Лилит, Геката, Морриган, Кали, Немезида и другие</li>
+</ul>
+<p>Защищает от хаоса чужих энергий, даёт устойчивость при работе с миром мёртвых, делает практику глубже и сильнее.</p>
+<div class="m-quote">Тьма не убивает свет, она рождает его</div>
+<p>Версия: подвеска.</p></div>
+<div data-desc-id="17"><p>Амулет суда и правды. Мы заряжаем его в самом сердце египетского некрополя, среди мёртвых и вечных, силой Смерти и Вечности.</p>
+<p>Он замораживает всё чужое, отсекает паразитов, отводит в Нижний мир то, что больше не твоё, и возвращает тебе равновесие. В сердце остаётся только то, что по праву твоё — сила, чистота, твой внутренний закон.</p>
+<p>Помогает освободиться от того, что удерживает в прошлом, раскрывает ясность ума и внутреннюю дисциплину. Соединяет твою силу с энергией космоса.</p>
+<div class="m-quote">С ним чужое перестаёт тянуть вниз, а твоё — начинает сиять</div>
+<p>Продаётся как самостоятельный кулон или в паре с «Плодом Вечности» — вместе они создают мощный комплекс: сначала освобождение от старого, затем пробуждение силы.</p></div>
+<div data-desc-id="18"><p>Амулет сохранения и раскрытия, заряженный в египетском некрополе. Он уплотняет твоё внутреннее «зерно судьбы», укореняет его в родовой силе, питает и заставляет прорастать даже сквозь мрак.</p>
+<p>Здесь нет разрушения — только рост и укрепление, только наполнение и мягкое раскрытие твоего истинного плода.</p>
+<p>Позволяет использовать накопленный опыт как основу для нового роста, укрепляет уверенность и внутреннюю силу. Соединяет земное и небесное, плоть и дух.</p>
+<div class="m-quote">С ним твоя сила не теряется, а становится плодом, который будет зреть и питать тебя снова и снова</div>
+<p>Продаётся как самостоятельный кулон или в паре с «Весами Осириса» — два полюса Самайна: один очищает и отсеивает, другой сохраняет и раскрывает.</p></div>
+<div data-desc-id="19"><p>Рунический браслет-антидепрессант. Артефакт, который вытаскивает даже из сложных клинических депрессивных состояний — без побочных эффектов таблеток.</p>
+<p>Выпущен под руной Наутиз — специально с учётом энергии годового цикла: для дисциплины, устойчивости и внутреннего стержня через ограничения.</p>
+<div class="m-quote">Тьма уходит. Свет возвращается. Я оживаю</div>
+<p>Ты не просто выходишь из тьмы — ты оживаешь.</p></div>
+<div data-desc-id="20"><p>Кулон-невидимка. Ставит тебя, твой бизнес и твой доход вне радара любого контролирующего органа.</p>
+<p>Бизнес и доход растут, а ты «как будто есть — но тебя не трогают»: меньше внимания проверяющих, меньше случайных блокировок, больше спокойствия в делах.</p>
+<div class="m-quote">Я и всё моё — вне радара</div></div>
+<div data-desc-id="21"><p>Амулет-кулон «Золотая пирамида перерождения». Перековка в денежного человека — строит внутреннюю структуру, через которую доход растёт кратно.</p>
+<p>Там, где слабые ломаются под давлением обстоятельств — сильные, прошедшие эту трансформацию, становятся богатыми.</p>
+<div class="m-quote">×5–×50 доход, через огонь трансформации</div></div>
+<div data-desc-id="22"><p>Ломает и разрывает любой образовавшийся тупик и вытаскивает тебя на новый уровень: дохода, возможностей, силы, отношений.</p>
+<p>Работает как молниеносный рывок вперёд — для моментов, когда энергия уже есть и хочется брать своё, но что-то держит на месте.</p>
+<div class="m-quote">×3–×10 по доходу и возможностям за 3–6 месяцев</div></div>
+<div data-desc-id="23"><p>Любые мошенники, токсики и манипуляторы исчезают из твоей жизни за считанные дни. Остаются только чистые люди и чистые доходы.</p>
+<p>С этим браслетом ты видишь любую ложь и манипуляции насквозь — ещё до того, как тебе успели что-то предложить.</p>
+<div class="m-quote">Щит, который работает тихо, но безотказно</div></div>
+<div data-desc-id="24"><p>Пробудите свою силу с амулетами Остары! Браслеты из ювелирной стали, заряженные на Остару в Карелии, на месте силы.</p>
+<ul>
+<li>Даёт ясность ума, чтобы видеть верный путь</li>
+<li>Защищает от негатива и хаоса</li>
+<li>Привлекает денежный поток и удачу</li>
+<li>Направляет к твоим истинным целям</li>
+</ul>
+<p>Амулеты ритуально заряжены в момент весеннего равноденствия, когда энергии земли и неба сливаются в мощный поток. Доступны в трёх цветах: серебряный, жёлтое золото и розовое золото.</p>
+<div class="m-quote">Повторяющиеся пятёрки — символ быстрых изменений</div></div>
+<div data-desc-id="25"><p>Амулет из коллекции «Ламмас». Ты вложил(а) силы — теперь пора собирать плоды.</p>
+<p>Этот браслет помогает заземлить всё, над чем ты работал(а), чтобы результат стал ощутимым: в деньгах, здоровье, стабильности, доме. Он активирует ресурсную устойчивость, чтобы ты мог(ла) встать на ноги, выпрямить плечи и держать то, что тебе по праву принадлежит.</p>
+<div class="m-quote">Поддержка реальности, когда нужно укрепиться, укорениться, вырасти</div>
+<p>Особенно хорошо работает в моменты завершения проектов, переходов, подведения итогов — в фазе жатвы, когда ты устал(а), но нужно дожать.</p></div>
+<div data-desc-id="26"><p>Амулет из коллекции «Ламмас». Этот браслет не просто про удачу — он про благородство потока.</p>
+<p>Он раскрывает внутреннюю щедрость и включает золотую формулу: когда ты не просто отдаёшь, а участвуешь в великом обмене с мирозданием. Помогает услышать зов момента, встать в правильный поток и стать магнитом для изобилия.</p>
+<div class="m-quote">Про щедрость духа, благодарность и ясность: когда, кому и зачем</div>
+<p>Особенно хорошо надевать в моменты запусков, дарения, обмена, сделок, подписаний. Отлично сочетается с «Осознанной удачей» и «Возвращением к жизни».</p></div>
+<div data-desc-id="27"><p>Амулет из коллекции «Ламмас». Ты много пахал(а) — теперь важно не потерять.</p>
+<p>Этот браслет ставит мощную защиту на твой труд, твои плоды, твой дом, твои проекты — всё, что ты создал(а) сама. Он блокирует утечки, зависть, кражи энергии и плодов — как со стороны людей, так и со стороны обстоятельств.</p>
+<div class="m-quote">Амулет силы, сохранности и уверенного «я заслужил»</div>
+<p>Идеально работает в паре с браслетами «Алая ведьма» или «Эльфийская защита», усиливая магический щит и личные границы. Отлично для дней напряжения, выхода на результат, при ощущении атак и зависти.</p></div>
+<div data-desc-id="28"><p>Первый браслет коллекции «Врата Льва» — для тех, кто готов перестать прятаться и начать жить свою жизнь, ощутив внутри свою силу.</p>
+<ul>
+<li>Возвращает внутреннее достоинство</li>
+<li>Пробуждает уверенность</li>
+<li>Делает тебя видимым — без крика, без игры, просто своим присутствием</li>
+</ul>
+<p>Это не про эго. Это про то, чтобы встать на своё место — в жизни, в отношениях, в пространстве. Помогает выйти из роли «удобного» или «невидимого», усиливает личную харизму.</p>
+<div class="m-quote">Твой голос важен. Твоё присутствие — ценно. Пора стать тем, кто ты есть</div>
+<p>Отлично сочетается с «Осознанной удачей» или коллекцией «Огненная жатва» — для усиления личного сияния и масштабирования потока.</p></div>
+<div data-desc-id="29"><p>Браслет для тех, кто чувствует глубоко, но устал быть уязвимым.</p>
+<ul>
+<li>Оберегает ваш внутренний мир от чужих вторжений</li>
+<li>Закрывает энергетические дыры</li>
+<li>Восстанавливает личные границы и возвращает ощущение безопасности</li>
+</ul>
+<p>С ним становится легче сказать «нет» и легче выбрать «себя» — без чувства вины. Мягко очищает пространство от манипуляций, давления, чужих ожиданий.</p>
+<div class="m-quote">Твоя мягкость — не слабость. Это сила, которую пора вернуть себе</div>
+<p>Отлично сочетается с «Эльфийской защитой», «Алой ведьмой» или «Возвращением к жизни». Особенно хорош в паре со «Львом среди людей».</p></div>
+<div data-desc-id="30"><p>Браслет для тех, кто чувствует, что пора выйти из внутренней спячки, включить себя на полную и начать жить так, как хочется на самом деле.</p>
+<p>Это мягкая и глубокая сила внутреннего пробуждения. Помогает соединиться с собой, услышать своё предназначение, укрепить веру в себя и свой путь.</p>
+<ul>
+<li>Усиливает интуицию</li>
+<li>Даёт ясность и понимание происходящего</li>
+<li>Зажигает уверенность в себе, как лампочку внутри</li>
+</ul>
+<div class="m-quote">Ты не просто часть этого мира — ты его свет. Пора светить</div>
+<p>Идеально сочетается с «Осознанной удачей», «Алой ведьмой», «Возвращением к жизни», а также с коллекциями «Огненная жатва» и «Врата льва».</p></div>
+<div data-desc-id="31"><p>Первая ступень «Огненной Жатвы». Представь: однажды ты просыпаешься и понимаешь, что прежняя жизнь тебя больше не радует, а день стал днём сурка.</p>
+<p>«Огонь пробуждения» мягко запускает внутренние процессы, помогает осознать свои желания, чувства и направления. Это не про резкие рывки — это про искру, с которой загорается костёр твоей настоящей жизни.</p>
+<ul>
+<li>Пробуждает твой внутренний поток</li>
+<li>Запускает силу в теле</li>
+<li>Помогает обрести смелость для движения и вдохновения</li>
+</ul>
+<div class="m-quote">Как будто утренний огонь проникает в твои клетки и говорит: «Вставай. Пора жить»</div>
+<p>Отлично работает с браслетами «Возвращение к жизни» и «Осознанная удача». Первая ступень цепочки: пробуждение → стабилизация → перерождение → сияние.</p></div>
+<div data-desc-id="32"><p>Вторая ступень «Огненной Жатвы» — не про то, чтобы захотеть меняться, а про то, чтобы пойти по дороге силы.</p>
+<p>Для тех, кто уже сделал первые шаги: осознал, чего хочет, и начал действовать — но дорога тяжёлая, а ресурсы на исходе.</p>
+<ul>
+<li>Помогает закрепиться на пути, не свернуть и не сломаться</li>
+<li>Возвращает ощущение внутренней ценности</li>
+<li>Активирует скрытые резервы, усиливает мышление и волю</li>
+</ul>
+<p>Лучше всего работает, когда ты уже в процессе перемен: осваиваешь новую профессию, строишь другую версию себя.</p>
+<div class="m-quote">Идеален как продолжение «Огня Пробуждения» — надевай после 3–4 недель ношения первого</div></div>
+<div data-desc-id="33"><p>Третья ступень «Огненной Жатвы» — для тех, кто уже прошёл боль, выбор и первые шаги перемен.</p>
+<p>Ты уже преодолел(а) внутренний хаос, пробился(-лась) сквозь ограничения, понял(а), кто ты есть. Но встаёт новый вызов: что дальше, если старое умерло, а новое ещё не родилось?</p>
+<ul>
+<li>Активирует архетип перерождения</li>
+<li>Взрывает закостенелые ментальные конструкции</li>
+<li>Открывает твоё внутреннее ядро — обновлённое «я»</li>
+</ul>
+<div class="m-quote">Не бойся сгореть — ты не пепел, ты Феникс</div>
+<p>Лучше носить только после «Пути Силы». Идеально сочетается с браслетом «Возвращение к жизни» — в дуэте они дают второе дыхание.</p></div>
+<div data-desc-id="34"><p>Финальная, четвёртая ступень «Огненной Жатвы». Не для начинающих.</p>
+<p>Для тех, кто уже прошёл путь, переплавил себя в огне, пережил перерождение — и теперь готов блистать, не скрывая света.</p>
+<ul>
+<li>Усиливает внутренний стержень</li>
+<li>Притягивает внимание, возможности, деньги, людей</li>
+<li>Открывает поток успеха и дарит радость быть собой</li>
+</ul>
+<div class="m-quote">Сила успешного человека — в зрелом сиянии, не в иллюзии величия</div>
+<p>Идеально носить после «Огненного Феникса». Отлично сочетается с «Алой Ведьмой» и «Осознанной удачей». Не рекомендуется надевать в периоды упадка.</p></div>
+</div>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -1090,6 +1318,65 @@ function checkout(){
 }
 window.addToCart = addToCart; window.removeFromCart = removeFromCart;
 window.checkout = checkout;
+
+/* ══ PRODUCT MODAL ══ */
+function openProductModal(id){
+  var card = document.querySelector('.product-card[data-id="'+id+'"]');
+  if(!card) return;
+  var name = card.getAttribute('data-name');
+  var price = card.getAttribute('data-price');
+  var rune = (card.querySelector('.product-btn') && card.querySelector('.product-btn').getAttribute('onclick').match(/'([^']*)'\)$/));
+  rune = rune ? rune[1] : '';
+  var img = card.querySelector('.product-img');
+  var placeholder = card.querySelector('.product-img-placeholder');
+  var collection = card.querySelector('.product-collection').textContent;
+  var tagline = card.querySelector('.product-tagline').textContent;
+  var priceRowHtml = card.querySelector('.product-price-row').innerHTML;
+
+  document.getElementById('modalCollection').textContent = collection;
+  document.getElementById('modalName').textContent = name;
+
+  var imgWrap = document.getElementById('modalImgWrap');
+  if(img){
+    imgWrap.innerHTML = '<img src="'+img.getAttribute('src')+'" alt="'+name+'">';
+  } else if(placeholder){
+    imgWrap.innerHTML = '<div class="product-img-placeholder">'+placeholder.textContent+'</div>';
+  } else {
+    imgWrap.innerHTML = '';
+  }
+
+  var descSource = document.querySelector('#fullDescriptions [data-desc-id="'+id+'"]');
+  var descEl = document.getElementById('modalDesc');
+  descEl.innerHTML = descSource ? descSource.innerHTML : '<p>'+tagline+'</p>';
+
+  var priceEl = document.getElementById('modalPrice');
+  priceEl.innerHTML = price === '0' ? 'Цена уточняется' : Number(price).toLocaleString('ru-RU')+' ₽';
+  var noteEl = card.querySelector('.product-price-row > div[style]');
+  var existingNote = document.getElementById('modalPriceNote');
+  if(existingNote) existingNote.remove();
+  if(noteEl){
+    var note = document.createElement('div');
+    note.id = 'modalPriceNote';
+    note.style.cssText = 'font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px';
+    note.textContent = noteEl.textContent;
+    priceEl.insertAdjacentElement('afterend', note);
+  }
+
+  var btn = document.getElementById('modalAddBtn');
+  btn.onclick = function(){ addToCart(Number(id), name, Number(price), rune); closeProductModal(); };
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('product-modal').classList.add('open');
+}
+function closeProductModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('product-modal').classList.remove('open');
+}
+window.openProductModal = openProductModal;
+window.closeProductModal = closeProductModal;
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeProductModal();
+});
 
 /* ══ CATALOG FILTER ══ */
 function filterCatalog(tag, chip){

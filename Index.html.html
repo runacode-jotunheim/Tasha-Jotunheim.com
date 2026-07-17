@@ -270,6 +270,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 /* ══ CATEGORY TILES ══ */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:0}
 @media(max-width:700px){.cat-grid{grid-template-columns:1fr}}
+.bento-grid{display:grid;grid-template-columns:1fr;grid-template-areas:"topsales" "season" "categories";gap:20px}
+@media(min-width:900px){
+  .bento-grid{grid-template-columns:minmax(260px,1fr) 2.15fr;grid-template-areas:"season topsales" "season categories";gap:24px;align-items:stretch}
+  .bento-season{display:flex;flex-direction:column}
+  .bento-season .season-card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:none;margin:0}
+  .bento-categories .cat-grid{height:100%}
+  .bento-categories .cat-tile{height:100%;display:flex;flex-direction:column;justify-content:center}
+}
+.bento-season{grid-area:season}
+.bento-topsales{grid-area:topsales}
+.bento-categories{grid-area:categories}
 .cat-tile{padding:28px 20px;text-align:center;transition:transform .3s;cursor:none}
 .cat-tile:hover{transform:translateY(-3px)}
 .cat-icon{font-family:'VT323',monospace;font-size:38px;color:var(--accent);margin-bottom:12px;text-shadow:0 0 12px var(--accent);display:block;animation:glow-pulse 3s ease-in-out infinite}
@@ -443,69 +454,74 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
-<!-- TOP SALES -->
-<div class="section-wrap" id="top-sales" style="padding-top:20px;padding-bottom:20px">
-  <span class="section-eye reveal">&#9658; хиты</span>
-  <h2 class="section-title reveal" style="margin-bottom:24px">Топ продаж</h2>
-  <div class="top-sales-scroll">
-    <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
-      <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy"></div>
-      <div class="top-sale-info">
-        <div class="top-sale-name">Jotun Vibe</div>
-        <div class="top-sale-price">7 900 ₽</div>
+<div class="divider reveal"><span>обзор</span></div>
+
+<!-- BENTO HUB: TOP SALES + SEASON + CATEGORIES -->
+<div class="section-wrap" id="bento-hub">
+  <div class="bento-grid">
+
+    <div class="bento-season" id="season">
+      <span class="section-eye reveal">&#9658; колесо года</span>
+      <h2 class="section-title reveal" id="seasonTitle" style="text-align:left;margin-bottom:16px">...</h2>
+      <div class="season-card glass reveal" id="seasonCard">
+        <div class="season-symbol" id="seasonSymbol">ᛟ</div>
+        <div class="season-name" id="seasonName">...</div>
+        <div class="season-dates" id="seasonDates">...</div>
+        <div class="season-text" id="seasonText">Коллекция обновляется по Колесу года автоматически.</div>
       </div>
     </div>
-    <div class="top-sale-card glass reveal" style="transition-delay:.08s" onclick="openProductModal(2)">
-      <div class="top-sale-img"><img src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy"></div>
-      <div class="top-sale-info">
-        <div class="top-sale-name">Кулон Prime</div>
-        <div class="top-sale-price">12 000 ₽</div>
+
+    <div class="bento-topsales" id="top-sales">
+      <span class="section-eye reveal">&#9658; хиты</span>
+      <h2 class="section-title reveal" style="text-align:left;margin-bottom:16px">Топ продаж</h2>
+      <div class="top-sales-scroll">
+        <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
+          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Jotun Vibe</div>
+            <div class="top-sale-price">7 900 ₽</div>
+          </div>
+        </div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.08s" onclick="openProductModal(2)">
+          <div class="top-sale-img"><img src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Кулон Prime</div>
+            <div class="top-sale-price">12 000 ₽</div>
+          </div>
+        </div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.16s" onclick="openProductModal(9)">
+          <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Осознанная удача</div>
+            <div class="top-sale-price">13 000 ₽</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="top-sale-card glass reveal" style="transition-delay:.16s" onclick="openProductModal(9)">
-      <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
-      <div class="top-sale-info">
-        <div class="top-sale-name">Осознанная удача</div>
-        <div class="top-sale-price">13 000 ₽</div>
+
+    <div class="bento-categories" id="categories">
+      <div class="cat-grid">
+        <div class="cat-tile glass reveal" onclick="filterCatalog('bracelet')">
+          <span class="cat-icon">ᚱ</span>
+          <div class="cat-name">Браслеты</div>
+          <div class="cat-count">23 артефакта</div>
+        </div>
+        <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('pendant')">
+          <span class="cat-icon">ᛏ</span>
+          <div class="cat-name">Кулоны</div>
+          <div class="cat-count">11 артефактов</div>
+        </div>
+        <div class="cat-tile glass reveal" style="transition-delay:.16s" onclick="filterCatalog('nail')">
+          <span class="cat-icon">ᛞ</span>
+          <div class="cat-name">Nail Amulets</div>
+          <div class="cat-count">скоро</div>
+        </div>
       </div>
     </div>
+
   </div>
 </div>
 
-<div class="divider reveal"><span>сезон</span></div>
-
-<!-- SEASON -->
-<div class="section-wrap" id="season">
-  <span class="section-eye reveal">&#9658; колесо года</span>
-  <h2 class="section-title reveal" id="seasonTitle">...</h2>
-  <div class="season-card glass reveal" id="seasonCard">
-    <div class="season-symbol" id="seasonSymbol">ᛟ</div>
-    <div class="season-name" id="seasonName">...</div>
-    <div class="season-dates" id="seasonDates">...</div>
-    <div class="season-text" id="seasonText">Коллекция обновляется по Колесу года автоматически.</div>
-  </div>
-</div>
-
-<!-- CATEGORIES -->
-<div class="section-wrap" id="categories">
-  <div class="cat-grid">
-    <div class="cat-tile glass reveal" onclick="filterCatalog('bracelet')">
-      <span class="cat-icon">ᚱ</span>
-      <div class="cat-name">Браслеты</div>
-      <div class="cat-count">23 артефакта</div>
-    </div>
-    <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('pendant')">
-      <span class="cat-icon">ᛏ</span>
-      <div class="cat-name">Кулоны</div>
-      <div class="cat-count">11 артефактов</div>
-    </div>
-    <div class="cat-tile glass reveal" style="transition-delay:.16s" onclick="filterCatalog('nail')">
-      <span class="cat-icon">ᛞ</span>
-      <div class="cat-name">Nail Amulets</div>
-      <div class="cat-count">скоро</div>
-    </div>
-  </div>
-</div>
 
 <div class="divider reveal"><span>о мастере</span></div>
 

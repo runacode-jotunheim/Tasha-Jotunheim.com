@@ -88,11 +88,11 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .top-sale-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:8px}
 .top-sale-price{font-family:'VT323',monospace;font-size:22px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
 .scroll-nav-wrap{position:relative}
-.scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:20;width:36px;height:36px;border-radius:50%;background:rgba(0,10,4,0.55);border:1px solid var(--accent);color:var(--accent);backdrop-filter:blur(8px);cursor:none;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(0,255,65,0.15);transition:background .2s,box-shadow .2s}
-.scroll-arrow:hover{background:rgba(0,255,65,0.15);box-shadow:0 0 18px rgba(0,255,65,0.3)}
-.scroll-arrow.left{left:-6px}
-.scroll-arrow.right{right:-6px}
-@media(max-width:700px){.scroll-arrow{display:none}}
+.scroll-nav-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:20;width:36px;height:36px;border-radius:50%;background:rgba(0,10,4,0.55);border:1px solid var(--accent);color:var(--accent);backdrop-filter:blur(8px);cursor:none;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(0,255,65,0.15);transition:background .2s,box-shadow .2s}
+.scroll-nav-arrow:hover{background:rgba(0,255,65,0.15);box-shadow:0 0 18px rgba(0,255,65,0.3)}
+.scroll-nav-arrow.left{left:-6px}
+.scroll-nav-arrow.right{right:-6px}
+@media(max-width:700px){.scroll-nav-arrow{display:none}}
 .about-layout{max-width:760px;margin:0 auto;padding:32px;display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center}
 @media(max-width:640px){.about-layout{grid-template-columns:1fr;padding:28px 24px}}
 .about-photos{display:flex;gap:12px}
@@ -573,7 +573,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <span class="section-eye reveal">&#9658; хиты</span>
       <h2 class="section-title reveal" style="text-align:left;margin-bottom:16px">Топ заказов</h2>
       <div class="scroll-nav-wrap">
-        <button class="scroll-arrow left" onclick="scrollByAmount('topSalesScroll',-1)" aria-label="Прокрутить влево">&#10094;</button>
+        <button class="scroll-nav-arrow left" onclick="scrollByAmount('topSalesScroll',-1)" aria-label="Прокрутить влево">&#10094;</button>
         <div class="top-sales-scroll" id="topSalesScroll">
           <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
             <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
@@ -611,7 +611,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
             </div>
           </div>
         </div>
-        <button class="scroll-arrow right" onclick="scrollByAmount('topSalesScroll',1)" aria-label="Прокрутить вправо">&#10095;</button>
+        <button class="scroll-nav-arrow right" onclick="scrollByAmount('topSalesScroll',1)" aria-label="Прокрутить вправо">&#10095;</button>
       </div>
     </div>
 
@@ -693,7 +693,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <!-- COLLECTION FILTER -->
   <div id="filterSentinel" style="height:1px"></div>
   <div class="scroll-nav-wrap">
-    <button class="scroll-arrow left" onclick="scrollByAmount('collectionFilter',-1)" aria-label="Прокрутить влево">&#10094;</button>
+    <button class="scroll-nav-arrow left" onclick="scrollByAmount('collectionFilter',-1)" aria-label="Прокрутить влево">&#10094;</button>
     <div class="collections-scroll reveal" id="collectionFilter" style="margin-bottom:32px">
       <div class="collection-chip active" onclick="filterCatalog('all',this)">Все</div>
       <div class="collection-chip" onclick="filterCatalog('jotun-vibe',this)">Jotun Vibe</div>
@@ -712,7 +712,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="collection-chip" onclick="filterCatalog('bracelet',this)">Браслеты</div>
       <div class="collection-chip" onclick="filterCatalog('pendant',this)">Кулоны</div>
     </div>
-    <button class="scroll-arrow right" onclick="scrollByAmount('collectionFilter',1)" aria-label="Прокрутить вправо">&#10095;</button>
+    <button class="scroll-nav-arrow right" onclick="scrollByAmount('collectionFilter',1)" aria-label="Прокрутить вправо">&#10095;</button>
   </div>
 
   <div class="product-grid" id="productGrid">

@@ -72,7 +72,7 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .top-sales-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
 .top-sales-scroll::-webkit-scrollbar{height:4px}
 .top-sales-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.25);border-radius:4px}
-.top-sale-card{cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
+.top-sale-card{position:relative;cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
 @media(max-width:480px){.top-sale-card{width:78vw}}
 .top-sale-img{width:220px;height:220px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
 @media(max-width:480px){.top-sale-img{width:100%;height:78vw}}
@@ -169,6 +169,21 @@ body:active #custom-cursor img{transform:scale(0.88)}
 
 /* ══ NAV ══ */
 nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:center;gap:0;padding:0 24px;height:56px;background:rgba(0,0,0,0.75);border-bottom:1px solid rgba(0,255,65,0.08);backdrop-filter:blur(12px);transition:background .3s}
+#scroll-progress{position:absolute;bottom:-1px;left:0;height:2px;width:0%;background:var(--accent);box-shadow:0 0 8px var(--accent),0 0 2px var(--accent);transition:width .08s linear;z-index:2}
+#glitch-overlay{position:fixed;inset:0;z-index:9500;pointer-events:none;opacity:0;mix-blend-mode:screen}
+#grain-overlay{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.045;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#glitch-overlay.glitching{animation:glitchFlicker .32s steps(2,end)}
+@keyframes glitchFlicker{
+  0%{opacity:0;transform:translate(0,0);background:transparent}
+  8%{opacity:.85;transform:translate(-6px,2px);background:repeating-linear-gradient(0deg,var(--accent) 0,transparent 1px,transparent 3px);filter:hue-rotate(0deg)}
+  16%{opacity:.6;transform:translate(5px,-2px);background:repeating-linear-gradient(90deg,var(--accent) 0,transparent 1px,transparent 4px)}
+  24%{opacity:.8;transform:translate(-3px,1px);background:rgba(255,255,255,0.08)}
+  33%{opacity:.4;transform:translate(4px,0)}
+  50%{opacity:.7;transform:translate(-2px,-1px);background:repeating-linear-gradient(0deg,var(--accent) 0,transparent 1px,transparent 2px)}
+  66%{opacity:.3;transform:translate(2px,1px)}
+  85%{opacity:.15;transform:translate(0,0)}
+  100%{opacity:0;transform:translate(0,0);background:transparent}
+}
 .nav-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:900;letter-spacing:2px;color:var(--accent);text-decoration:none;text-transform:uppercase;margin-right:auto;text-shadow:0 0 10px rgba(0,255,65,0.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:600px){
   .nav-logo{font-size:9px;letter-spacing:1px;max-width:110px}
@@ -194,7 +209,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .glass{background:rgba(0,0,0,0.72);border:1px solid rgba(0,255,65,0.14);border-radius:14px;backdrop-filter:blur(12px)}
 
 /* ══ COLLECTIONS (horizontal scroll) ══ */
-.collections-scroll{display:flex;gap:16px;overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin;scrollbar-color:rgba(0,255,65,0.2) transparent;-webkit-overflow-scrolling:touch}
+.collections-scroll{display:flex;gap:16px;overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin;scrollbar-color:rgba(0,255,65,0.2) transparent;-webkit-overflow-scrolling:touch;position:sticky;top:56px;z-index:150;background:rgba(0,0,0,0);transition:background .3s,padding .3s,gap .3s}
+.collections-scroll.compact{background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);padding:8px 12px;gap:10px;margin:0 -24px;padding-left:24px;padding-right:24px;border-bottom:1px solid rgba(0,255,65,0.1);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.collections-scroll.compact .collection-chip{padding:6px 14px;font-size:9px}
+@media(max-width:600px){.collections-scroll{top:44px}}
 .collections-scroll::-webkit-scrollbar{height:3px}
 .collections-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.2);border-radius:2px}
 .collection-chip{flex-shrink:0;padding:10px 22px;border-radius:24px;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:none;transition:all .25s;white-space:nowrap}
@@ -206,7 +224,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.product-grid{grid-template-columns:1fr}}
-.product-card{overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:none;display:none}
+.product-card{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:none;display:none}
+.product-card::before,.top-sale-card::before,.video-card::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.5px;background:linear-gradient(115deg,transparent 20%,var(--accent) 45%,#fff 50%,var(--accent) 55%,transparent 80%);background-size:250% 250%;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .35s;animation:holoShift 2.8s linear infinite;pointer-events:none;z-index:6}
+.product-card:hover::before,.top-sale-card:hover::before,.video-card:hover::before{opacity:1}
+@keyframes holoShift{0%{background-position:0% 50%}100%{background-position:250% 50%}}
 .product-card.show{display:block;animation:fadeIn .4s ease}
 .product-card:hover{transform:translateY(-5px);box-shadow:0 10px 32px rgba(0,255,65,0.14)}
 .product-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:rgba(0,20,8,0.6)}
@@ -297,11 +318,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
+<!-- GLITCH OVERLAY -->
+<div id="glitch-overlay"></div>
+<div id="grain-overlay"></div>
+
 <!-- MATRIX -->
 <canvas id="matrix-canvas"></canvas>
 
 <!-- NAV -->
 <nav id="topNav">
+  <div id="scroll-progress"></div>
   <a class="nav-logo" href="#">Артефакты Йотунхейм</a>
   <div class="nav-links">
     <a class="nav-link" href="#catalog">Каталог</a>
@@ -383,7 +409,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
   <div class="hero-text-col">
     <div class="hero-eyebrow"><span class="cursor"></span><span>Таша Йотунхейм · рунический мастер</span></div>
-    <h1 class="hero-title">Артефакты<br>Йотунхейм</h1>
+    <h1 class="hero-title" id="heroTitle"><span class="scramble-line">Артефакты</span><br><span class="scramble-line">Йотунхейм</span></h1>
     <p class="hero-sub">Рунические браслеты, кулоны и амулеты с заложенной авторской формулой. Каждый артефакт создаётся под твою энергию и запрос.</p>
     <div class="hero-runes">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ</div>
     <a href="#catalog" class="hero-cta">&#9654; смотреть коллекцию</a>
@@ -512,6 +538,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <h2 class="section-title reveal">Все коллекции</h2>
 
   <!-- COLLECTION FILTER -->
+  <div id="filterSentinel" style="height:1px"></div>
   <div class="collections-scroll reveal" id="collectionFilter" style="margin-bottom:32px">
     <div class="collection-chip active" onclick="filterCatalog('all',this)">Все</div>
     <div class="collection-chip" onclick="filterCatalog('jotun-vibe',this)">Jotun Vibe</div>
@@ -1125,13 +1152,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <li>ᛃ Йера — запускает цикл устойчивого роста без резких перегрузок</li>
 </ul>
 <div class="m-quote">Даже если вокруг всё меняется, внутри остаётся то, что нельзя отнять. Твоя сила. Твой стержень. Твоя опора</div>
-<p>Носить ежедневно на ведущей руке. Совместим с кулоном и браслетом Prime — вместе три артефакта формируют единую систему: устранение препятствий, раскрытие потенциала, устойчивый рост.</p>
-<div class="m-sub">Комплекты</div>
-<ul>
-<li>Кулон Prime + Браслет Йотун Вайб — 18 300 ₽</li>
-<li>Два браслета (Prime + Йотун Вайб) — 16 500 ₽</li>
-<li>Все три артефакта (Кулон Prime + Браслет Prime + Браслет Йотун Вайб) — 25 000 ₽</li>
-</ul></div>
+<p>Носить ежедневно на ведущей руке. Совместим с кулоном и браслетом Prime — вместе три артефакта формируют единую систему: устранение препятствий, раскрытие потенциала, устойчивый рост.</p></div>
 <div data-desc-id="2"><p>Если браслет Prime похож на восход солнца, то кулон — это курс, который не даёт слиться после подъёма. Формула раскрывает внутренний потенциал, помогает увидеть перспективы и своевременно встречать нужных людей и обстоятельства.</p>
 <div class="m-sub">Руническая формула</div>
 <ul>
@@ -1143,13 +1164,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <li>ᚹ Вуньо — формирует внутреннюю гармонию и удовлетворённость достигнутым</li>
 </ul>
 <div class="m-quote">Браслет даёт движение. Кулон помогает не потерять курс. Вместе это и есть твой вечный прайм</div>
-<p>Совместим с браслетом Prime и браслетом Йотун Вайб.</p>
-<div class="m-sub">Комплекты</div>
-<ul>
-<li>Кулон + Браслет Prime — 19 900 ₽</li>
-<li>Кулон Prime + Браслет Йотун Вайб — 18 300 ₽</li>
-<li>Все три артефакта — 25 000 ₽</li>
-</ul></div>
+<p>Совместим с браслетом Prime и браслетом Йотун Вайб.</p></div>
 <div data-desc-id="3"><p>Если кулон Prime похож на восход солнца, то браслет похож на течение реки. Он работает не через яркий подъём, а через постепенное накопление: одна полезная встреча, одна вовремя замеченная идея, один удачный разговор — и вот жизнь уже движется легче.</p>
 <p>Браслет не создаёт возможности из пустоты. Он помогает использовать те, что уже появляются рядом, но обычно проходят мимо внимания. Поэтому его действие ощущается очень естественно — не как магическое вмешательство, а как период жизни, в котором всё постепенно складывается в правильную картинку.</p>
 <div class="m-sub">Руническая формула</div>
@@ -1161,13 +1176,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <li>ᛟ Отал — закрепляет результаты, укрепляет достигнутое положение</li>
 <li>ᚹ Вуньо — удерживает ощущение своей Prime Era</li>
 </ul>
-<div class="m-quote">Энергия движется циклически, каждый завершённый цикл становится основой для следующего</div>
-<div class="m-sub">Комплекты</div>
-<ul>
-<li>Браслет + Кулон Prime — 19 900 ₽</li>
-<li>Два браслета (Prime + Йотун Вайб) — 16 500 ₽</li>
-<li>Все три артефакта — 25 000 ₽</li>
-</ul></div>
+<div class="m-quote">Энергия движется циклически, каждый завершённый цикл становится основой для следующего</div></div>
 <div data-desc-id="4"><p>Этот артефакт создан для тех, кто устал от внутреннего шума. Тревоги, чужие мнения, давление среды — всё это со временем заглушает собственный голос и делает мышление тяжёлым.</p>
 <p>Формула постепенно выстраивает новую структуру восприятия: создаёт тишину внутри, возвращает вас к себе и формирует ясное, устойчивое мышление. Вы начнёте замечать: мысли становятся точнее, тревога уходит на фон, а решения приходят из состояния равновесия — не из хаоса.</p>
 <div class="m-sub">Руническая формула — 7 рун</div>
@@ -1416,6 +1425,7 @@ window.togglePills = togglePills;
 function setTheme(t){
   _matrixMode = t;
   var root = document.documentElement;
+  triggerGlitch();
   if(t === 'red'){
     root.style.setProperty('--accent','var(--red)');
     root.style.setProperty('--accent-dim','var(--red-dim)');
@@ -1428,6 +1438,14 @@ function setTheme(t){
   if(window._updateCursorColor) window._updateCursorColor(t);
 }
 window.setTheme = setTheme;
+function triggerGlitch(){
+  var el = document.getElementById('glitch-overlay');
+  if(!el) return;
+  el.classList.remove('glitching');
+  void el.offsetWidth;
+  el.classList.add('glitching');
+  setTimeout(function(){ el.classList.remove('glitching'); }, 320);
+}
 var savedTheme = localStorage.getItem('jv_theme');
 if(savedTheme) setTheme(savedTheme);
 
@@ -1552,6 +1570,50 @@ document.addEventListener('keydown', function(e){
   if(e.key === 'Escape') closeProductModal();
 });
 
+/* ══ HERO TEXT SCRAMBLE ══ */
+function scrambleHeroTitle(){
+  var lines = document.querySelectorAll('#heroTitle .scramble-line');
+  if(!lines.length) return;
+  var chars = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  lines.forEach(function(line, lineIdx){
+    var final = line.textContent;
+    var len = final.length;
+    var frame = 0;
+    var revealed = 0;
+    var maxFrames = 18;
+    setTimeout(function(){
+      var iv = setInterval(function(){
+        frame++;
+        revealed = Math.floor((frame / maxFrames) * len);
+        var out = '';
+        for(var i = 0; i < len; i++){
+          if(i < revealed) out += final[i];
+          else out += chars[Math.floor(Math.random() * chars.length)];
+        }
+        line.textContent = out;
+        if(revealed >= len){
+          line.textContent = final;
+          clearInterval(iv);
+        }
+      }, 35);
+    }, lineIdx * 250);
+  });
+}
+window.scrambleHeroTitle = scrambleHeroTitle;
+
+/* ══ STICKY FILTER BAR ══ */
+(function(){
+  var sentinel = document.getElementById('filterSentinel');
+  var bar = document.getElementById('collectionFilter');
+  if(!sentinel || !bar || !window.IntersectionObserver) return;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      bar.classList.toggle('compact', !e.isIntersecting);
+    });
+  }, {threshold:0, rootMargin:'-56px 0px 0px 0px'});
+  obs.observe(sentinel);
+})();
+
 /* ══ SCROLL TO TOP ══ */
 (function(){
   var btn = document.getElementById('scroll-top-btn');
@@ -1559,6 +1621,21 @@ document.addEventListener('keydown', function(e){
   window.addEventListener('scroll', function(){
     btn.classList.toggle('show', window.scrollY > 600);
   }, {passive:true});
+})();
+
+/* ══ SCROLL PROGRESS BAR ══ */
+(function(){
+  var bar = document.getElementById('scroll-progress');
+  if(!bar) return;
+  function update(){
+    var h = document.documentElement;
+    var scrollable = h.scrollHeight - h.clientHeight;
+    var pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+    bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update);
+  update();
 })();
 
 /* ══ RECENTLY VIEWED / INTERESTS ══ */
@@ -1787,6 +1864,7 @@ setTimeout(function(){
     setTimeout(function(){
       loader.style.display="none";
       document.getElementById("main").classList.add("visible");
+      scrambleHeroTitle();
     },650);
   },400);
 },REVEAL_AT);

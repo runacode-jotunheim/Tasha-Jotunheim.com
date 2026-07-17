@@ -155,6 +155,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-card:hover{transform:translateY(-5px);box-shadow:0 10px 32px rgba(0,255,65,0.14)}
 .product-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:rgba(0,20,8,0.6)}
 .product-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace;font-size:64px;color:rgba(0,255,65,0.15);aspect-ratio:1}
+.product-img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.05);transition:transform .4s ease}
+.product-card:hover .product-img{transform:scale(1.05)}
 .product-badge-wrap{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}
 .product-badge{display:inline-block;font-size:8px;letter-spacing:2px;text-transform:uppercase;border-radius:20px;padding:3px 9px}
 .badge-top{background:rgba(0,255,65,0.15);border:1px solid rgba(0,255,65,0.35);color:var(--accent)}
@@ -299,12 +301,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="cat-tile glass reveal" onclick="filterCatalog('bracelet')">
       <span class="cat-icon">ᚱ</span>
       <div class="cat-name">Браслеты</div>
-      <div class="cat-count">3 артефакта</div>
+      <div class="cat-count">12 артефактов</div>
     </div>
     <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('pendant')">
       <span class="cat-icon">ᛏ</span>
       <div class="cat-name">Кулоны</div>
-      <div class="cat-count">2 артефакта</div>
+      <div class="cat-count">15 артефактов</div>
     </div>
     <div class="cat-tile glass reveal" style="transition-delay:.16s" onclick="filterCatalog('nail')">
       <span class="cat-icon">ᛞ</span>
@@ -326,6 +328,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="collection-chip active" onclick="filterCatalog('all',this)">Все</div>
     <div class="collection-chip" onclick="filterCatalog('jotun-vibe',this)">Jotun Vibe</div>
     <div class="collection-chip" onclick="filterCatalog('prime',this)">Prime Era</div>
+    <div class="collection-chip" onclick="filterCatalog('авторская',this)">Авторские</div>
+    <div class="collection-chip" onclick="filterCatalog('мабон',this)">Мабон</div>
+    <div class="collection-chip" onclick="filterCatalog('самайн',this)">Самайн</div>
+    <div class="collection-chip" onclick="filterCatalog('йоль',this)">Йоль</div>
+    <div class="collection-chip" onclick="filterCatalog('остара',this)">Остара</div>
     <div class="collection-chip" onclick="filterCatalog('путь',this)">Путь ясной мысли</div>
     <div class="collection-chip" onclick="filterCatalog('lotus',this)">Лотос души</div>
     <div class="collection-chip" onclick="filterCatalog('bracelet',this)">Браслеты</div>
@@ -337,7 +344,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <!-- JOTUN VIBE -->
     <div class="product-card glass show" data-tags="jotun-vibe bracelet" data-id="1" data-price="7900" data-name="Браслет Jotun Vibe">
       <div class="product-img-wrap">
-        <div class="product-img-placeholder">ᚨ</div>
+        <img class="product-img" src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Топ продаж</span></div>
       </div>
       <div class="product-body">
@@ -353,7 +360,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
     <div class="product-card glass show" data-tags="prime pendant" data-id="2" data-price="12000" data-name="Кулон Prime">
       <div class="product-img-wrap">
-        <div class="product-img-placeholder">ᛏ</div>
+        <img class="product-img" src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Хит</span></div>
       </div>
       <div class="product-body">
@@ -369,7 +376,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
     <div class="product-card glass show" data-tags="prime bracelet" data-id="3" data-price="9500" data-name="Браслет Prime">
       <div class="product-img-wrap">
-        <div class="product-img-placeholder">ᚱ</div>
+        <img class="product-img" src="assets/img/products/prime-bracelet.jpg" alt="Браслет Prime" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
       </div>
       <div class="product-body">
@@ -379,6 +386,342 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-price-row">
           <span class="product-price">9 500 ₽</span>
           <button class="product-btn" onclick="addToCart(3,'Браслет Prime',9500,'ᚱ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="авторская браслет" data-id="7" data-price="8800" data-name="Возвращение к жизни">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛉ</div>
+        
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Авторские артефакты</div>
+        <div class="product-name">Возвращение к жизни</div>
+        <div class="product-tagline">Талисман перерождения · Восстанавливает энергетический иммунитет · Возвращает вкус жизни</div>
+        <div class="product-price-row">
+          <span class="product-price">8 800 ₽</span>
+          <button class="product-btn" onclick="addToCart(7,'Возвращение к жизни',8800,'ᛉ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="авторская браслет" data-id="8" data-price="7800" data-name="Эльфийская защита">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy">
+        
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Авторские артефакты</div>
+        <div class="product-name">Эльфийская защита</div>
+        <div class="product-tagline">Сохраняет энергию в контактах · Держит личные границы · «Защита, которая ощущается как свобода»</div>
+        <div class="product-price-row">
+          <span class="product-price">7 800 ₽</span>
+          <button class="product-btn" onclick="addToCart(8,'Эльфийская защита',7800,'ᚢ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="авторская браслет" data-id="9" data-price="13000" data-name="Осознанная удача">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-top">Топ продаж</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Авторские артефакты</div>
+        <div class="product-name">Осознанная удача</div>
+        <div class="product-tagline">Привлекает нужных людей и события · «Не туда где легко, а туда где победа»</div>
+        <div class="product-price-row">
+          <span class="product-price">13 000 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">2 шт за 20 000 ₽</div>
+          <button class="product-btn" onclick="addToCart(9,'Осознанная удача',13000,'ᚨ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="авторская браслет" data-id="10" data-price="0" data-name="Лёгкий путь">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛉ</div>
+        
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Авторские артефакты</div>
+        <div class="product-name">Лёгкий путь</div>
+        <div class="product-tagline">Навигатор наименьшего сопротивления · Препятствия сглаживаются, бюрократия рассасывается</div>
+        <div class="product-price-row">
+          <span class="product-price" style="font-size:14px">Цена уточняется</span>
+          <button class="product-btn" onclick="addToCart(10,'Лёгкий путь',0,'ᛉ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="авторская браслет" data-id="11" data-price="8800" data-name="Алая ведьма">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy">
+        
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Авторские артефакты</div>
+        <div class="product-name">Алая ведьма</div>
+        <div class="product-tagline">Формула женской силы · Харизма, сексуальность, магнетизм · «Не зови силу. Стань ею»</div>
+        <div class="product-price-row">
+          <span class="product-price">8 800 ₽</span>
+          <button class="product-btn" onclick="addToCart(11,'Алая ведьма',8800,'ᚨ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="12" data-price="15900" data-name="Глаз Одина">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/glaz-odina.jpg" alt="Глаз Одина" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Глаз Одина</div>
+        <div class="product-tagline">Сакральное видение · Внутренняя мудрость · Усиливает интуицию и связь с мудростью богов</div>
+        <div class="product-price-row">
+          <span class="product-price">15 900 ₽</span>
+          <button class="product-btn" onclick="addToCart(12,'Глаз Одина',15900,'ᚨ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="13" data-price="15900" data-name="Печать Короля">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/pechat-korolya.jpg" alt="Печать Короля" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Печать Короля</div>
+        <div class="product-tagline">Закрепляет удачу · Удерживает достижения · Стабильность и рост. Идеален в паре с «Осознанной удачей»</div>
+        <div class="product-price-row">
+          <span class="product-price">15 900 ₽</span>
+          <button class="product-btn" onclick="addToCart(13,'Печать Короля',15900,'ᚠ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="14" data-price="15900" data-name="Яблочный Пентакль">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/yablochny-pentakl.jpg" alt="Яблочный Пентакль" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Яблочный Пентакль</div>
+        <div class="product-tagline">Гармония в отношениях · Снимает конфликты · Защита семьи и коллектива</div>
+        <div class="product-price-row">
+          <span class="product-price">15 900 ₽</span>
+          <button class="product-btn" onclick="addToCart(14,'Яблочный Пентакль',15900,'ᛉ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон браслет" data-id="15" data-price="13900" data-name="Мать Теней (браслет)">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᚦ</div>
+        
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Мать Теней (браслет)</div>
+        <div class="product-tagline">Для работы с тёмными энергиями · Трансформация, связь с предками</div>
+        <div class="product-price-row">
+          <span class="product-price">13 900 ₽</span>
+          <button class="product-btn" onclick="addToCart(15,'Мать Теней (браслет)',13900,'ᚦ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон" data-id="16" data-price="13900" data-name="Мать Теней (кулон)">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᚦ</div>
+        
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Мать Теней (кулон)</div>
+        <div class="product-tagline">Для работы с тёмными энергиями · Трансформация, связь с предками</div>
+        <div class="product-price-row">
+          <span class="product-price">13 900 ₽</span>
+          <button class="product-btn" onclick="addToCart(16,'Мать Теней (кулон)',13900,'ᚦ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="самайн кулон" data-id="17" data-price="22900" data-name="Весы Осириса">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛁ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Самайн</div>
+        <div class="product-name">Весы Осириса</div>
+        <div class="product-tagline">Очищение от чужого · Баланс · Суд и правда. «Твоё сердце лёгкое — всё чужое возвращено мёртвым»</div>
+        <div class="product-price-row">
+          <span class="product-price">22 900 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">пара · заряжены в некрополе (Египет)</div>
+          <button class="product-btn" onclick="addToCart(17,'Весы Осириса',22900,'ᛁ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="самайн кулон" data-id="18" data-price="22900" data-name="Плод Вечности">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛜ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Самайн</div>
+        <div class="product-name">Плод Вечности</div>
+        <div class="product-tagline">Сохранение и накопление силы · Родовое ядро. «В сердце хранится плод, что переживёт все смерти»</div>
+        <div class="product-price-row">
+          <span class="product-price">22 900 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">пара · заряжены в некрополе (Египет)</div>
+          <button class="product-btn" onclick="addToCart(18,'Плод Вечности',22900,'ᛜ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="йоль браслет" data-id="19" data-price="20333" data-name="Аттаракс">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᚾ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Йоль</div>
+        <div class="product-name">Аттаракс</div>
+        <div class="product-tagline">Рунический антидепрессант · Выход из клинической депрессии любой тяжести. «Тьма уходит. Свет возвращается»</div>
+        <div class="product-price-row">
+          <span class="product-price">20 333 ₽</span>
+          <button class="product-btn" onclick="addToCart(19,'Аттаракс',20333,'ᚾ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="йоль кулон" data-id="20" data-price="19666" data-name="РСБ — Руническая Служба Безопасности">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛃ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Йоль</div>
+        <div class="product-name">РСБ — Руническая Служба Безопасности</div>
+        <div class="product-tagline">Кулон-невидимка. «Я и всё моё — вне радара»</div>
+        <div class="product-price-row">
+          <span class="product-price">19 666 ₽</span>
+          <button class="product-btn" onclick="addToCart(20,'РСБ — Руническая Служба Безопасности',19666,'ᛃ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="йоль кулон" data-id="21" data-price="12000" data-name="Золотая Пирамида">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᚠ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Йоль</div>
+        <div class="product-name">Золотая Пирамида</div>
+        <div class="product-tagline">Перековка в денежного человека · Рост дохода ×5–×50 за год</div>
+        <div class="product-price-row">
+          <span class="product-price">12 000 ₽</span>
+          <button class="product-btn" onclick="addToCart(21,'Золотая Пирамида',12000,'ᚠ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="йоль кулон" data-id="22" data-price="10333" data-name="Прорыв">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛗ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Йоль</div>
+        <div class="product-name">Прорыв</div>
+        <div class="product-tagline">Разрыв любого тупика · ×3–×10 по доходу и возможностям за 3–6 месяцев</div>
+        <div class="product-price-row">
+          <span class="product-price">10 333 ₽</span>
+          <button class="product-btn" onclick="addToCart(22,'Прорыв',10333,'ᛗ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="йоль браслет" data-id="23" data-price="9800" data-name="Анти-Лариса">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛉ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Йоль</div>
+        <div class="product-name">Анти-Лариса</div>
+        <div class="product-tagline">Защита от мошенников и токсиков · Видит ложь насквозь · Чистое окружение</div>
+        <div class="product-price-row">
+          <span class="product-price">9 800 ₽</span>
+          <button class="product-btn" onclick="addToCart(23,'Анти-Лариса',9800,'ᛉ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="остара браслет" data-id="24" data-price="5555" data-name="Амулет Остары">
+      <div class="product-img-wrap">
+        <div class="product-img-placeholder">ᛒ</div>
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Остара</div>
+        <div class="product-name">Амулет Остары</div>
+        <div class="product-tagline">Ясность ума · Защита от негатива · Денежный поток. Заряжен в Карелии на весеннее равноденствие</div>
+        <div class="product-price-row">
+          <span class="product-price">5 555 ₽</span>
+          <button class="product-btn" onclick="addToCart(24,'Амулет Остары',5555,'ᛒ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон новинка" data-id="25" data-price="0" data-name="Плод земли">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/plod-zemli.jpg" alt="Плод земли" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Плод земли</div>
+        <div class="product-tagline">Изобилие и плодородие · Связь с силой земли · Цена и формула уточняются</div>
+        <div class="product-price-row">
+          <span class="product-price" style="font-size:14px">Цена уточняется</span>
+          <button class="product-btn" onclick="addToCart(25,'Плод земли',0,'ᛟ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон новинка" data-id="26" data-price="0" data-name="Золотое зерно">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/zolotoe-zerno.jpg" alt="Золотое зерно" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Золотое зерно</div>
+        <div class="product-tagline">Накопление ресурса · Зерно как символ будущего урожая · Цена и формула уточняются</div>
+        <div class="product-price-row">
+          <span class="product-price" style="font-size:14px">Цена уточняется</span>
+          <button class="product-btn" onclick="addToCart(26,'Золотое зерно',0,'ᛃ')">В корзину</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card glass show" data-tags="мабон кулон новинка" data-id="27" data-price="0" data-name="Хранитель урожая">
+      <div class="product-img-wrap">
+        <img class="product-img" src="assets/img/products/hranitel-urozhaya.jpg" alt="Хранитель урожая" loading="lazy">
+        <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
+      </div>
+      <div class="product-body">
+        <div class="product-collection">Мабон</div>
+        <div class="product-name">Хранитель урожая</div>
+        <div class="product-tagline">Защита накопленного · Благодарность земле · Цена и формула уточняются</div>
+        <div class="product-price-row">
+          <span class="product-price" style="font-size:14px">Цена уточняется</span>
+          <button class="product-btn" onclick="addToCart(27,'Хранитель урожая',0,'ᛞ')">В корзину</button>
         </div>
       </div>
     </div>

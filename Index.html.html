@@ -75,6 +75,8 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .top-sales-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.25);border-radius:4px}
 .top-sale-card{position:relative;cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
 @media(max-width:480px){.top-sale-card{width:78vw}}
+.top-sale-card.featured{box-shadow:0 0 0 1.5px var(--accent),0 0 20px rgba(0,255,65,0.25)}
+.top-sale-card.featured .top-sale-name::after{content:'★ ФЛАГМАН';display:block;font-size:8px;letter-spacing:2px;color:var(--accent);margin-top:4px;opacity:.85}
 .top-sale-img{width:220px;height:220px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
 @media(max-width:480px){.top-sale-img{width:100%;height:78vw}}
 .top-sale-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
@@ -102,7 +104,15 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .modal-overlay.open{opacity:1;pointer-events:auto}
 #product-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:640px;max-height:86vh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:701;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow:hidden}
 #product-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal-drag-handle{display:none}
+@media(max-width:700px){
+  #product-modal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:90vh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none}
+  #product-modal.open{transform:translateY(0)}
+  .modal-drag-handle{display:block;width:36px;height:4px;border-radius:3px;background:rgba(0,255,65,0.3);margin:10px auto 0}
+  .modal-close{top:10px;right:10px;width:34px;height:34px}
+}
 .modal-scroll{max-height:86vh;overflow-y:auto}
+@media(max-width:700px){.modal-scroll{max-height:90vh}}
 .modal-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.85);border:1.5px solid var(--accent);color:var(--accent);font-size:16px;font-weight:700;cursor:none;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.6),0 0 14px rgba(0,0,0,0.4);backdrop-filter:blur(6px)}
 .modal-img-wrap{width:100%;max-height:52vh;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .modal-img-wrap img{width:100%;max-height:52vh;object-fit:contain;display:block}
@@ -254,6 +264,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 @media(max-width:560px){.video-grid{grid-template-columns:1fr}}
 .video-grid-single{grid-template-columns:1fr;max-width:420px;margin:0 auto}
 .video-grid-single .video-card{cursor:none;aspect-ratio:9/13}
+.special-offer{max-width:480px;margin:0 auto;overflow:hidden;padding:0}
+.special-offer-media{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;cursor:none;background:#000}
+.special-offer-media video{width:100%;height:100%;object-fit:cover}
+.special-offer-body{padding:24px 26px 28px}
+.special-offer-name{font-family:'Cinzel',serif;font-size:22px;font-weight:900;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin:6px 0 12px;text-shadow:0 0 16px rgba(0,255,65,0.3)}
+.special-offer-text{font-size:12.5px;line-height:1.7;color:#c8ffda;margin-bottom:18px}
+.special-offer-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid rgba(0,255,65,0.12)}
 .video-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:9/16;background:rgba(0,20,8,0.6);box-shadow:0 0 0 1px rgba(0,255,65,0.12)}
 .video-card video{width:100%;height:100%;object-fit:cover;display:block}
 .video-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75) 0%,transparent 35%);pointer-events:none}
@@ -401,6 +418,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeProductModal()"></div>
 <div id="product-modal">
+  <div class="modal-drag-handle"></div>
   <button class="modal-close" onclick="closeProductModal()">✕</button>
   <div class="modal-scroll">
     <div class="modal-img-wrap" id="modalImgWrap"></div>
@@ -441,14 +459,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
 <div class="divider reveal"><span>видео</span></div>
 
-<!-- VIDEO -->
+<!-- SPECIAL OFFER -->
 <div class="section-wrap" id="video">
-  <span class="section-eye reveal">&#9658; из некрополя</span>
-  <h2 class="section-title reveal">Самайн в движении</h2>
-  <div class="video-grid video-grid-single">
-    <div class="video-card glass reveal" onclick="openProductModal(17)">
+  <span class="section-eye reveal">&#9658; последний в сезоне</span>
+  <h2 class="section-title reveal">Особое предложение</h2>
+  <div class="special-offer glass reveal">
+    <div class="special-offer-media" onclick="openProductModal(17)">
       <video src="assets/video/clip-2.mp4" poster="assets/img/video-posters/poster-2.jpg" autoplay muted loop playsinline></video>
-      <div class="video-card-caption"><div class="video-card-eyebrow">Дух коллекции</div>Весы Осириса</div>
+      <div class="stock-badge low">Остался 1!</div>
+    </div>
+    <div class="special-offer-body">
+      <div class="modal-collection">Самайн · Египет</div>
+      <div class="special-offer-name">Весы Осириса</div>
+      <p class="special-offer-text">Амулет суда и правды, заряженный в египетском некрополе. Замораживает чужое, отсекает паразитов, возвращает равновесие — последний экземпляр этого сезона.</p>
+      <div class="special-offer-footer">
+        <span class="modal-price">29 900 ₽</span>
+        <button class="product-btn" onclick="openProductModal(17)">Смотреть</button>
+      </div>
     </div>
   </div>
 </div>
@@ -471,28 +498,43 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     </div>
 
     <div class="bento-topsales" id="top-sales">
-      <span class="section-eye reveal">&#9658; хиты</span>
-      <h2 class="section-title reveal" style="text-align:left;margin-bottom:16px">Топ продаж</h2>
+      <span class="section-eye reveal">&#9658; снова в наличии</span>
+      <h2 class="section-title reveal" style="text-align:left;margin-bottom:4px">Топ амулетов</h2>
+      <div style="font-size:11px;color:var(--accent-dim);margin-bottom:16px;letter-spacing:.5px">Легенды прошлых коллекций — снова доступны к заказу</div>
       <div class="top-sales-scroll">
-        <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
-          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy"></div>
+        <div class="top-sale-card glass reveal featured" onclick="openProductModal(1)">
+          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
           <div class="top-sale-info">
-            <div class="top-sale-name">Jotun Vibe</div>
+            <div class="top-sale-name">Йотун Вайб</div>
             <div class="top-sale-price">7 900 ₽</div>
           </div>
         </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.08s" onclick="openProductModal(2)">
-          <div class="top-sale-img"><img src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy"></div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(8)">
+          <div class="top-sale-img"><img src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy"></div>
           <div class="top-sale-info">
-            <div class="top-sale-name">Кулон Prime</div>
-            <div class="top-sale-price">12 000 ₽</div>
+            <div class="top-sale-name">Эльфийская защита</div>
+            <div class="top-sale-price">7 800 ₽</div>
           </div>
         </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.16s" onclick="openProductModal(9)">
+        <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(7)">
+          <div class="top-sale-img"><img src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Возвращение к жизни</div>
+            <div class="top-sale-price">8 800 ₽</div>
+          </div>
+        </div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(9)">
           <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
           <div class="top-sale-info">
             <div class="top-sale-name">Осознанная удача</div>
             <div class="top-sale-price">13 000 ₽</div>
+          </div>
+        </div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.24s" onclick="openProductModal(11)">
+          <div class="top-sale-img"><img src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Алая ведьма</div>
+            <div class="top-sale-price">8 800 ₽</div>
           </div>
         </div>
       </div>
@@ -1130,6 +1172,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     </div>
 
   </div>
+
+  <div id="catalogLoadMoreWrap" style="text-align:center;margin-top:32px">
+    <div id="catalogCount" style="font-size:10px;letter-spacing:2px;color:var(--accent-dim);margin-bottom:14px"></div>
+    <button class="hero-cta" id="catalogLoadMoreBtn" onclick="loadMoreCatalog()" style="font-size:14px;padding:12px 30px">&#9660; Показать ещё</button>
+  </div>
 </div>
 
 <div class="section-wrap" id="contacts">
@@ -1158,52 +1205,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <div id="fullDescriptions" style="display:none">
 <div data-desc-id="1"><p>Если вас жизнь постоянно проверяет на прочность. На вас многое держится. Но вы привыкли справляться, привыкли быть сильными. Но даже сильные устают — устают всё время всё контролировать, сомневаться в себе, искать опору снаружи.</p>
 <p>«Йотун Вайб» — про состояние, когда внутри появляется уверенность. Когда ты перестаёшь бояться будущего и терять себя из-за людей, обстоятельств и чужих ожиданий. Когда появляется чёткое ощущение: «Я справлюсь».</p>
-<div class="m-sub">Руническая формула</div>
-<ul>
-<li>ᛉ Альгиз — формирует устойчивое защитное поле, укрепляет внутреннюю опору</li>
-<li>ᛁ Иса — стабилизирует внутреннее состояние, останавливает накопление хаоса</li>
-<li>ᛇ Эйваз — устраняет глубинные причины жизненных препятствий, укрепляет стержень</li>
-<li>ᛟ Отал — создаёт прочный фундамент для развития</li>
-<li>ᛃ Йера — запускает цикл устойчивого роста без резких перегрузок</li>
-</ul>
 <div class="m-quote">Даже если вокруг всё меняется, внутри остаётся то, что нельзя отнять. Твоя сила. Твой стержень. Твоя опора</div>
-<p>Носить ежедневно на ведущей руке. Совместим с кулоном и браслетом Prime — вместе три артефакта формируют единую систему: устранение препятствий, раскрытие потенциала, устойчивый рост.</p></div>
-<div data-desc-id="2"><p>Если браслет Prime похож на восход солнца, то кулон — это курс, который не даёт слиться после подъёма. Формула раскрывает внутренний потенциал, помогает увидеть перспективы и своевременно встречать нужных людей и обстоятельства.</p>
-<div class="m-sub">Руническая формула</div>
-<ul>
-<li>ᚲ Кеназ — раскрывает потенциал, помогает увидеть перспективы и направления для роста</li>
-<li>ᛈ Перт — открывает скрытые внутренние ресурсы, готовые перейти в реализацию</li>
-<li>ᚷ Гебо — формирует гармоничное взаимодействие с миром, нужные знакомства и обстоятельства</li>
-<li>ᛞ Дагаз — запускает переход на новый уровень, превращает потенциал в достижения</li>
-<li>ᛟ Отал — закрепляет результаты, укрепляет положение владельца</li>
-<li>ᚹ Вуньо — формирует внутреннюю гармонию и удовлетворённость достигнутым</li>
-</ul>
+<p>Формирует внутреннюю устойчивость и опору, укрепляет характер и помогает уверенно проходить периоды перемен. Носить ежедневно на ведущей руке. Совместим с кулоном и браслетом Prime — вместе три артефакта формируют единую систему устойчивого роста.</p></div>
+<div data-desc-id="2"><p>Если браслет Prime похож на восход солнца, то кулон — это курс, который не даёт слиться после подъёма. Раскрывает внутренний потенциал, помогает увидеть перспективы и своевременно встречать нужных людей и обстоятельства.</p>
 <div class="m-quote">Браслет даёт движение. Кулон помогает не потерять курс. Вместе это и есть твой вечный прайм</div>
-<p>Совместим с браслетом Prime и браслетом Йотун Вайб.</p></div>
+<p>Закрепляет достигнутые результаты, помогает занять своё место в жизни и формирует состояние устойчивого развития. Совместим с браслетом Prime и браслетом Йотун Вайб.</p></div>
 <div data-desc-id="3"><p>Если кулон Prime похож на восход солнца, то браслет похож на течение реки. Он работает не через яркий подъём, а через постепенное накопление: одна полезная встреча, одна вовремя замеченная идея, один удачный разговор — и вот жизнь уже движется легче.</p>
 <p>Браслет не создаёт возможности из пустоты. Он помогает использовать те, что уже появляются рядом, но обычно проходят мимо внимания. Поэтому его действие ощущается очень естественно — не как магическое вмешательство, а как период жизни, в котором всё постепенно складывается в правильную картинку.</p>
-<div class="m-sub">Руническая формула</div>
-<ul>
-<li>ᚲ Кеназ — ясность целей, раскрытие потенциала, новые возможности</li>
-<li>ᛈ Перт — активирует внутренние ресурсы для эффективного использования опыта</li>
-<li>ᚷ Гебо — гармоничный обмен с миром: знакомства, предложения, сотрудничество</li>
-<li>ᛞ Дагаз — постоянное движение вперёд без остановки</li>
-<li>ᛟ Отал — закрепляет результаты, укрепляет достигнутое положение</li>
-<li>ᚹ Вуньо — удерживает ощущение своей Prime Era</li>
-</ul>
 <div class="m-quote">Энергия движется циклически, каждый завершённый цикл становится основой для следующего</div></div>
 <div data-desc-id="4"><p>Этот артефакт создан для тех, кто устал от внутреннего шума. Тревоги, чужие мнения, давление среды — всё это со временем заглушает собственный голос и делает мышление тяжёлым.</p>
 <p>Формула постепенно выстраивает новую структуру восприятия: создаёт тишину внутри, возвращает вас к себе и формирует ясное, устойчивое мышление. Вы начнёте замечать: мысли становятся точнее, тревога уходит на фон, а решения приходят из состояния равновесия — не из хаоса.</p>
-<div class="m-sub">Руническая формула — 7 рун</div>
-<ul>
-<li>ᛚ Лагуз — открывает формулу, размягчает внутреннее напряжение</li>
-<li>ᛁ Иса — создаёт тишину, останавливает хаотичный поток мыслей</li>
-<li>ᛒ Беркана — запускает обновление мягко, без насилия над психикой</li>
-<li>ᛋ Соулу — вносит свет, возвращает к собственной природе</li>
-<li>ᚨ Ансуз — открывает канал ясной мысли, убирает ментальные блоки</li>
-<li>ᛇ Эйваз — даёт устойчивость, интегрирует изменения</li>
-<li>ᛗ Манназ — завершает и закрепляет новую идентичность</li>
-</ul>
 <div class="m-sub">Как носить</div>
 <p>Рекомендуется левая рука — рука приёма, артефакт работает внутрь. На правой руке акцент смещается во внешние решения и коммуникацию. Носить ежедневно, снимать на ночь желательно (не обязательно). Первые ощущения — через 2–4 недели, устойчивые изменения — от 3 месяцев.</p>
 <div class="m-quote">Фраза-активатор: «Я выбираю тишину внутри и ясность снаружи. Мой ум свободен, моя мысль — чиста. Я иду своим путём»</div></div>
@@ -1211,15 +1222,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <p>Кулон запускает мягкую, но глубокую трансформацию. Сначала вы начинаете лучше слышать себя — свои истинные желания, ощущения, внутренний голос. Затем приходит понимание, кто вы есть на самом деле, что вам действительно важно. И постепенно — состояние внутреннего спокойствия, зрелости и гармонии.</p>
 <div class="m-quote">Формула не ломает личность и не давит на неё. Она выравнивает внутренний поток и помогает вам стать тем, кем вы являетесь на самом деле</div></div>
 <div data-desc-id="35"><p>Артефакт фиксирует состояние застоя, ломает внутреннюю инерцию и переводит человека в цикл осознанных действий. Он не подталкивает извне, а перестраивает внутренний механизм принятия решений.</p>
-<div class="m-sub">Руническая формула</div>
-<ul>
-<li>ᛗ Манназ — точка входа: работа с личной моделью поведения</li>
-<li>ᛁ Иса — фиксация состояния ступора, остановка бессмысленного метания</li>
-<li>ᚢ Уруз — подключает внутренний ресурс силы и способность действовать</li>
-<li>ᚱ Райдо — запускает движение и изменения в реальной жизни</li>
-<li>ᛏ Тейваз — формирует волю и решимость доводить начатое до конца</li>
-<li>ᛃ Йера — закрепляет процесс в виде устойчивого жизненного цикла</li>
-</ul>
 <div class="m-sub">Как развивается действие</div>
 <p><strong>Первые месяцы:</strong> перелом состояния, выход из ступора, первые реальные изменения.<br>
 <strong>Средний период:</strong> формируется новая внутренняя дисциплина и воля.<br>
@@ -1700,15 +1702,17 @@ function renderRecentlyViewed(){
   if(divider) divider.style.display = rendered > 0 ? '' : 'none';
 }
 document.addEventListener('DOMContentLoaded', renderRecentlyViewed);
+document.addEventListener('DOMContentLoaded', renderCatalogVisibility);
 
 /* ══ CATALOG FILTER ══ */
+var CATALOG_PAGE_SIZE = 9;
+var catalogLimit = CATALOG_PAGE_SIZE;
+var catalogCurrentTag = 'all';
+
 function filterCatalog(tag, chip){
-  var cards = document.querySelectorAll('.product-card, .collection-banner');
-  cards.forEach(function(c){
-    var tags = c.getAttribute('data-tags') || '';
-    var show = (tag === 'all') || tags.indexOf(tag) !== -1;
-    c.classList.toggle('show', show);
-  });
+  catalogCurrentTag = tag;
+  catalogLimit = CATALOG_PAGE_SIZE;
+  renderCatalogVisibility();
   if(chip){
     document.querySelectorAll('.collection-chip').forEach(function(ch){ ch.classList.remove('active'); });
     chip.classList.add('active');
@@ -1716,6 +1720,46 @@ function filterCatalog(tag, chip){
   document.getElementById('catalog').scrollIntoView({behavior:'smooth'});
 }
 window.filterCatalog = filterCatalog;
+
+function renderCatalogVisibility(){
+  var tag = catalogCurrentTag;
+  var allCards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
+  var matching = allCards.filter(function(c){
+    var tags = c.getAttribute('data-tags') || '';
+    return tag === 'all' || tags.indexOf(tag) !== -1;
+  });
+  var paged = tag === 'all';
+  var visibleCount = paged ? Math.min(catalogLimit, matching.length) : matching.length;
+
+  allCards.forEach(function(c){ c.classList.remove('show'); });
+  matching.slice(0, visibleCount).forEach(function(c){ c.classList.add('show'); });
+
+  document.querySelectorAll('.collection-banner').forEach(function(b){
+    var tags = b.getAttribute('data-tags') || '';
+    b.classList.toggle('show', tag === 'all' || tags.indexOf(tag) !== -1);
+  });
+
+  var wrap = document.getElementById('catalogLoadMoreWrap');
+  var btn = document.getElementById('catalogLoadMoreBtn');
+  var countEl = document.getElementById('catalogCount');
+  if(paged && matching.length > visibleCount){
+    wrap.style.display = 'block';
+    btn.style.display = 'inline-flex';
+    countEl.textContent = 'Показано ' + visibleCount + ' из ' + matching.length;
+  } else if(paged){
+    wrap.style.display = matching.length > CATALOG_PAGE_SIZE ? 'block' : 'none';
+    btn.style.display = 'none';
+    countEl.textContent = 'Показаны все ' + matching.length;
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function loadMoreCatalog(){
+  catalogLimit += CATALOG_PAGE_SIZE;
+  renderCatalogVisibility();
+}
+window.loadMoreCatalog = loadMoreCatalog;
 
 /* ══ SEASON ══ */
 (function(){

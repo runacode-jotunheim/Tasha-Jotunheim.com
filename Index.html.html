@@ -66,17 +66,20 @@ body:active #custom-cursor img{transform:scale(0.88)}
 /* ══ CART BUTTON ══ */
 #cart-btn{position:fixed;top:20px;right:20px;z-index:500;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:10px 18px;cursor:none;backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent);transition:box-shadow .3s;box-shadow:0 0 10px rgba(0,255,65,0.1)}
 #cart-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.3)}
-#scroll-top-btn{position:fixed;bottom:24px;right:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
+#scroll-top-btn{position:fixed;bottom:28px;left:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
 #scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 #scroll-top-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.35)}
-.top-sales-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin:0 auto}
-@media(max-width:640px){.top-sales-grid{grid-template-columns:1fr;max-width:340px}}
-.top-sale-card{cursor:none;overflow:hidden;display:flex;align-items:center;gap:14px;padding:10px}
-.top-sale-img{width:64px;height:64px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(0,20,8,0.6)}
+.top-sales-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.top-sales-scroll::-webkit-scrollbar{height:4px}
+.top-sales-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.25);border-radius:4px}
+.top-sale-card{cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
+@media(max-width:480px){.top-sale-card{width:78vw}}
+.top-sale-img{width:220px;height:220px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
+@media(max-width:480px){.top-sale-img{width:100%;height:78vw}}
 .top-sale-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
-.top-sale-info{min-width:0}
-.top-sale-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top-sale-price{font-family:'VT323',monospace;font-size:16px;color:var(--accent)}
+.top-sale-info{padding:14px 16px 16px}
+.top-sale-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:8px}
+.top-sale-price{font-family:'VT323',monospace;font-size:22px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
 #recently-viewed{display:none}
 #recently-viewed.has-items{display:block}
 .rv-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
@@ -166,7 +169,12 @@ body:active #custom-cursor img{transform:scale(0.88)}
 
 /* ══ NAV ══ */
 nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:center;gap:0;padding:0 24px;height:56px;background:rgba(0,0,0,0.75);border-bottom:1px solid rgba(0,255,65,0.08);backdrop-filter:blur(12px);transition:background .3s}
-.nav-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:900;letter-spacing:2px;color:var(--accent);text-decoration:none;text-transform:uppercase;margin-right:auto;text-shadow:0 0 10px rgba(0,255,65,0.3)}
+.nav-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:900;letter-spacing:2px;color:var(--accent);text-decoration:none;text-transform:uppercase;margin-right:auto;text-shadow:0 0 10px rgba(0,255,65,0.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:600px){
+  .nav-logo{font-size:9px;letter-spacing:1px;max-width:110px}
+  #cart-btn{padding:8px 12px;font-size:12px;letter-spacing:1px;gap:6px;top:10px;right:10px}
+  #cart-btn svg{width:13px;height:13px}
+}
 .nav-links{display:flex;gap:20px}
 @media(max-width:600px){.nav-links{display:none}}
 .nav-link{font-size:9px;letter-spacing:3px;color:rgba(0,255,65,0.5);text-decoration:none;text-transform:uppercase;transition:color .2s;cursor:none}
@@ -387,11 +395,33 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </section>
 
+<div class="divider reveal"><span>видео</span></div>
+
+<!-- VIDEO -->
+<div class="section-wrap" id="video">
+  <span class="section-eye reveal">&#9658; из некрополя</span>
+  <h2 class="section-title reveal">Самайн в движении</h2>
+  <div class="video-grid">
+    <div class="video-card glass reveal">
+      <video src="assets/video/clip-1.mp4" poster="assets/img/video-posters/poster-1.jpg" autoplay muted loop playsinline></video>
+      <div class="video-card-caption"><div class="video-card-eyebrow">Египет</div>Заряд коллекции на месте силы</div>
+    </div>
+    <div class="video-card glass reveal" style="transition-delay:.08s">
+      <video src="assets/video/clip-2.mp4" poster="assets/img/video-posters/poster-2.jpg" autoplay muted loop playsinline></video>
+      <div class="video-card-caption"><div class="video-card-eyebrow">Дух коллекции</div>Весы Осириса</div>
+    </div>
+    <div class="video-card glass reveal" style="transition-delay:.16s">
+      <video src="assets/video/clip-3.mp4" poster="assets/img/video-posters/poster-3.jpg" autoplay muted loop playsinline></video>
+      <div class="video-card-caption"><div class="video-card-eyebrow">Крупным планом</div>Плод Вечности</div>
+    </div>
+  </div>
+</div>
+
 <!-- TOP SALES -->
 <div class="section-wrap" id="top-sales" style="padding-top:20px;padding-bottom:20px">
   <span class="section-eye reveal">&#9658; хиты</span>
   <h2 class="section-title reveal" style="margin-bottom:24px">Топ продаж</h2>
-  <div class="top-sales-grid">
+  <div class="top-sales-scroll">
     <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
       <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy"></div>
       <div class="top-sale-info">
@@ -413,6 +443,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="top-sale-price">13 000 ₽</div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="divider reveal"><span>сезон</span></div>
+
+<!-- SEASON -->
+<div class="section-wrap" id="season">
+  <span class="section-eye reveal">&#9658; колесо года</span>
+  <h2 class="section-title reveal" id="seasonTitle">...</h2>
+  <div class="season-card glass reveal" id="seasonCard">
+    <div class="season-symbol" id="seasonSymbol">ᛟ</div>
+    <div class="season-name" id="seasonName">...</div>
+    <div class="season-dates" id="seasonDates">...</div>
+    <div class="season-text" id="seasonText">Коллекция обновляется по Колесу года автоматически.</div>
   </div>
 </div>
 
@@ -1043,42 +1087,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-  </div>
-</div>
-
-<div class="divider reveal"><span>видео</span></div>
-
-<!-- VIDEO -->
-<div class="section-wrap" id="video">
-  <span class="section-eye reveal">&#9658; из некрополя</span>
-  <h2 class="section-title reveal">Самайн в движении</h2>
-  <div class="video-grid">
-    <div class="video-card glass reveal">
-      <video src="assets/video/clip-1.mp4" poster="assets/img/video-posters/poster-1.jpg" autoplay muted loop playsinline></video>
-      <div class="video-card-caption"><div class="video-card-eyebrow">Египет</div>Заряд коллекции на месте силы</div>
-    </div>
-    <div class="video-card glass reveal" style="transition-delay:.08s">
-      <video src="assets/video/clip-2.mp4" poster="assets/img/video-posters/poster-2.jpg" autoplay muted loop playsinline></video>
-      <div class="video-card-caption"><div class="video-card-eyebrow">Дух коллекции</div>Весы Осириса</div>
-    </div>
-    <div class="video-card glass reveal" style="transition-delay:.16s">
-      <video src="assets/video/clip-3.mp4" poster="assets/img/video-posters/poster-3.jpg" autoplay muted loop playsinline></video>
-      <div class="video-card-caption"><div class="video-card-eyebrow">Крупным планом</div>Плод Вечности</div>
-    </div>
-  </div>
-</div>
-
-<div class="divider reveal"><span>сезон</span></div>
-
-<!-- SEASON -->
-<div class="section-wrap" id="season">
-  <span class="section-eye reveal">&#9658; колесо года</span>
-  <h2 class="section-title reveal" id="seasonTitle">...</h2>
-  <div class="season-card glass reveal" id="seasonCard">
-    <div class="season-symbol" id="seasonSymbol">ᛟ</div>
-    <div class="season-name" id="seasonName">...</div>
-    <div class="season-dates" id="seasonDates">...</div>
-    <div class="season-text" id="seasonText">Коллекция обновляется по Колесу года автоматически.</div>
   </div>
 </div>
 

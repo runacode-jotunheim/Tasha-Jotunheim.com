@@ -38,6 +38,10 @@ body{color:var(--accent);font-family:'Share Tech Mono',monospace;transition:colo
 
 /* ══ CUSTOM CURSOR — Space Rangers style ══ */
 * { cursor: none !important; }
+@media (hover: none), (pointer: coarse) {
+  * { cursor: auto !important; }
+  #custom-cursor { display: none !important; }
+}
 #custom-cursor{
   position:fixed;pointer-events:none;z-index:9999;
   width:32px;height:32px;
@@ -54,8 +58,10 @@ body:active #custom-cursor img{transform:scale(0.88)}
 
 /* ══ THEME TOGGLE ══ */
 #theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
-.pill-trigger{width:50px;height:50px;border-radius:50%;background:rgba(0,0,0,0.8);border:1px solid rgba(0,255,65,0.4);display:flex;align-items:center;justify-content:center;cursor:none;backdrop-filter:blur(6px);box-shadow:0 0 16px rgba(0,255,65,0.2);transition:box-shadow .3s;font-family:'VT323',monospace;font-size:20px;color:var(--accent)}
-.pill-trigger:hover{box-shadow:0 0 24px rgba(0,255,65,0.45)}
+.pill-trigger{width:54px;height:28px;border-radius:14px;background:linear-gradient(90deg,#00ff41 50%,#ff2020 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:none;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
+.pill-trigger:hover{box-shadow:0 0 22px rgba(0,255,65,0.4),0 0 22px rgba(255,32,32,0.3)}
+.pill-trigger::before{content:'';position:absolute;left:50%;top:2px;bottom:2px;width:1px;background:rgba(0,0,0,0.45);transform:translateX(-50%)}
+.pill-trigger::after{content:'';position:absolute;top:3px;left:5px;right:5px;height:38%;border-radius:8px;background:rgba(255,255,255,0.3);filter:blur(1px)}
 .pill-choices{display:flex;flex-direction:column;gap:8px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .3s,transform .3s}
 .pill-choices.open{opacity:1;pointer-events:auto;transform:translateY(0)}
 .pill-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:none;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);transition:transform .2s}
@@ -70,19 +76,50 @@ body:active #custom-cursor img{transform:scale(0.88)}
 #scroll-top-btn{position:fixed;bottom:28px;left:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
 #scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 #scroll-top-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.35)}
-.top-sales-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.top-sales-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;user-select:none;-webkit-user-select:none}
 .top-sales-scroll::-webkit-scrollbar{height:4px}
 .top-sales-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.25);border-radius:4px}
 .top-sale-card{position:relative;cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
 @media(max-width:480px){.top-sale-card{width:78vw}}
-.top-sale-card.featured{box-shadow:0 0 0 1.5px var(--accent),0 0 20px rgba(0,255,65,0.25)}
-.top-sale-card.featured .top-sale-name::after{content:'★ ФЛАГМАН';display:block;font-size:8px;letter-spacing:2px;color:var(--accent);margin-top:4px;opacity:.85}
 .top-sale-img{width:220px;height:220px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
 @media(max-width:480px){.top-sale-img{width:100%;height:78vw}}
 .top-sale-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
 .top-sale-info{padding:14px 16px 16px}
 .top-sale-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:8px}
 .top-sale-price{font-family:'VT323',monospace;font-size:22px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
+.scroll-nav-wrap{position:relative}
+.scroll-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:20;width:36px;height:36px;border-radius:50%;background:rgba(0,10,4,0.55);border:1px solid var(--accent);color:var(--accent);backdrop-filter:blur(8px);cursor:none;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 12px rgba(0,255,65,0.15);transition:background .2s,box-shadow .2s}
+.scroll-arrow:hover{background:rgba(0,255,65,0.15);box-shadow:0 0 18px rgba(0,255,65,0.3)}
+.scroll-arrow.left{left:-6px}
+.scroll-arrow.right{right:-6px}
+@media(max-width:700px){.scroll-arrow{display:none}}
+.about-layout{max-width:760px;margin:0 auto;padding:32px;display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:center}
+@media(max-width:640px){.about-layout{grid-template-columns:1fr;padding:28px 24px}}
+.about-photos{display:flex;gap:12px}
+@media(max-width:640px){.about-photos{max-width:280px;margin:0 auto}}
+.about-photo-slot{flex:1;aspect-ratio:3/4;border-radius:10px;border:1.5px dashed rgba(0,255,65,0.3);background:rgba(0,255,65,0.04);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:2px;color:var(--accent-dim);text-transform:uppercase}
+.about-text{font-size:13px;line-height:2;color:#c8ffda}
+.new-collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:820px;margin:0 auto}
+@media(max-width:700px){.new-collection-grid{grid-template-columns:1fr;max-width:340px}}
+.new-card{position:relative;cursor:none;overflow:hidden}
+.new-card-badge{position:absolute;top:10px;left:10px;z-index:6;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#000;background:var(--accent);padding:4px 10px;border-radius:5px;box-shadow:0 0 10px rgba(0,255,65,0.4)}
+.new-card-img{width:100%;aspect-ratio:1;overflow:hidden;background:rgba(0,20,8,0.6)}
+.new-card-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%;transition:transform .4s}
+.new-card:hover .new-card-img img{transform:scale(1.05)}
+.new-card-info{padding:16px 18px 20px}
+.new-card-collection{font-size:9px;letter-spacing:2px;color:var(--accent-dim);text-transform:uppercase;margin-bottom:6px}
+.new-card-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+.new-card-price{font-family:'VT323',monospace;font-size:20px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
+.countdown-card{max-width:480px;margin:0 auto;padding:32px;text-align:center}
+.countdown-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:20px}
+.countdown-label span{color:var(--accent);font-weight:700}
+.countdown-clock{display:flex;align-items:center;justify-content:center;gap:14px}
+.cd-unit{display:flex;flex-direction:column;align-items:center;min-width:80px;padding:14px 10px;border:1px solid rgba(0,255,65,0.25);border-radius:10px;background:rgba(0,255,65,0.04)}
+.cd-unit span{font-family:'VT323',monospace;font-size:48px;line-height:1;color:var(--accent);text-shadow:0 0 16px var(--accent),0 0 32px var(--accent)}
+.cd-unit small{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-dim);margin-top:6px}
+.cd-sep{font-family:'VT323',monospace;font-size:36px;color:var(--accent-dim);animation:cdBlink 1s step-end infinite}
+@keyframes cdBlink{0%,100%{opacity:1}50%{opacity:.2}}
+.countdown-sub{margin-top:18px;font-size:11px;color:var(--accent-dim);letter-spacing:1px}
 #recently-viewed{display:none}
 #recently-viewed.has-items{display:block}
 .rv-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
@@ -221,7 +258,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .glass{background:rgba(0,0,0,0.72);border:1px solid rgba(0,255,65,0.14);border-radius:14px;backdrop-filter:blur(12px)}
 
 /* ══ COLLECTIONS (horizontal scroll) ══ */
-.collections-scroll{display:flex;gap:16px;overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin;scrollbar-color:rgba(0,255,65,0.2) transparent;-webkit-overflow-scrolling:touch;position:sticky;top:56px;z-index:150;background:rgba(0,0,0,0);transition:background .3s,padding .3s,gap .3s}
+.collections-scroll{display:flex;gap:16px;overflow-x:auto;padding:4px 4px 16px;scrollbar-width:thin;scrollbar-color:rgba(0,255,65,0.2) transparent;-webkit-overflow-scrolling:touch;position:sticky;top:56px;z-index:150;background:rgba(0,0,0,0);transition:background .3s,padding .3s,gap .3s;user-select:none;-webkit-user-select:none}
 .collections-scroll.compact{background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);padding:8px 4px;gap:10px;border-bottom:1px solid rgba(0,255,65,0.1);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
 .collections-scroll.compact .collection-chip{padding:6px 14px;font-size:9px}
 @media(max-width:600px){.collections-scroll{top:44px}}
@@ -249,9 +286,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace;font-size:64px;color:rgba(0,255,65,0.15);aspect-ratio:1}
 .product-img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;filter:saturate(1.05) contrast(1.05);transition:transform .4s ease}
 .product-card:hover .product-img{transform:scale(1.05)}
-.stock-badge{position:absolute;top:10px;right:-8px;z-index:6;font-family:'Permanent Marker',cursive;font-size:15px;line-height:1;color:#fff;padding:7px 18px 9px 16px;transform:rotate(9deg);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;box-shadow:0 3px 10px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.12) inset;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,0.5);background:linear-gradient(135deg,#ff5a2e,#ff8a3d)}
-.stock-badge.low{background:linear-gradient(135deg,#ff2020,#b30000);animation:stockPulse 1.8s ease-in-out infinite}
-@keyframes stockPulse{0%,100%{transform:rotate(9deg) scale(1)}50%{transform:rotate(9deg) scale(1.06)}}
+.stock-badge{position:absolute;top:10px;right:10px;z-index:6;font-family:'VT323',monospace;font-size:15px;letter-spacing:1px;line-height:1;color:#fff;padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.35);white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,0.5);background:linear-gradient(135deg,#ff5a2e,#ff8a3d);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.stock-badge.low{background:linear-gradient(135deg,#ff2020,#b30000);border-color:rgba(255,255,255,0.4);animation:stockPulse 1.8s ease-in-out infinite}
+@keyframes stockPulse{0%,100%{box-shadow:0 2px 8px rgba(0,0,0,0.4),0 0 0 rgba(255,32,32,0.5)}50%{box-shadow:0 2px 8px rgba(0,0,0,0.4),0 0 12px rgba(255,32,32,0.8)}}
 .collection-banner{grid-column:1/-1;position:relative;border-radius:12px;overflow:hidden;height:140px;margin-bottom:4px;display:none}
 .collection-banner.show{display:block;animation:fadeIn .4s ease}
 .collection-banner img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.75) saturate(1.1)}
@@ -294,13 +331,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 /* ══ CATEGORY TILES ══ */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:0}
 @media(max-width:700px){.cat-grid{grid-template-columns:1fr}}
-.bento-grid{display:grid;grid-template-columns:1fr;grid-template-areas:"topsales" "season" "categories";gap:20px}
-@media(min-width:900px){
-  .bento-grid{grid-template-columns:minmax(260px,1fr) 2.15fr;grid-template-areas:"season topsales" "season categories";gap:24px;align-items:stretch}
+.bento-grid{display:grid;grid-template-columns:1fr;grid-template-areas:"topsales" "season" "categories";gap:36px}
+@media(min-width:1200px){
+  .bento-grid{grid-template-columns:340px 1fr;grid-template-areas:"season topsales" "categories categories";gap:32px 40px}
   .bento-season{display:flex;flex-direction:column}
   .bento-season .season-card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:none;margin:0}
-  .bento-categories .cat-grid{height:100%}
-  .bento-categories .cat-tile{height:100%;display:flex;flex-direction:column;justify-content:center}
 }
 .bento-season{grid-area:season;min-width:0}
 .bento-topsales{grid-area:topsales;min-width:0}
@@ -389,7 +424,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="pill-btn" onclick="setTheme('red')" title="Красная матрица"><div class="pill-icon red"></div></div>
     <div class="pill-btn" onclick="setTheme('green')" title="Зелёная матрица"><div class="pill-icon green"></div></div>
   </div>
-  <div class="pill-trigger" onclick="togglePills()">⬡</div>
+  <div class="pill-trigger" onclick="togglePills()"></div>
 </div>
 
 <!-- CART DRAWER -->
@@ -457,7 +492,44 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </section>
 
-<div class="divider reveal"><span>видео</span></div>
+<div class="divider reveal"><span>новинка</span></div>
+
+<!-- NEW COLLECTION -->
+<div class="section-wrap" id="new-collection" style="padding-top:20px;padding-bottom:20px">
+  <span class="section-eye reveal">&#9658; только что выпустили</span>
+  <h2 class="section-title reveal">Новая коллекция</h2>
+  <div class="new-collection-grid">
+    <div class="new-card glass reveal" onclick="openProductModal(1)">
+      <div class="new-card-badge">Новинка</div>
+      <div class="new-card-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy"></div>
+      <div class="new-card-info">
+        <div class="new-card-collection">Jotun Vibe</div>
+        <div class="new-card-name">Браслет Jotun Vibe</div>
+        <div class="new-card-price">7 900 ₽</div>
+      </div>
+    </div>
+    <div class="new-card glass reveal" style="transition-delay:.08s" onclick="openProductModal(2)">
+      <div class="new-card-badge">Новинка</div>
+      <div class="new-card-img"><img src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy"></div>
+      <div class="new-card-info">
+        <div class="new-card-collection">Prime Era</div>
+        <div class="new-card-name">Кулон Prime</div>
+        <div class="new-card-price">12 000 ₽</div>
+      </div>
+    </div>
+    <div class="new-card glass reveal" style="transition-delay:.16s" onclick="openProductModal(3)">
+      <div class="new-card-badge">Новинка</div>
+      <div class="new-card-img"><img src="assets/img/products/prime-bracelet.jpg" alt="Браслет Prime" loading="lazy"></div>
+      <div class="new-card-info">
+        <div class="new-card-collection">Prime Era</div>
+        <div class="new-card-name">Браслет Prime</div>
+        <div class="new-card-price">9 500 ₽</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider reveal"><span>особое предложение</span></div>
 
 <!-- SPECIAL OFFER -->
 <div class="section-wrap" id="video">
@@ -498,45 +570,48 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     </div>
 
     <div class="bento-topsales" id="top-sales">
-      <span class="section-eye reveal">&#9658; снова в наличии</span>
-      <h2 class="section-title reveal" style="text-align:left;margin-bottom:4px">Топ амулетов</h2>
-      <div style="font-size:11px;color:var(--accent-dim);margin-bottom:16px;letter-spacing:.5px">Легенды прошлых коллекций — снова доступны к заказу</div>
-      <div class="top-sales-scroll">
-        <div class="top-sale-card glass reveal featured" onclick="openProductModal(1)">
-          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
-          <div class="top-sale-info">
-            <div class="top-sale-name">Йотун Вайб</div>
-            <div class="top-sale-price">7 900 ₽</div>
+      <span class="section-eye reveal">&#9658; хиты</span>
+      <h2 class="section-title reveal" style="text-align:left;margin-bottom:16px">Топ заказов</h2>
+      <div class="scroll-nav-wrap">
+        <button class="scroll-arrow left" onclick="scrollByAmount('topSalesScroll',-1)" aria-label="Прокрутить влево">&#10094;</button>
+        <div class="top-sales-scroll" id="topSalesScroll">
+          <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
+            <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
+            <div class="top-sale-info">
+              <div class="top-sale-name">Йотун Вайб</div>
+              <div class="top-sale-price">7 900 ₽</div>
+            </div>
+          </div>
+          <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(8)">
+            <div class="top-sale-img"><img src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy"></div>
+            <div class="top-sale-info">
+              <div class="top-sale-name">Эльфийская защита</div>
+              <div class="top-sale-price">7 800 ₽</div>
+            </div>
+          </div>
+          <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(7)">
+            <div class="top-sale-img"><img src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy"></div>
+            <div class="top-sale-info">
+              <div class="top-sale-name">Возвращение к жизни</div>
+              <div class="top-sale-price">8 800 ₽</div>
+            </div>
+          </div>
+          <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(9)">
+            <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
+            <div class="top-sale-info">
+              <div class="top-sale-name">Осознанная удача</div>
+              <div class="top-sale-price">13 000 ₽</div>
+            </div>
+          </div>
+          <div class="top-sale-card glass reveal" style="transition-delay:.24s" onclick="openProductModal(11)">
+            <div class="top-sale-img"><img src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy"></div>
+            <div class="top-sale-info">
+              <div class="top-sale-name">Алая ведьма</div>
+              <div class="top-sale-price">8 800 ₽</div>
+            </div>
           </div>
         </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(8)">
-          <div class="top-sale-img"><img src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy"></div>
-          <div class="top-sale-info">
-            <div class="top-sale-name">Эльфийская защита</div>
-            <div class="top-sale-price">7 800 ₽</div>
-          </div>
-        </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(7)">
-          <div class="top-sale-img"><img src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy"></div>
-          <div class="top-sale-info">
-            <div class="top-sale-name">Возвращение к жизни</div>
-            <div class="top-sale-price">8 800 ₽</div>
-          </div>
-        </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(9)">
-          <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
-          <div class="top-sale-info">
-            <div class="top-sale-name">Осознанная удача</div>
-            <div class="top-sale-price">13 000 ₽</div>
-          </div>
-        </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.24s" onclick="openProductModal(11)">
-          <div class="top-sale-img"><img src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy"></div>
-          <div class="top-sale-info">
-            <div class="top-sale-name">Алая ведьма</div>
-            <div class="top-sale-price">8 800 ₽</div>
-          </div>
-        </div>
+        <button class="scroll-arrow right" onclick="scrollByAmount('topSalesScroll',1)" aria-label="Прокрутить вправо">&#10095;</button>
       </div>
     </div>
 
@@ -563,6 +638,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
+<div class="divider reveal"><span>скоро</span></div>
+
+<!-- COUNTDOWN -->
+<div class="section-wrap" id="countdown-section" style="padding-top:20px;padding-bottom:20px">
+  <div class="countdown-card glass reveal">
+    <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
+    <div class="countdown-clock">
+      <div class="cd-unit"><span id="cdDays">00</span><small>дней</small></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-unit"><span id="cdHours">00</span><small>часов</small></div>
+    </div>
+    <div class="countdown-sub" id="cdDate">...</div>
+  </div>
+</div>
+
 
 <div class="divider reveal"><span>о мастере</span></div>
 
@@ -570,10 +660,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <div class="section-wrap" id="about">
   <span class="section-eye reveal">&#9658; мастер</span>
   <h2 class="section-title reveal">Таша Йотунхейм</h2>
-  <div class="glass reveal" style="padding:36px;max-width:680px;margin:0 auto;font-size:13px;line-height:2;color:#c8ffda">
-    Рунический мастер и эрилья. Создаёт артефакты с заложенной авторской рунической формулой. Каждый артефакт — индивидуален и напитан конкретным намерением.<br><br>
-    Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
-    <span style="color:var(--accent)">ᚠ Каждый артефакт создаётся под конкретного человека и его запрос.</span>
+  <div class="about-layout glass reveal">
+    <div class="about-photos">
+      <div class="about-photo-slot"><span>фото 1</span></div>
+      <div class="about-photo-slot"><span>фото 2</span></div>
+    </div>
+    <div class="about-text">
+      Рунический мастер и эрилья. Создаёт артефакты с заложенной авторской рунической формулой. Каждый артефакт — индивидуален и напитан конкретным намерением.<br><br>
+      Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
+      <span style="color:var(--accent)">ᚠ Каждый артефакт создаётся под конкретного человека и его запрос.</span>
+    </div>
   </div>
 </div>
 
@@ -596,23 +692,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
   <!-- COLLECTION FILTER -->
   <div id="filterSentinel" style="height:1px"></div>
-  <div class="collections-scroll reveal" id="collectionFilter" style="margin-bottom:32px">
-    <div class="collection-chip active" onclick="filterCatalog('all',this)">Все</div>
-    <div class="collection-chip" onclick="filterCatalog('jotun-vibe',this)">Jotun Vibe</div>
-    <div class="collection-chip" onclick="filterCatalog('prime',this)">Prime Era</div>
-    <div class="collection-chip" onclick="filterCatalog('авторская',this)">Авторские</div>
-    <div class="collection-chip" onclick="filterCatalog('мабон',this)">Мабон</div>
-    <div class="collection-chip" onclick="filterCatalog('самайн',this)">Самайн</div>
-    <div class="collection-chip" onclick="filterCatalog('йоль',this)">Йоль</div>
-    <div class="collection-chip" onclick="filterCatalog('остара',this)">Остара</div>
-    <div class="collection-chip" onclick="filterCatalog('врата-льва',this)">Врата Льва</div>
-    <div class="collection-chip" onclick="filterCatalog('огненная-жатва',this)">Огненная Жатва</div>
-    <div class="collection-chip" onclick="filterCatalog('ламмас',this)">Ламмас</div>
-    <div class="collection-chip" onclick="filterCatalog('лита',this)">Лита</div>
-    <div class="collection-chip" onclick="filterCatalog('путь',this)">Путь ясной мысли</div>
-    <div class="collection-chip" onclick="filterCatalog('lotus',this)">Лотос души</div>
-    <div class="collection-chip" onclick="filterCatalog('bracelet',this)">Браслеты</div>
-    <div class="collection-chip" onclick="filterCatalog('pendant',this)">Кулоны</div>
+  <div class="scroll-nav-wrap">
+    <button class="scroll-arrow left" onclick="scrollByAmount('collectionFilter',-1)" aria-label="Прокрутить влево">&#10094;</button>
+    <div class="collections-scroll reveal" id="collectionFilter" style="margin-bottom:32px">
+      <div class="collection-chip active" onclick="filterCatalog('all',this)">Все</div>
+      <div class="collection-chip" onclick="filterCatalog('jotun-vibe',this)">Jotun Vibe</div>
+      <div class="collection-chip" onclick="filterCatalog('prime',this)">Prime Era</div>
+      <div class="collection-chip" onclick="filterCatalog('авторская',this)">Авторские</div>
+      <div class="collection-chip" onclick="filterCatalog('мабон',this)">Мабон</div>
+      <div class="collection-chip" onclick="filterCatalog('самайн',this)">Самайн</div>
+      <div class="collection-chip" onclick="filterCatalog('йоль',this)">Йоль</div>
+      <div class="collection-chip" onclick="filterCatalog('остара',this)">Остара</div>
+      <div class="collection-chip" onclick="filterCatalog('врата-льва',this)">Врата Льва</div>
+      <div class="collection-chip" onclick="filterCatalog('огненная-жатва',this)">Огненная Жатва</div>
+      <div class="collection-chip" onclick="filterCatalog('ламмас',this)">Ламмас</div>
+      <div class="collection-chip" onclick="filterCatalog('лита',this)">Лита</div>
+      <div class="collection-chip" onclick="filterCatalog('путь',this)">Путь ясной мысли</div>
+      <div class="collection-chip" onclick="filterCatalog('lotus',this)">Лотос души</div>
+      <div class="collection-chip" onclick="filterCatalog('bracelet',this)">Браслеты</div>
+      <div class="collection-chip" onclick="filterCatalog('pendant',this)">Кулоны</div>
+    </div>
+    <button class="scroll-arrow right" onclick="scrollByAmount('collectionFilter',1)" aria-label="Прокрутить вправо">&#10095;</button>
   </div>
 
   <div class="product-grid" id="productGrid">
@@ -1640,6 +1740,14 @@ window.scrambleHeroTitle = scrambleHeroTitle;
   }, {passive:true});
 })();
 
+/* ══ HORIZONTAL SCROLL ARROWS ══ */
+function scrollByAmount(id, dir){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.scrollBy({left: dir * 260, behavior: 'smooth'});
+}
+window.scrollByAmount = scrollByAmount;
+
 /* ══ SCROLL PROGRESS BAR ══ */
 (function(){
   var bar = document.getElementById('scroll-progress');
@@ -1701,8 +1809,8 @@ function renderRecentlyViewed(){
   section.classList.toggle('has-items', rendered > 0);
   if(divider) divider.style.display = rendered > 0 ? '' : 'none';
 }
-document.addEventListener('DOMContentLoaded', renderRecentlyViewed);
-document.addEventListener('DOMContentLoaded', renderCatalogVisibility);
+renderRecentlyViewed();
+renderCatalogVisibility();
 
 /* ══ CATALOG FILTER ══ */
 var CATALOG_PAGE_SIZE = 9;
@@ -1787,6 +1895,55 @@ window.loadMoreCatalog = loadMoreCatalog;
   document.getElementById('seasonDates').textContent = s.dates + ' · обновляется автоматически';
   document.getElementById('seasonText').textContent = s.text;
   document.getElementById('seasonCard').setAttribute('data-rune', s.sym);
+})();
+
+/* ══ COUNTDOWN TO NEXT HOLIDAY ══ */
+(function(){
+  var holidays = [
+    {name:"Имболк", month:2, day:2},
+    {name:"Остара", month:3, day:20},
+    {name:"Бельтайн", month:5, day:1},
+    {name:"Лита", month:6, day:21},
+    {name:"Ламмас", month:8, day:2},
+    {name:"Мабон", month:9, day:23},
+    {name:"Самайн", month:11, day:1},
+    {name:"Йоль", month:12, day:21}
+  ];
+  var elName = document.getElementById('cdName');
+  var elDays = document.getElementById('cdDays');
+  var elHours = document.getElementById('cdHours');
+  var elDate = document.getElementById('cdDate');
+  if(!elName) return;
+
+  function nextHoliday(){
+    var now = new Date();
+    var year = now.getFullYear();
+    var candidates = [];
+    holidays.forEach(function(h){
+      candidates.push({name:h.name, date:new Date(year, h.month-1, h.day, 0, 0, 0)});
+      candidates.push({name:h.name, date:new Date(year+1, h.month-1, h.day, 0, 0, 0)});
+    });
+    candidates = candidates.filter(function(c){ return c.date > now; });
+    candidates.sort(function(a,b){ return a.date - b.date; });
+    return candidates[0];
+  }
+
+  var monthsRu = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+  function update(){
+    var next = nextHoliday();
+    var now = new Date();
+    var diffMs = next.date - now;
+    var totalHours = Math.floor(diffMs / (1000*60*60));
+    var days = Math.floor(totalHours / 24);
+    var hours = totalHours % 24;
+    elName.textContent = next.name;
+    elDays.textContent = String(days).padStart(2,'0');
+    elHours.textContent = String(hours).padStart(2,'0');
+    elDate.textContent = next.date.getDate() + ' ' + monthsRu[next.date.getMonth()] + ' ' + next.date.getFullYear();
+  }
+  update();
+  setInterval(update, 60000);
 })();
 
 /* ══ SCROLL REVEAL ══ */

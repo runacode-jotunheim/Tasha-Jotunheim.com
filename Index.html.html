@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Артефакты Йотунхейм — Рунические украшения и амулеты</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Cinzel:wght@400;700;900&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
 :root{
   --green:#00ff41;--green-dim:#00cc35;
@@ -157,6 +157,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace;font-size:64px;color:rgba(0,255,65,0.15);aspect-ratio:1}
 .product-img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.05);transition:transform .4s ease}
 .product-card:hover .product-img{transform:scale(1.05)}
+.stock-badge{position:absolute;top:10px;right:-8px;z-index:6;font-family:'Permanent Marker',cursive;font-size:15px;line-height:1;color:#fff;padding:7px 18px 9px 16px;transform:rotate(9deg);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;box-shadow:0 3px 10px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.12) inset;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,0.5);background:linear-gradient(135deg,#ff5a2e,#ff8a3d)}
+.stock-badge.low{background:linear-gradient(135deg,#ff2020,#b30000);animation:stockPulse 1.8s ease-in-out infinite}
+@keyframes stockPulse{0%,100%{transform:rotate(9deg) scale(1)}50%{transform:rotate(9deg) scale(1.06)}}
 .product-badge-wrap{position:absolute;top:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}
 .product-badge{display:inline-block;font-size:8px;letter-spacing:2px;text-transform:uppercase;border-radius:20px;padding:3px 9px}
 .badge-top{background:rgba(0,255,65,0.15);border:1px solid rgba(0,255,65,0.35);color:var(--accent)}
@@ -573,6 +576,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᛜ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
+        <div class="stock-badge low">Остался 1!</div>
       </div>
       <div class="product-body">
         <div class="product-collection">Самайн</div>

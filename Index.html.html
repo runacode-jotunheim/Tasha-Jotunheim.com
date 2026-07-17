@@ -235,9 +235,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 }
 .nav-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:900;letter-spacing:2px;color:var(--accent);text-decoration:none;text-transform:uppercase;margin-right:auto;text-shadow:0 0 10px rgba(0,255,65,0.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:600px){
-  .nav-logo{font-size:9px;letter-spacing:1px;max-width:110px}
-  #cart-btn{padding:8px 12px;font-size:12px;letter-spacing:1px;gap:6px;top:10px;right:10px}
-  #cart-btn svg{width:13px;height:13px}
+  nav{padding:0 14px}
+  .nav-logo{font-size:8px;letter-spacing:0.5px;max-width:165px}
+  #cart-btn{padding:7px 10px;font-size:11px;letter-spacing:1px;gap:5px;top:9px;right:9px}
+  #cart-btn svg{width:12px;height:12px}
 }
 .nav-links{display:flex;gap:20px}
 @media(max-width:600px){.nav-links{display:none}}
@@ -2032,7 +2033,7 @@ function initMatrix(canvas){
 /* ══ LOADER ══ */
 var LINES=[
   {t:200,  text:"> инициализация хранилища рун"},
-  {t:1000, text:"> загружаю Колесо года ["+(new Date().getFullYear())+"]"},
+  {t:1000, text:"> загружаю Колесо года"},
   {t:1900, text:"> напитываю артефакты магией"},
   {t:2800, text:"> считываю запрос пользователя"},
   {t:3700, text:"> открываю коллекцию Йотунхейм",last:true},

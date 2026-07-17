@@ -66,6 +66,29 @@ body:active #custom-cursor img{transform:scale(0.88)}
 /* ══ CART BUTTON ══ */
 #cart-btn{position:fixed;top:20px;right:20px;z-index:500;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:10px 18px;cursor:none;backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent);transition:box-shadow .3s;box-shadow:0 0 10px rgba(0,255,65,0.1)}
 #cart-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.3)}
+#scroll-top-btn{position:fixed;bottom:24px;right:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
+#scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#scroll-top-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.35)}
+.top-sales-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:760px;margin:0 auto}
+@media(max-width:640px){.top-sales-grid{grid-template-columns:1fr;max-width:340px}}
+.top-sale-card{cursor:none;overflow:hidden;display:flex;align-items:center;gap:14px;padding:10px}
+.top-sale-img{width:64px;height:64px;border-radius:10px;overflow:hidden;flex-shrink:0;background:rgba(0,20,8,0.6)}
+.top-sale-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.top-sale-info{min-width:0}
+.top-sale-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-sale-price{font-family:'VT323',monospace;font-size:16px;color:var(--accent)}
+#recently-viewed{display:none}
+#recently-viewed.has-items{display:block}
+.rv-scroll{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.rv-scroll::-webkit-scrollbar{height:4px}
+.rv-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.25);border-radius:4px}
+.rv-card{cursor:none;flex:0 0 auto;width:130px}
+.rv-img{width:130px;height:130px;border-radius:10px;overflow:hidden;background:rgba(0,20,8,0.6);margin-bottom:8px}
+.rv-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.rv-name{font-size:10px;letter-spacing:.5px;color:var(--accent-dim);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-price{font-family:'VT323',monospace;font-size:14px;color:var(--accent);margin-top:2px}
+.rv-clear{font-size:9px;letter-spacing:2px;color:var(--accent-dim);text-transform:uppercase;cursor:none;text-align:right;display:block;margin-top:-28px;margin-bottom:16px;opacity:.7}
+.rv-clear:hover{opacity:1;color:var(--accent)}
 #cart-count{background:var(--accent);color:#000;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;min-width:20px}
 
 /* ══ CART DRAWER ══ */
@@ -73,12 +96,13 @@ body:active #custom-cursor img{transform:scale(0.88)}
 #cart-drawer.open{right:0}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:700;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .modal-overlay.open{opacity:1;pointer-events:auto}
-#product-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:640px;max-height:86vh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:701;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow-y:auto}
+#product-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:640px;max-height:86vh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:701;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow:hidden}
 #product-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
-.modal-close{position:sticky;top:12px;left:100%;transform:translateX(-100%);margin-right:12px;margin-top:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.7);border:1px solid rgba(0,255,65,0.3);color:var(--accent);font-size:15px;cursor:none;z-index:5;display:flex;align-items:center;justify-content:center}
-.modal-img-wrap{width:100%;aspect-ratio:16/10;background:rgba(0,20,8,0.6);overflow:hidden;margin-top:-46px}
-.modal-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}
-.modal-img-wrap .product-img-placeholder{font-size:96px}
+.modal-scroll{max-height:86vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.85);border:1.5px solid var(--accent);color:var(--accent);font-size:16px;font-weight:700;cursor:none;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.6),0 0 14px rgba(0,0,0,0.4);backdrop-filter:blur(6px)}
+.modal-img-wrap{width:100%;max-height:52vh;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.modal-img-wrap img{width:100%;max-height:52vh;object-fit:contain;display:block}
+.modal-img-wrap .product-img-placeholder{width:auto;height:auto;aspect-ratio:auto;font-size:96px;padding:40px 0}
 .modal-body{padding:26px 30px 34px}
 .modal-collection{font-size:9px;letter-spacing:3px;color:var(--accent-dim);text-transform:uppercase;margin-bottom:8px}
 .modal-name{font-family:'Cinzel',serif;font-size:22px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:16px;line-height:1.3}
@@ -89,7 +113,7 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .modal-desc li::before{content:'▸';position:absolute;left:0;color:var(--accent)}
 .modal-desc .m-sub{font-family:'VT323',monospace;font-size:16px;letter-spacing:1px;color:var(--accent);margin:18px 0 6px}
 .modal-footer{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid rgba(0,255,65,0.12)}
-.modal-price{font-family:'VT323',monospace;font-size:26px;color:#fff;text-shadow:0 0 8px rgba(0,255,65,0.3)}
+.modal-price{font-family:'VT323',monospace;font-size:30px;color:var(--accent);text-shadow:0 0 8px var(--accent),0 0 26px var(--accent)}
 @media(max-width:600px){.modal-body{padding:22px 20px 28px}.modal-name{font-size:18px}}
 .cart-header{padding:24px 20px;border-bottom:1px solid rgba(0,255,65,0.12);display:flex;justify-content:space-between;align-items:center}
 .cart-header-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
@@ -109,6 +133,10 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .cart-total-price{font-family:'VT323',monospace;font-size:22px;color:#fff}
 .cart-checkout{width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:none;transition:opacity .2s}
 .cart-checkout:hover{opacity:.88}
+.cart-checkout:disabled{opacity:.35;cursor:not-allowed}
+.cart-consent{display:flex;align-items:flex-start;gap:8px;font-size:10px;line-height:1.5;color:rgba(0,255,65,0.6);margin-bottom:14px;cursor:none}
+.cart-consent input{margin-top:2px;accent-color:var(--accent);cursor:none;flex-shrink:0}
+.cart-consent a{color:var(--accent);text-decoration:underline}
 .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:590;display:none}
 .cart-overlay.show{display:block}
 
@@ -175,7 +203,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-card:hover{transform:translateY(-5px);box-shadow:0 10px 32px rgba(0,255,65,0.14)}
 .product-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:rgba(0,20,8,0.6)}
 .product-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'VT323',monospace;font-size:64px;color:rgba(0,255,65,0.15);aspect-ratio:1}
-.product-img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05) contrast(1.05);transition:transform .4s ease}
+.product-img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;filter:saturate(1.05) contrast(1.05);transition:transform .4s ease}
 .product-card:hover .product-img{transform:scale(1.05)}
 .stock-badge{position:absolute;top:10px;right:-8px;z-index:6;font-family:'Permanent Marker',cursive;font-size:15px;line-height:1;color:#fff;padding:7px 18px 9px 16px;transform:rotate(9deg);border-radius:255px 15px 225px 15px/15px 225px 15px 255px;box-shadow:0 3px 10px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.12) inset;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,0.5);background:linear-gradient(135deg,#ff5a2e,#ff8a3d)}
 .stock-badge.low{background:linear-gradient(135deg,#ff2020,#b30000);animation:stockPulse 1.8s ease-in-out infinite}
@@ -206,7 +234,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;line-height:1.3}
 .product-tagline{font-size:10px;line-height:1.65;color:rgba(200,255,218,0.7);margin-bottom:14px;min-height:32px}
 .product-price-row{display:flex;justify-content:space-between;align-items:center}
-.product-price{font-family:'VT323',monospace;font-size:21px;letter-spacing:1px;color:#fff;text-shadow:0 0 8px rgba(0,255,65,0.3)}
+.product-price{font-family:'VT323',monospace;font-size:27px;letter-spacing:1px;color:var(--accent);text-shadow:0 0 8px var(--accent),0 0 26px var(--accent)}
 .product-btn{font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;color:var(--accent);border:1px solid rgba(0,255,65,0.35);border-radius:4px;padding:6px 13px;background:transparent;text-transform:uppercase;cursor:none;transition:background .2s,color .2s}
 .product-btn:hover{background:var(--accent);color:#000}
 
@@ -283,6 +311,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <span id="cart-count">0</span>
 </div>
 
+<!-- SCROLL TO TOP -->
+<button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Наверх">&#9650;</button>
+
 <!-- THEME TOGGLE -->
 <div id="theme-toggle">
   <div class="pill-choices" id="pillChoices">
@@ -307,7 +338,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <span class="cart-total-label">ИТОГО</span>
       <span class="cart-total-price" id="cartTotal">0 ₽</span>
     </div>
-    <button class="cart-checkout" onclick="checkout()">&#9654; Оформить заказ</button>
+    <label class="cart-consent">
+      <input type="checkbox" id="consentCheckbox" onchange="document.getElementById('checkoutBtn').disabled = !this.checked">
+      <span>Согласен(-на) на <a href="/privacy-policy.html" target="_blank">обработку персональных данных</a></span>
+    </label>
+    <button class="cart-checkout" id="checkoutBtn" onclick="checkout()" disabled>&#9654; Оформить заказ</button>
   </div>
 </div>
 
@@ -315,14 +350,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <div class="modal-overlay" id="modalOverlay" onclick="closeProductModal()"></div>
 <div id="product-modal">
   <button class="modal-close" onclick="closeProductModal()">✕</button>
-  <div class="modal-img-wrap" id="modalImgWrap"></div>
-  <div class="modal-body">
-    <div class="modal-collection" id="modalCollection"></div>
-    <h3 class="modal-name" id="modalName"></h3>
-    <div class="modal-desc" id="modalDesc"></div>
-    <div class="modal-footer">
-      <span class="modal-price" id="modalPrice"></span>
-      <button class="product-btn" id="modalAddBtn">В корзину</button>
+  <div class="modal-scroll">
+    <div class="modal-img-wrap" id="modalImgWrap"></div>
+    <div class="modal-body">
+      <div class="modal-collection" id="modalCollection"></div>
+      <h3 class="modal-name" id="modalName"></h3>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-footer">
+        <span class="modal-price" id="modalPrice"></span>
+        <button class="product-btn" id="modalAddBtn">В корзину</button>
+      </div>
     </div>
   </div>
 </div>
@@ -350,6 +387,35 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </section>
 
+<!-- TOP SALES -->
+<div class="section-wrap" id="top-sales" style="padding-top:20px;padding-bottom:20px">
+  <span class="section-eye reveal">&#9658; хиты</span>
+  <h2 class="section-title reveal" style="margin-bottom:24px">Топ продаж</h2>
+  <div class="top-sales-grid">
+    <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
+      <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Браслет Jotun Vibe" loading="lazy"></div>
+      <div class="top-sale-info">
+        <div class="top-sale-name">Jotun Vibe</div>
+        <div class="top-sale-price">7 900 ₽</div>
+      </div>
+    </div>
+    <div class="top-sale-card glass reveal" style="transition-delay:.08s" onclick="openProductModal(2)">
+      <div class="top-sale-img"><img src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy"></div>
+      <div class="top-sale-info">
+        <div class="top-sale-name">Кулон Prime</div>
+        <div class="top-sale-price">12 000 ₽</div>
+      </div>
+    </div>
+    <div class="top-sale-card glass reveal" style="transition-delay:.16s" onclick="openProductModal(9)">
+      <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
+      <div class="top-sale-info">
+        <div class="top-sale-name">Осознанная удача</div>
+        <div class="top-sale-price">13 000 ₽</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- CATEGORIES -->
 <div class="section-wrap" id="categories">
   <div class="cat-grid">
@@ -369,6 +435,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="cat-count">скоро</div>
     </div>
   </div>
+</div>
+
+<div class="divider reveal"><span>о мастере</span></div>
+
+<!-- ABOUT -->
+<div class="section-wrap" id="about">
+  <span class="section-eye reveal">&#9658; мастер</span>
+  <h2 class="section-title reveal">Таша Йотунхейм</h2>
+  <div class="glass reveal" style="padding:36px;max-width:680px;margin:0 auto;font-size:13px;line-height:2;color:#c8ffda">
+    Рунический мастер и эрилья. Создаёт артефакты с заложенной авторской рунической формулой. Каждый артефакт — индивидуален и напитан конкретным намерением.<br><br>
+    Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
+    <span style="color:var(--accent)">ᚠ Каждый артефакт создаётся под конкретного человека и его запрос.</span>
+  </div>
+</div>
+
+<div class="divider reveal" id="rv-divider" style="display:none"><span>ваш интерес</span></div>
+
+<!-- RECENTLY VIEWED -->
+<div class="section-wrap" id="recently-viewed" style="padding-top:20px;padding-bottom:20px">
+  <span class="section-eye reveal">&#9658; персонально для вас</span>
+  <h2 class="section-title reveal" style="margin-bottom:8px">Ваши последние интересы</h2>
+  <span class="rv-clear" onclick="clearRecentlyViewed()">очистить ✕</span>
+  <div class="rv-scroll" id="rvScroll"></div>
 </div>
 
 <div class="divider reveal"><span>коллекции</span></div>
@@ -490,7 +579,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-name">Осознанная удача</div>
         <div class="product-tagline">Магнит твоего везения · Помогает вовремя оказаться в нужном месте и удержать шанс, а не просто дождаться его. «Не туда где легко, а туда где победа»</div>
         <div class="product-price-row">
-          <span class="product-price">13 000 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">2 шт за 20 000 ₽</div>
+          <span class="product-price">13 000 ₽</span><div style="font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px;font-weight:600">2 шт за 20 000 ₽</div>
           <button class="product-btn" onclick="event.stopPropagation(); addToCart(9,'Осознанная удача',13000,'ᚨ')">В корзину</button>
         </div>
       </div>
@@ -619,7 +708,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-name">Весы Осириса</div>
         <div class="product-tagline">Амулет суда и правды · Замораживает чужое, отсекает паразитов, возвращает равновесие. «Твоё сердце лёгкое — всё чужое возвращено мёртвым»</div>
         <div class="product-price-row">
-          <span class="product-price">29 900 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">55 900 ₽ за пару с «Плодом Вечности» · заряжен в некрополе (Египет) · до 26 октября</div>
+          <span class="product-price">29 900 ₽</span><div style="font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px;font-weight:600">55 900 ₽ за пару с «Плодом Вечности» · заряжен в некрополе (Египет) · до 26 октября</div>
           <button class="product-btn" onclick="event.stopPropagation(); addToCart(17,'Весы Осириса',29900,'ᛁ')">В корзину</button>
         </div>
       </div>
@@ -636,7 +725,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-name">Плод Вечности</div>
         <div class="product-tagline">Амулет сохранения и раскрытия · Укореняет твоё внутреннее «зерно судьбы» в родовой силе. «В сердце хранится плод, что переживёт все смерти»</div>
         <div class="product-price-row">
-          <span class="product-price">29 900 ₽</span><div style="font-size:8px;letter-spacing:1px;color:var(--accent-dim);margin-top:2px">55 900 ₽ за пару с «Весами Осириса» · заряжен в некрополе (Египет) · до 26 октября</div>
+          <span class="product-price">29 900 ₽</span><div style="font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px;font-weight:600">55 900 ₽ за пару с «Весами Осириса» · заряжен в некрополе (Египет) · до 26 октября</div>
           <button class="product-btn" onclick="event.stopPropagation(); addToCart(18,'Плод Вечности',29900,'ᛜ')">В корзину</button>
         </div>
       </div>
@@ -993,20 +1082,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
-<div class="divider reveal"><span>о мастере</span></div>
-
-<!-- ABOUT -->
-<div class="section-wrap" id="about">
-  <span class="section-eye reveal">&#9658; мастер</span>
-  <h2 class="section-title reveal">Таша Йотунхейм</h2>
-  <div class="glass reveal" style="padding:36px;max-width:680px;margin:0 auto;font-size:13px;line-height:2;color:#c8ffda">
-    Рунический мастер и эрилья. Создаёт артефакты с заложенной авторской рунической формулой. Каждый артефакт — индивидуален и напитан конкретным намерением.<br><br>
-    Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
-    <span style="color:var(--accent)">ᚠ Каждый артефакт создаётся под конкретного человека и его запрос.</span>
-  </div>
-</div>
-
-<!-- CONTACTS -->
 <div class="section-wrap" id="contacts">
   <span class="section-eye reveal">&#9658; связаться</span>
   <h2 class="section-title reveal">Контакты</h2>
@@ -1307,6 +1382,7 @@ function addToCart(id, name, price, rune){
   cart.push({id:id, name:name, price:price, rune:rune});
   renderCart();
   openCart();
+  trackInterest(id);
 }
 function removeFromCart(i){
   cart.splice(i,1);
@@ -1367,16 +1443,79 @@ function openProductModal(id){
 
   document.getElementById('modalOverlay').classList.add('open');
   document.getElementById('product-modal').classList.add('open');
+  _modalViewTimer = setTimeout(function(){ trackInterest(id); }, 3000);
+  _modalViewId = id;
 }
 function closeProductModal(){
   document.getElementById('modalOverlay').classList.remove('open');
   document.getElementById('product-modal').classList.remove('open');
+  if(_modalViewTimer){ clearTimeout(_modalViewTimer); _modalViewTimer = null; }
+  _modalViewId = null;
 }
+var _modalViewTimer = null;
+var _modalViewId = null;
 window.openProductModal = openProductModal;
 window.closeProductModal = closeProductModal;
 document.addEventListener('keydown', function(e){
   if(e.key === 'Escape') closeProductModal();
 });
+
+/* ══ SCROLL TO TOP ══ */
+(function(){
+  var btn = document.getElementById('scroll-top-btn');
+  if(!btn) return;
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('show', window.scrollY > 600);
+  }, {passive:true});
+})();
+
+/* ══ RECENTLY VIEWED / INTERESTS ══ */
+var RV_KEY = 'jv_interests';
+function trackInterest(id){
+  id = String(id);
+  try{
+    var list = JSON.parse(localStorage.getItem(RV_KEY) || '[]');
+    list = list.filter(function(x){ return String(x) !== id; });
+    list.unshift(id);
+    if(list.length > 10) list = list.slice(0, 10);
+    localStorage.setItem(RV_KEY, JSON.stringify(list));
+    renderRecentlyViewed();
+  }catch(e){}
+}
+function clearRecentlyViewed(){
+  try{ localStorage.removeItem(RV_KEY); }catch(e){}
+  renderRecentlyViewed();
+}
+window.clearRecentlyViewed = clearRecentlyViewed;
+function renderRecentlyViewed(){
+  var section = document.getElementById('recently-viewed');
+  var divider = document.getElementById('rv-divider');
+  var scroll = document.getElementById('rvScroll');
+  if(!section || !scroll) return;
+  var list = [];
+  try{ list = JSON.parse(localStorage.getItem(RV_KEY) || '[]'); }catch(e){}
+  scroll.innerHTML = '';
+  var rendered = 0;
+  list.forEach(function(id){
+    var card = document.querySelector('.product-card[data-id="'+id+'"]');
+    if(!card) return;
+    var img = card.querySelector('.product-img');
+    var placeholder = card.querySelector('.product-img-placeholder');
+    var name = card.getAttribute('data-name');
+    var price = card.getAttribute('data-price');
+    var imgHtml = img ? '<img src="'+img.getAttribute('src')+'" alt="'+name+'">' : (placeholder ? '<div class="product-img-placeholder" style="font-size:36px">'+placeholder.textContent+'</div>' : '');
+    var priceText = price === '0' ? 'уточняется' : Number(price).toLocaleString('ru-RU')+' ₽';
+    var el = document.createElement('div');
+    el.className = 'rv-card';
+    el.onclick = function(){ openProductModal(id); };
+    el.innerHTML = '<div class="rv-img">'+imgHtml+'</div><div class="rv-name">'+name+'</div><div class="rv-price">'+priceText+'</div>';
+    scroll.appendChild(el);
+    rendered++;
+  });
+  section.classList.toggle('has-items', rendered > 0);
+  if(divider) divider.style.display = rendered > 0 ? '' : 'none';
+}
+document.addEventListener('DOMContentLoaded', renderRecentlyViewed);
 
 /* ══ CATALOG FILTER ══ */
 function filterCatalog(tag, chip){

@@ -160,20 +160,20 @@ body:active #custom-cursor img{transform:scale(0.88)}
 #cart-drawer.open{right:0}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:700;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .modal-overlay.open{opacity:1;pointer-events:auto}
-#product-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:640px;max-height:86vh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:701;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow:hidden}
+#product-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:640px;max-height:86vh;max-height:86dvh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:701;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow:hidden}
 #product-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
 .modal-drag-handle{display:none}
 @media(max-width:700px){
-  #product-modal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:90vh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none}
+  #product-modal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:90vh;max-height:90dvh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none}
   #product-modal.open{transform:translateY(0)}
   .modal-drag-handle{display:block;width:36px;height:4px;border-radius:3px;background:rgba(0,255,65,0.3);margin:10px auto 0}
   .modal-close{top:10px;right:10px;width:34px;height:34px}
 }
-.modal-scroll{max-height:86vh;overflow-y:auto}
-@media(max-width:700px){.modal-scroll{max-height:90vh}}
+.modal-scroll{max-height:86vh;max-height:86dvh;overflow-y:auto}
+@media(max-width:700px){.modal-scroll{max-height:90vh;max-height:90dvh}}
 .modal-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.85);border:1.5px solid var(--accent);color:var(--accent);font-size:16px;font-weight:700;cursor:none;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.6),0 0 14px rgba(0,0,0,0.4);backdrop-filter:blur(6px)}
-.modal-img-wrap{width:100%;max-height:52vh;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.modal-img-wrap img{width:100%;max-height:52vh;object-fit:contain;display:block}
+.modal-img-wrap{width:100%;height:38vh;height:38dvh;max-height:52vh;max-height:52dvh;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.modal-img-wrap img{width:100%;height:100%;max-height:52vh;max-height:52dvh;object-fit:contain;display:block}
 .modal-img-wrap .product-img-placeholder{width:auto;height:auto;aspect-ratio:auto;font-size:96px;padding:40px 0}
 .modal-body{padding:26px 30px 34px}
 .modal-collection{font-size:9px;letter-spacing:3px;color:var(--accent-dim);text-transform:uppercase;margin-bottom:8px}
@@ -456,7 +456,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <div id="search-input-row">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input type="text" id="searchInput" placeholder="Поиск: путь, мать, прайм..." oninput="handleSearchInput()" autocomplete="off">
-    <button id="search-close" onclick="closeSearch()">✕</button>
+    <button id="search-close" onclick="handleSearchClose()">✕</button>
   </div>
   <div id="searchResults"></div>
 </div>
@@ -1684,6 +1684,18 @@ function handleSearchInput(){
   });
 }
 window.handleSearchInput = handleSearchInput;
+
+function handleSearchClose(){
+  var input = document.getElementById('searchInput');
+  if(input.value.length > 0){
+    input.value = '';
+    handleSearchInput();
+    input.focus();
+  } else {
+    closeSearch();
+  }
+}
+window.handleSearchClose = handleSearchClose;
 
 function renderCart(){
   var el = document.getElementById('cartItems');

@@ -38,6 +38,7 @@ body{color:var(--accent);font-family:'Share Tech Mono',monospace;transition:colo
 
 /* ══ CUSTOM CURSOR — Space Rangers style ══ */
 * { cursor: none !important; }
+img { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; pointer-events: auto; }
 @media (hover: none), (pointer: coarse) {
   * { cursor: auto !important; }
   #custom-cursor { display: none !important; }
@@ -104,7 +105,7 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .top-sale-card{position:relative;cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
 @media(max-width:480px){.top-sale-card{width:100%;flex:0 0 100%}}
 .top-sale-img{width:220px;height:220px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
-@media(max-width:480px){.top-sale-img{width:100%;height:78vw}}
+@media(max-width:480px){.top-sale-img{width:100%;height:auto;aspect-ratio:1/1}}
 .top-sale-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
 .top-sale-info{padding:14px 16px 16px}
 .top-sale-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:8px}
@@ -1804,6 +1805,12 @@ window.openProductModal = openProductModal;
 window.closeProductModal = closeProductModal;
 document.addEventListener('keydown', function(e){
   if(e.key === 'Escape'){ closeProductModal(); closeSearch(); }
+});
+document.addEventListener('contextmenu', function(e){
+  if(e.target.tagName === 'IMG') e.preventDefault();
+});
+document.addEventListener('dragstart', function(e){
+  if(e.target.tagName === 'IMG') e.preventDefault();
 });
 
 /* ══ HERO TEXT SCRAMBLE ══ */

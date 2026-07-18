@@ -26,7 +26,7 @@ body{color:var(--accent);font-family:'Share Tech Mono',monospace;transition:colo
 .loader-lines .line{display:block}
 .loader-box{width:100%;max-width:500px;border:1px solid rgba(0,255,65,0.3);border-radius:12px;padding:28px 32px;background:rgba(0,255,65,0.03);text-align:center}
 .loader-label{font-size:9px;letter-spacing:6px;color:rgba(0,255,65,0.5);text-transform:uppercase;margin-bottom:14px}
-.loader-title{font-family:'Cinzel',serif;font-size:clamp(18px,4.5vw,28px);font-weight:900;letter-spacing:3px;color:var(--green);text-shadow:0 0 20px rgba(0,255,65,0.4);margin-bottom:24px;line-height:1.35}
+.loader-title{font-family:'Cinzel',serif;font-size:clamp(18px,4.5vw,28px);font-weight:900;letter-spacing:3px;color:var(--green);text-shadow:0 0 20px rgba(0,255,65,0.4);margin-bottom:24px;line-height:1.35;text-transform:uppercase}
 .cursor-block{display:inline-block;width:8px;height:14px;background:var(--green);vertical-align:middle;margin-left:3px;box-shadow:0 0 6px var(--green);animation:blink 1s step-end infinite}
 .progress-wrap{width:100%;height:3px;background:rgba(0,255,65,0.1);border-radius:2px;overflow:hidden;margin-bottom:10px}
 .progress-bar{height:100%;width:0%;background:var(--green);box-shadow:0 0 10px var(--green);transition:width .05s linear}
@@ -75,7 +75,7 @@ body:active #custom-cursor img{transform:scale(0.88)}
 #top-right-controls{position:fixed;top:20px;right:20px;z-index:500;display:flex;align-items:center;gap:10px}
 #search-toggle{width:38px;height:38px;border-radius:10px;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.1);transition:box-shadow .3s}
 #search-toggle:hover{box-shadow:0 0 18px rgba(0,255,65,0.3)}
-#cart-btn{background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:10px 18px;cursor:none;backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent);transition:box-shadow .3s;box-shadow:0 0 10px rgba(0,255,65,0.1)}
+#cart-btn{background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:10px 18px;cursor:none;backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent);transition:box-shadow .3s;box-shadow:0 0 10px rgba(0,255,65,0.1);text-transform:uppercase}
 #search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:549;opacity:0;pointer-events:none;transition:opacity .25s}
 #search-overlay.open{opacity:1;pointer-events:auto}
 #search-panel{position:fixed;top:70px;left:50%;transform:translate(-50%,-12px);width:92%;max-width:480px;background:rgba(0,5,2,0.97);border:1px solid var(--accent);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 30px rgba(0,255,65,0.1);z-index:550;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;overflow:hidden}
@@ -203,7 +203,7 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .cart-item-del:hover{color:#ff4444}
 .cart-footer{padding:20px;border-top:1px solid rgba(0,255,65,0.12)}
 .cart-total{display:flex;justify-content:space-between;margin-bottom:16px;font-size:13px}
-.cart-total-label{color:rgba(0,255,65,0.5);letter-spacing:2px}
+.cart-total-label{color:rgba(0,255,65,0.5);letter-spacing:2px;text-transform:uppercase}
 .cart-total-price{font-family:'VT323',monospace;font-size:22px;color:#fff}
 .cart-checkout{width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:none;transition:opacity .2s}
 .cart-checkout:hover{opacity:.88}
@@ -414,7 +414,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <div class="loader-lines" id="loaderLines"></div>
   <div class="loader-box">
     <div class="loader-label">инициализация хранилища</div>
-    <div class="loader-title">АРТЕФАКТЫ<br>ЙОТУНХЕЙМ<span class="cursor-block"></span></div>
+    <div class="loader-title">Артефакты<br>Йотунхейм<span class="cursor-block"></span></div>
     <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
     <div class="progress-pct" id="progressPct">0%</div>
   </div>
@@ -447,7 +447,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </button>
   <div id="cart-btn" onclick="openCart()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-    <span class="cart-btn-label">КОРЗИНА</span>
+    <span class="cart-btn-label">Корзина</span>
     <span id="cart-count">0</span>
   </div>
 </div>
@@ -487,7 +487,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
   <div class="cart-footer">
     <div class="cart-total">
-      <span class="cart-total-label">ИТОГО</span>
+      <span class="cart-total-label">Итого</span>
       <span class="cart-total-price" id="cartTotal">0 ₽</span>
     </div>
     <label class="cart-consent">
@@ -771,7 +771,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-badge-wrap"><span class="product-badge badge-top">Топ продаж</span></div>
       </div>
       <div class="product-body">
-        <div class="product-collection">Jotun Vibe</div>
+        <div class="product-collection">Йотун Вайб</div>
         <div class="product-name">Браслет Йотун Вайб</div>
         <div class="product-tagline">Северная устойчивость · Внутренний стержень · Защита от откатов</div>
         <div class="product-price-row">
@@ -781,34 +781,34 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="prime pendant" data-id="2" data-price="12000" data-name="Кулон Prime" onclick="openProductModal(2)">
+    <div class="product-card glass show" data-tags="jotun-vibe pendant" data-id="2" data-price="12000" data-name="Кулон Твой Вечный Прайм" onclick="openProductModal(2)">
       <div class="product-img-wrap">
-        <img class="product-img" src="assets/img/products/prime-pendant.jpg" alt="Кулон Prime" loading="lazy">
+        <img class="product-img" src="assets/img/products/prime-pendant.jpg" alt="Кулон Твой Вечный Прайм" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Хит</span></div>
       </div>
       <div class="product-body">
-        <div class="product-collection">Prime Era</div>
-        <div class="product-name">Кулон Prime</div>
+        <div class="product-collection">Йотун Вайб</div>
+        <div class="product-name">Кулон Твой Вечный Прайм</div>
         <div class="product-tagline">Ясность направления · Курс не теряется · Лучшая версия себя</div>
         <div class="product-price-row">
           <span class="product-price">12 000 ₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(2,'Кулон Prime',12000,'ᛏ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(2,'Кулон Твой Вечный Прайм',12000,'ᛏ')">В корзину</button>
         </div>
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="prime bracelet" data-id="3" data-price="9500" data-name="Браслет Prime" onclick="openProductModal(3)">
+    <div class="product-card glass show" data-tags="jotun-vibe bracelet" data-id="3" data-price="9500" data-name="Браслет Твой Вечный Прайм" onclick="openProductModal(3)">
       <div class="product-img-wrap">
-        <img class="product-img" src="assets/img/products/prime-bracelet.jpg" alt="Браслет Prime" loading="lazy">
+        <img class="product-img" src="assets/img/products/prime-bracelet.jpg" alt="Браслет Твой Вечный Прайм" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
       </div>
       <div class="product-body">
-        <div class="product-collection">Prime Era</div>
-        <div class="product-name">Браслет Prime</div>
+        <div class="product-collection">Йотун Вайб</div>
+        <div class="product-name">Браслет Твой Вечный Прайм</div>
         <div class="product-tagline">Энергия движения · Поток возможностей · Действие без остановки</div>
         <div class="product-price-row">
           <span class="product-price">9 500 ₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(3,'Браслет Prime',9500,'ᚱ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(3,'Браслет Твой Вечный Прайм',9500,'ᚱ')">В корзину</button>
         </div>
       </div>
     </div>
@@ -1292,7 +1292,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
       </div>
       <div class="product-body">
-        <div class="product-collection">Jotun Vibe</div>
+        <div class="product-collection">Йотун Вайб</div>
         <div class="product-name">Кулон «Счастье»</div>
         <div class="product-tagline">Радость · Гармония · Привлечение светлых событий</div>
         <div class="product-price-row">
@@ -1353,11 +1353,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <div data-desc-id="1"><p>Если вас жизнь постоянно проверяет на прочность. На вас многое держится. Но вы привыкли справляться, привыкли быть сильными. Но даже сильные устают — устают всё время всё контролировать, сомневаться в себе, искать опору снаружи.</p>
 <p>«Йотун Вайб» — про состояние, когда внутри появляется уверенность. Когда ты перестаёшь бояться будущего и терять себя из-за людей, обстоятельств и чужих ожиданий. Когда появляется чёткое ощущение: «Я справлюсь».</p>
 <div class="m-quote">Даже если вокруг всё меняется, внутри остаётся то, что нельзя отнять. Твоя сила. Твой стержень. Твоя опора</div>
-<p>Формирует внутреннюю устойчивость и опору, укрепляет характер и помогает уверенно проходить периоды перемен. Носить ежедневно на ведущей руке. Совместим с кулоном и браслетом Prime — вместе три артефакта формируют единую систему устойчивого роста.</p></div>
-<div data-desc-id="2"><p>Если браслет Prime похож на восход солнца, то кулон — это курс, который не даёт слиться после подъёма. Раскрывает внутренний потенциал, помогает увидеть перспективы и своевременно встречать нужных людей и обстоятельства.</p>
+<p>Формирует внутреннюю устойчивость и опору, укрепляет характер и помогает уверенно проходить периоды перемен. Носить ежедневно на ведущей руке. Совместим с кулоном и браслетом «Твой Вечный Прайм» — вместе три артефакта формируют единую систему устойчивого роста.</p></div>
+<div data-desc-id="2"><p>Если браслет «Твой Вечный Прайм» похож на восход солнца, то кулон — это курс, который не даёт слиться после подъёма. Раскрывает внутренний потенциал, помогает увидеть перспективы и своевременно встречать нужных людей и обстоятельства.</p>
 <div class="m-quote">Браслет даёт движение. Кулон помогает не потерять курс. Вместе это и есть твой вечный прайм</div>
-<p>Закрепляет достигнутые результаты, помогает занять своё место в жизни и формирует состояние устойчивого развития. Совместим с браслетом Prime и браслетом Йотун Вайб.</p></div>
-<div data-desc-id="3"><p>Если кулон Prime похож на восход солнца, то браслет похож на течение реки. Он работает не через яркий подъём, а через постепенное накопление: одна полезная встреча, одна вовремя замеченная идея, один удачный разговор — и вот жизнь уже движется легче.</p>
+<p>Закрепляет достигнутые результаты, помогает занять своё место в жизни и формирует состояние устойчивого развития. Совместим с браслетом «Твой Вечный Прайм» и браслетом Йотун Вайб.</p></div>
+<div data-desc-id="3"><p>Если кулон «Твой Вечный Прайм» похож на восход солнца, то браслет похож на течение реки. Он работает не через яркий подъём, а через постепенное накопление: одна полезная встреча, одна вовремя замеченная идея, один удачный разговор — и вот жизнь уже движется легче.</p>
 <p>Браслет не создаёт возможности из пустоты. Он помогает использовать те, что уже появляются рядом, но обычно проходят мимо внимания. Поэтому его действие ощущается очень естественно — не как магическое вмешательство, а как период жизни, в котором всё постепенно складывается в правильную картинку.</p>
 <div class="m-quote">Энергия движется циклически, каждый завершённый цикл становится основой для следующего</div></div>
 <div data-desc-id="4"><p>Этот артефакт создан для тех, кто устал от внутреннего шума. Тревоги, чужие мнения, давление среды — всё это со временем заглушает собственный голос и делает мышление тяжёлым.</p>

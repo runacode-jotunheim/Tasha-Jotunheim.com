@@ -71,7 +71,28 @@ body:active #custom-cursor img{transform:scale(0.88)}
 .pill-icon.red{background:radial-gradient(circle at 35% 30%,#ff9090,#ff2020 60%,#7a0f0f)}
 
 /* ══ CART BUTTON ══ */
-#cart-btn{position:fixed;top:20px;right:20px;z-index:500;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:10px 18px;cursor:none;backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent);transition:box-shadow .3s;box-shadow:0 0 10px rgba(0,255,65,0.1)}
+#top-right-controls{position:fixed;top:20px;right:20px;z-index:500;display:flex;align-items:center;gap:10px}
+#search-toggle{width:38px;height:38px;border-radius:10px;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.1);transition:box-shadow .3s}
+#search-toggle:hover{box-shadow:0 0 18px rgba(0,255,65,0.3)}
+#cart-btn{background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);border-radius:10px;padding:10px 18px;cursor:none;backdrop-filter:blur(8px);display:flex;align-items:center;gap:10px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent);transition:box-shadow .3s;box-shadow:0 0 10px rgba(0,255,65,0.1)}
+#search-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:549;opacity:0;pointer-events:none;transition:opacity .25s}
+#search-overlay.open{opacity:1;pointer-events:auto}
+#search-panel{position:fixed;top:70px;left:50%;transform:translate(-50%,-12px);width:92%;max-width:480px;background:rgba(0,5,2,0.97);border:1px solid var(--accent);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 30px rgba(0,255,65,0.1);z-index:550;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;overflow:hidden}
+#search-panel.open{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+#search-input-row{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid rgba(0,255,65,0.15);color:var(--accent)}
+#searchInput{flex:1;background:none;border:none;outline:none;color:#fff;font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:.5px}
+#searchInput::placeholder{color:rgba(0,255,65,0.35)}
+#search-close{background:none;border:none;color:var(--accent-dim);font-size:14px;cursor:none;padding:2px}
+#searchResults{max-height:60vh;overflow-y:auto}
+.search-result{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:none;border-bottom:1px solid rgba(0,255,65,0.06);transition:background .15s}
+.search-result:hover{background:rgba(0,255,65,0.06)}
+.search-result-img{width:42px;height:42px;border-radius:8px;overflow:hidden;flex-shrink:0;background:rgba(0,255,65,0.05);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(0,255,65,0.3)}
+.search-result-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.search-result-info{min-width:0;flex:1}
+.search-result-name{font-size:12px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-result-collection{font-size:9px;letter-spacing:1px;color:var(--accent-dim);text-transform:uppercase;margin-top:2px}
+.search-result-price{font-family:'VT323',monospace;font-size:15px;color:var(--accent);flex-shrink:0}
+.search-empty{padding:24px 16px;text-align:center;font-size:12px;color:var(--accent-dim)}
 #cart-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.3)}
 #scroll-top-btn{position:fixed;bottom:28px;left:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
 #scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
@@ -237,7 +258,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 @media(max-width:600px){
   nav{padding:0 14px}
   .nav-logo{font-size:8px;letter-spacing:0.5px;max-width:165px}
-  #cart-btn{padding:7px 10px;font-size:11px;letter-spacing:1px;gap:5px;top:9px;right:9px}
+  #top-right-controls{top:9px;right:9px;gap:6px}
+  #cart-btn{padding:7px 10px;font-size:11px;letter-spacing:1px;gap:5px}
+  #search-toggle{width:32px;height:32px}
+  #search-toggle svg{width:14px;height:14px}
+}
+@media(max-width:400px){
+  .cart-btn-label{display:none}
+  #cart-btn{padding:7px 9px}
+  .nav-logo{max-width:135px}
   #cart-btn svg{width:12px;height:12px}
 }
 .nav-links{display:flex;gap:20px}
@@ -409,11 +438,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </nav>
 
-<!-- CART BUTTON -->
-<div id="cart-btn" onclick="openCart()">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  КОРЗИНА
-  <span id="cart-count">0</span>
+<!-- TOP RIGHT CONTROLS -->
+<div id="top-right-controls">
+  <button id="search-toggle" onclick="toggleSearch()" aria-label="Поиск">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </button>
+  <div id="cart-btn" onclick="openCart()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    <span class="cart-btn-label">КОРЗИНА</span>
+    <span id="cart-count">0</span>
+  </div>
+</div>
+
+<!-- SEARCH PANEL -->
+<div id="search-overlay" onclick="closeSearch()"></div>
+<div id="search-panel">
+  <div id="search-input-row">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Поиск: путь, мать, прайм..." oninput="handleSearchInput()" autocomplete="off">
+    <button id="search-close" onclick="closeSearch()">✕</button>
+  </div>
+  <div id="searchResults"></div>
 </div>
 
 <!-- SCROLL TO TOP -->
@@ -1580,6 +1625,66 @@ function closeCart(){
 }
 window.openCart = openCart; window.closeCart = closeCart;
 
+/* ══ SEARCH ══ */
+function toggleSearch(){
+  var panel = document.getElementById('search-panel');
+  var overlay = document.getElementById('search-overlay');
+  var isOpen = panel.classList.contains('open');
+  if(isOpen){ closeSearch(); return; }
+  panel.classList.add('open');
+  overlay.classList.add('open');
+  closeCart();
+  setTimeout(function(){ document.getElementById('searchInput').focus(); }, 100);
+}
+function closeSearch(){
+  document.getElementById('search-panel').classList.remove('open');
+  document.getElementById('search-overlay').classList.remove('open');
+}
+window.toggleSearch = toggleSearch;
+window.closeSearch = closeSearch;
+
+function handleSearchInput(){
+  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  var resultsEl = document.getElementById('searchResults');
+  if(q.length < 2){
+    resultsEl.innerHTML = q.length === 0 ? '' : '<div class="search-empty">Введите минимум 2 буквы</div>';
+    return;
+  }
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
+  var matches = cards.filter(function(c){
+    var name = (c.getAttribute('data-name') || '').toLowerCase();
+    var collection = (c.querySelector('.product-collection') ? c.querySelector('.product-collection').textContent : '').toLowerCase();
+    var tagline = (c.querySelector('.product-tagline') ? c.querySelector('.product-tagline').textContent : '').toLowerCase();
+    var tags = (c.getAttribute('data-tags') || '').toLowerCase();
+    return name.indexOf(q) !== -1 || collection.indexOf(q) !== -1 || tagline.indexOf(q) !== -1 || tags.indexOf(q) !== -1;
+  }).slice(0, 10);
+
+  if(matches.length === 0){
+    resultsEl.innerHTML = '<div class="search-empty">Ничего не нашлось по «' + q + '»</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = '';
+  matches.forEach(function(c){
+    var id = c.getAttribute('data-id');
+    var name = c.getAttribute('data-name');
+    var price = c.getAttribute('data-price');
+    var collection = c.querySelector('.product-collection') ? c.querySelector('.product-collection').textContent : '';
+    var img = c.querySelector('.product-img');
+    var placeholder = c.querySelector('.product-img-placeholder');
+    var imgHtml = img ? '<img src="'+img.getAttribute('src')+'" alt="'+name+'">' : (placeholder ? placeholder.textContent : 'ᛟ');
+    var priceText = price === '0' ? 'уточняется' : Number(price).toLocaleString('ru-RU')+' ₽';
+    var row = document.createElement('div');
+    row.className = 'search-result';
+    row.onclick = function(){ closeSearch(); openProductModal(id); };
+    row.innerHTML = '<div class="search-result-img">'+imgHtml+'</div>'+
+      '<div class="search-result-info"><div class="search-result-name">'+name+'</div><div class="search-result-collection">'+collection+'</div></div>'+
+      '<div class="search-result-price">'+priceText+'</div>';
+    resultsEl.appendChild(row);
+  });
+}
+window.handleSearchInput = handleSearchInput;
+
 function renderCart(){
   var el = document.getElementById('cartItems');
   var count = document.getElementById('cart-count');
@@ -1685,7 +1790,7 @@ var _modalViewId = null;
 window.openProductModal = openProductModal;
 window.closeProductModal = closeProductModal;
 document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape') closeProductModal();
+  if(e.key === 'Escape'){ closeProductModal(); closeSearch(); }
 });
 
 /* ══ HERO TEXT SCRAMBLE ══ */

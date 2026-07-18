@@ -49,9 +49,23 @@ img { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
   transform:translate(-2px,-2px);
   transition:opacity .15s;
   image-rendering:crisp-edges;
+  will-change:left,top;
 }
-#custom-cursor img{width:32px;height:32px;display:block;transition:transform .12s,filter .2s}
-body:active #custom-cursor img{transform:scale(0.88)}
+.cursor-sprite{
+  width:32px;height:32px;
+  background-repeat:no-repeat;
+  background-image:url('assets/cursors/main-sprite.png');
+  background-size:512px 32px;
+  animation:cursorAnimMain 1.1s steps(16) infinite;
+  transition:transform .12s,filter .2s;
+}
+body:active .cursor-sprite{transform:scale(0.88)}
+.cursor-sprite.red{filter:hue-rotate(-120deg) saturate(1.3)}
+.cursor-sprite.mode-busy{background-image:url('assets/cursors/busy-sprite.png');background-size:1600px 32px;animation:cursorAnimBusy 3.3s steps(50) infinite}
+.cursor-sprite.mode-move{background-image:url('assets/cursors/move-sprite.png');background-size:832px 32px;animation:cursorAnimMove 1.7s steps(26) infinite}
+@keyframes cursorAnimMain{from{background-position:0 0}to{background-position:-512px 0}}
+@keyframes cursorAnimBusy{from{background-position:0 0}to{background-position:-1600px 0}}
+@keyframes cursorAnimMove{from{background-position:0 0}to{background-position:-832px 0}}
 
 /* ══ MAIN ══ */
 #main{opacity:0;transition:opacity .8s ease .2s}
@@ -406,7 +420,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
 <!-- CURSOR — Space Rangers style -->
 <div id="custom-cursor">
-  <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8ZGVmcz4KICAgIDxmaWx0ZXIgaWQ9Imdsb3ciIHg9Ii00MCUiIHk9Ii00MCUiIHdpZHRoPSIxODAlIiBoZWlnaHQ9IjE4MCUiPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIxLjUiIHJlc3VsdD0iYmx1ciIvPgogICAgICA8ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz48ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz48L2ZlTWVyZ2U+CiAgICA8L2ZpbHRlcj4KICA8L2RlZnM+CiAgPCEtLSBTaGFkb3cgbGF5ZXIgKGRhcmssIG9mZnNldCBkb3duLXJpZ2h0IHNsaWdodGx5KSAtLT4KICA8cG9seWdvbiBwb2ludHM9IjMsMyAzLDIyIDguNSwxNiAxMywyNiAxNS41LDI1IDExLDE1IDE4LDE1IgogICAgICAgICAgIGZpbGw9InJnYmEoMCwwLDAsMC4zNSkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEsMSkiLz4KICA8IS0tIE1haW4gYXJyb3c6IHRoaW4gY29udG91ciwgc2VtaS10cmFuc3BhcmVudCBmaWxsIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iMywzIDMsMjIgOC41LDE2IDEzLDI2IDE1LjUsMjUgMTEsMTUgMTgsMTUiCiAgICAgICAgICAgZmlsbD0icmdiYSgwLDI1NSw2NSwwLjA4KSIKICAgICAgICAgICBzdHJva2U9InJnYmEoMCwyNTUsNjUsMC43NSkiCiAgICAgICAgICAgc3Ryb2tlLXdpZHRoPSIxIgogICAgICAgICAgIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiCiAgICAgICAgICAgZmlsdGVyPSJ1cmwoI2dsb3cpIi8+CiAgPCEtLSBJbm5lciBoaWdobGlnaHQgbGluZSBvbiBsZWZ0IGVkZ2UgLS0+CiAgPGxpbmUgeDE9IjMiIHkxPSIzIiB4Mj0iMyIgeTI9IjIwIgogICAgICAgIHN0cm9rZT0icmdiYSgxODAsMjU1LDIwMCwwLjUpIiBzdHJva2Utd2lkdGg9IjAuOCIvPgogIDwhLS0gVGlwIGhpZ2hsaWdodCAtLT4KICA8Y2lyY2xlIGN4PSIzIiBjeT0iMyIgcj0iMS4yIiBmaWxsPSJyZ2JhKDIwMCwyNTUsMjEwLDAuOSkiLz4KPC9zdmc+" alt="" draggable="false">
+  <div class="cursor-sprite" id="cursorSprite"></div>
 </div>
 
 <!-- LOADER -->
@@ -1566,20 +1580,41 @@ document.addEventListener("DOMContentLoaded", function() {
 
 /* ══ CURSOR — Space Rangers style ══ */
 var cur = document.getElementById('custom-cursor');
-var _curImg = cur.querySelector('img');
-var _curGreen = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8ZGVmcz48ZmlsdGVyIGlkPSJnIiB4PSItNDAlIiB5PSItNDAlIiB3aWR0aD0iMTgwJSIgaGVpZ2h0PSIxODAlIj4KICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEuNSIgcmVzdWx0PSJiIi8+CiAgICA8ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49ImIiLz48ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz48L2ZlTWVyZ2U+CiAgPC9maWx0ZXI+PC9kZWZzPgogIDxwb2x5Z29uIHBvaW50cz0iMywzIDMsMjIgOC41LDE2IDEzLDI2IDE1LjUsMjUgMTEsMTUgMTgsMTUiIGZpbGw9InJnYmEoMCwwLDAsMC4zKSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSwxKSIvPgogIDxwb2x5Z29uIHBvaW50cz0iMywzIDMsMjIgOC41LDE2IDEzLDI2IDE1LjUsMjUgMTEsMTUgMTgsMTUiCiAgICBmaWxsPSJyZ2JhKDAsMjU1LDY1LDAuMDgpIiBzdHJva2U9InJnYmEoMCwyNTUsNjUsMC43OCkiIHN0cm9rZS13aWR0aD0iMSIKICAgIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiIGZpbHRlcj0idXJsKCNnKSIvPgogIDxsaW5lIHgxPSIzIiB5MT0iMyIgeDI9IjMiIHkyPSIyMCIgc3Ryb2tlPSJyZ2JhKDE4MCwyNTUsMjAwLDAuNSkiIHN0cm9rZS13aWR0aD0iMC44Ii8+CiAgPGNpcmNsZSBjeD0iMyIgY3k9IjMiIHI9IjEuMiIgZmlsbD0icmdiYSgyMDAsMjU1LDIxMCwwLjkpIi8+Cjwvc3ZnPg==';
-var _curRed   = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICA8ZGVmcz48ZmlsdGVyIGlkPSJnIiB4PSItNDAlIiB5PSItNDAlIiB3aWR0aD0iMTgwJSIgaGVpZ2h0PSIxODAlIj4KICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEuNSIgcmVzdWx0PSJiIi8+CiAgICA8ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49ImIiLz48ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz48L2ZlTWVyZ2U+CiAgPC9maWx0ZXI+PC9kZWZzPgogIDxwb2x5Z29uIHBvaW50cz0iMywzIDMsMjIgOC41LDE2IDEzLDI2IDE1LjUsMjUgMTEsMTUgMTgsMTUiIGZpbGw9InJnYmEoMCwwLDAsMC4zKSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSwxKSIvPgogIDxwb2x5Z29uIHBvaW50cz0iMywzIDMsMjIgOC41LDE2IDEzLDI2IDE1LjUsMjUgMTEsMTUgMTgsMTUiCiAgICBmaWxsPSJyZ2JhKDI1NSwzMiwzMiwwLjA4KSIgc3Ryb2tlPSJyZ2JhKDI1NSwzMiwzMiwwLjc4KSIgc3Ryb2tlLXdpZHRoPSIxIgogICAgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgZmlsdGVyPSJ1cmwoI2cpIi8+CiAgPGxpbmUgeDE9IjMiIHkxPSIzIiB4Mj0iMyIgeTI9IjIwIiBzdHJva2U9InJnYmEoMjU1LDE4MCwxODAsMC41KSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICA8Y2lyY2xlIGN4PSIzIiBjeT0iMyIgcj0iMS4yIiBmaWxsPSJyZ2JhKDI1NSwyMDAsMjAwLDAuOSkiLz4KPC9zdmc+';
+var _curSprite = document.getElementById('cursorSprite');
+var _mouseX = 0, _mouseY = 0, _curRAF = null;
 
+function _cursorTick(){
+  cur.style.left = _mouseX + 'px';
+  cur.style.top  = _mouseY + 'px';
+  _curRAF = null;
+}
 document.addEventListener('mousemove', function(e){
-  cur.style.left = e.clientX + 'px';
-  cur.style.top  = e.clientY + 'px';
+  _mouseX = e.clientX; _mouseY = e.clientY;
+  if(!_curRAF) _curRAF = requestAnimationFrame(_cursorTick);
 });
 document.addEventListener('mouseleave', function(){ cur.style.opacity='0'; });
 document.addEventListener('mouseenter', function(){ cur.style.opacity='1'; });
 // expose for theme switch
 window._updateCursorColor = function(t){
-  _curImg.src = t==='red' ? _curRed : _curGreen;
+  _curSprite.classList.toggle('red', t === 'red');
 };
+
+// cursor mode: main (default) / busy (loading) / move (draggable scroll areas)
+function setCursorMode(mode){
+  _curSprite.classList.remove('mode-busy','mode-move');
+  if(mode === 'busy') _curSprite.classList.add('mode-busy');
+  else if(mode === 'move') _curSprite.classList.add('mode-move');
+}
+window.setCursorMode = setCursorMode;
+
+setCursorMode('busy'); // busy while the loader is up
+
+['collectionFilter','topSalesScroll'].forEach(function(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('mouseenter', function(){ setCursorMode('move'); });
+  el.addEventListener('mouseleave', function(){ setCursorMode('main'); });
+});
 
 /* ══ THEME ══ */
 var _matrixMode = 'green';
@@ -2206,6 +2241,7 @@ setTimeout(function(){
       loader.style.display="none";
       document.getElementById("main").classList.add("visible");
       scrambleHeroTitle();
+      if(window.setCursorMode) setCursorMode('main');
     },650);
   },400);
 },REVEAL_AT);

@@ -2153,10 +2153,14 @@ window.loadMoreCatalog = loadMoreCatalog;
     });
     return list;
   }
-  var topRowsNeckToEdge = []; for(var r = neckRow - 1; r >= 0; r--) topRowsNeckToEdge.push(r);
-  var botRowsNeckToEdge = []; for(var r2 = neckRow + 1; r2 < rows; r2++) botRowsNeckToEdge.push(r2);
-  var slotsTop = buildSlots(topRowsNeckToEdge);
-  var slotsBot = buildSlots(botRowsNeckToEdge);
+  // each chamber settles toward its OWN geometric low point: top chamber's apex points
+  // down at the neck (so sand rests neck-first, extending outward as level rises);
+  // bottom chamber's apex points up at the neck (so sand rests floor-first, extending
+  // toward the neck as level rises). This is fixed by shape, not by source/destination role.
+  var topRowsSettleOrder = []; for(var r = neckRow - 1; r >= 0; r--) topRowsSettleOrder.push(r); // neck -> edge
+  var botRowsSettleOrder = []; for(var r2 = rows - 1; r2 > neckRow; r2--) botRowsSettleOrder.push(r2); // floor -> neck
+  var slotsTop = buildSlots(topRowsSettleOrder);
+  var slotsBot = buildSlots(botRowsSettleOrder);
 
   var TOTAL_GRAINS = 60;
   var filledTop = Math.round(TOTAL_GRAINS * 0.70); // ~30% already progressed

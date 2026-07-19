@@ -148,7 +148,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .new-card-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
 .new-card-price{font-family:'VT323',monospace;font-size:20px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
 .countdown-card{max-width:480px;margin:0 auto;padding:32px;text-align:center}
-.hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px;transition:transform 2s cubic-bezier(.45,.05,.15,1)}
+.hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px}
 .hourglass-wrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hourglass-wrap polygon{fill:none;stroke:var(--accent);stroke-width:2.5;filter:drop-shadow(0 0 6px var(--accent))}
 #hourglassCanvas{position:absolute;inset:0;width:100%;height:100%}
@@ -2116,7 +2116,7 @@ window.loadMoreCatalog = loadMoreCatalog;
   document.getElementById('seasonCard').setAttribute('data-rune', s.sym);
 })();
 
-/* ══ HOURGLASS: individual pixel-grain gravity simulation ══ */
+/* ══ HOURGLASS: real-time cellular sand physics, gravity rotates with the flip ══ */
 (function(){
   var canvas = document.getElementById('hourglassCanvas');
   var wrap = document.getElementById('hourglassWrap');
@@ -2143,143 +2143,173 @@ window.loadMoreCatalog = loadMoreCatalog;
     var left = Math.round(centerCol - hw), right = Math.round(centerCol + hw);
     return {left:left, right:Math.max(right, left+1)};
   }
-  // canonical neck->edge slot order per chamber, columns center-out within each row
-  function buildSlots(rowOrder){
-    var list = [];
-    rowOrder.forEach(function(r){
-      var b = rowBounds(r);
-      var cs = [];
-      for(var c = b.left; c < b.right; c++) cs.push(c);
-      cs.sort(function(a,b2){ return Math.abs(a+0.5-centerCol) - Math.abs(b2+0.5-centerCol); });
-      cs.forEach(function(c){ list.push({row:r, col:c}); });
-    });
-    return list;
+  // precompute container membership once - the SAME test used to draw the
+  // outline is used to gate every single grain move, so nothing can ever
+  // render outside the visible shape.
+  var inside = [];
+  for(var r0 = 0; r0 < rows; r0++){
+    var b0 = rowBounds(r0);
+    inside[r0] = [];
+    for(var c0 = 0; c0 < cols; c0++) inside[r0][c0] = (c0 >= b0.left && c0 < b0.right);
   }
-  // Both lists ordered near(neck)->far, per chamber's OWN neck-adjacent row.
-  // Which end is "settled first" depends on CURRENT ROLE, not on which physical
-  // chamber (top/bottom) it is — that's what changes correctly after every flip:
-  //   SOURCE   chamber: anchored near the neck (drains from the far end inward)
-  //   DESTINATION chamber: anchored at its far edge/floor (fills toward the neck)
-  var nearFarTop = []; for(var r = neckRow - 1; r >= 0; r--) nearFarTop.push(r);
-  var nearFarBot = []; for(var r2 = neckRow + 1; r2 < rows; r2++) nearFarBot.push(r2);
-  var listTop = buildSlots(nearFarTop);
-  var listBot = buildSlots(nearFarBot);
+  function isInside(r, c){
+    return r >= 0 && r < rows && c >= 0 && c < cols && inside[r][c];
+  }
 
   var TOTAL_GRAINS = 88;
-  var filledTop = Math.round(TOTAL_GRAINS * 0.70); // ~30% already progressed
-  var filledBot = TOTAL_GRAINS - filledTop;
-  var sourceIsTop = true;
-  var flipping = false;
+  var grid = [];
+  for(var ri = 0; ri < rows; ri++){ grid[ri] = []; for(var ci = 0; ci < cols; ci++) grid[ri][ci] = false; }
+
+  function randCellInBand(rowFrom, rowTo){
+    for(var tries = 0; tries < 60; tries++){
+      var r = rowFrom + Math.floor(Math.random() * (rowTo - rowFrom + 1));
+      var b = rowBounds(r);
+      if(b.right - b.left <= 0) continue;
+      var c = b.left + Math.floor(Math.random() * (b.right - b.left));
+      if(isInside(r, c) && !grid[r][c]) return {r:r, c:c};
+    }
+    return null;
+  }
+
+  (function seed(){
+    var topCount = Math.round(TOTAL_GRAINS * 0.70);
+    var botCount = TOTAL_GRAINS - topCount;
+    var i, s;
+    for(i = 0; i < topCount; i++){
+      s = randCellInBand(Math.max(0, neckRow - 9), neckRow - 1);
+      if(s) grid[s.r][s.c] = true;
+    }
+    for(i = 0; i < botCount; i++){
+      s = randCellInBand(neckRow + 1, Math.min(rows - 1, neckRow + 9));
+      if(s) grid[s.r][s.c] = true;
+    }
+  })();
+
+  // ── rotation state, driven every frame (not CSS transitions) so the
+  // gravity vector can smoothly rotate together with the visible shape ──
   var rotationDeg = 0;
-  var falling = [];
-  var lastSpawn = 0;
-  var SPAWN_MS = 10000 / TOTAL_GRAINS; // ~167ms per grain -> ~10s to fully drain one chamber
-  var FALL_MS = 480;
+  var rotating = false;
+  var rotFrom = 0, rotTo = 0, rotStart = 0;
+  var ROT_MS = 2600;
 
-  function slotPixel(slot){
-    return {x:(slot.col + 0.5) * cell, y:(slot.row + 0.5) * cell};
-  }
-  var neckPx = {x: centerCol * cell, y: neckRow * cell};
-
-  // source: filled = list[0 .. count-1] (near-neck anchored)
-  // destination: filled = list[length-count .. length-1] (far-edge anchored)
-  function sourceCellAt(list, count, i){ return list[i]; }
-  function destCellAt(list, count, i){ return list[list.length - count + i]; }
-
-  function trySpawn(now){
-    if(flipping) return;
-    var srcList = sourceIsTop ? listTop : listBot;
-    var srcCount = sourceIsTop ? filledTop : filledBot;
-    if(srcCount <= 0){
-      if(falling.length === 0) doFlip();
-      return;
-    }
-    var dstList = sourceIsTop ? listBot : listTop;
-    var dstCount = sourceIsTop ? filledBot : filledTop;
-    if(dstCount >= dstList.length) return;
-    var fromSlot = sourceCellAt(srcList, srcCount, srcCount - 1);
-    var toSlot = destCellAt(dstList, dstCount + 1, 0);
-    if(sourceIsTop) filledTop--; else filledBot--;
-    var fromPx = slotPixel(fromSlot), toPx = slotPixel(toSlot);
-    falling.push({fromPx:fromPx, toPx:toPx, start:now, dur:FALL_MS, landDest:sourceIsTop ? 'bot' : 'top'});
+  function startFlip(){
+    rotating = true;
+    rotFrom = rotationDeg;
+    rotTo = rotationDeg + 180; // always increasing -> strictly clockwise
+    rotStart = performance.now();
   }
 
-  function doFlip(){
-    flipping = true;
-    canvas.style.transition = 'opacity .5s ease';
-    canvas.style.opacity = '0';
-    rotationDeg += 180; // strictly increasing -> always clockwise, never reverses
+  function updateRotation(now){
+    if(!rotating) return;
+    var p = (now - rotStart) / ROT_MS;
+    if(p >= 1){ p = 1; rotating = false; }
+    var eased = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p+2, 2)/2; // ease-in-out, unhurried
+    rotationDeg = rotFrom + (rotTo - rotFrom) * eased;
     wrap.style.transform = 'rotate(' + rotationDeg + 'deg)';
-    setTimeout(function(){
-      sourceIsTop = !sourceIsTop; // swapped while invisible, mid-rotation
-    }, 1000);
-    setTimeout(function(){
-      canvas.style.opacity = '1'; // fades back in already settled, before rotation finishes
-    }, 1550);
-    setTimeout(function(){
-      flipping = false;
-    }, 2000);
   }
 
-  function ease(t){ return t * t; } // accelerate like gravity
+  // gravity direction expressed in the CANVAS's own local coordinate frame:
+  // as the container rotates clockwise by rotationDeg, real-world "down"
+  // swings counter-clockwise relative to the container's own axes.
+  function gravityVector(){
+    var rad = rotationDeg * Math.PI / 180;
+    return {x: Math.sin(rad), y: Math.cos(rad)};
+  }
 
-  function drawChamber(list, count, isSource){
-    for(var i = 0; i < count; i++){
-      var s = isSource ? sourceCellAt(list, count, i) : destCellAt(list, count, i);
-      ctx.fillRect(s.col * cell + 0.3, s.row * cell + 0.3, cell - 0.5, cell - 0.5);
+  function primaryAndSlideOffsets(g){
+    var dx = Math.round(g.x), dy = Math.round(g.y);
+    if(dx === 0 && dy === 0) dy = 1;
+    // two diagonal alternatives (perpendicular-ish) for natural sliding
+    // when the straight path is blocked, biased toward the true vector
+    var altA, altB;
+    if(dy !== 0 && dx === 0){ altA = {dx:-1, dy:dy}; altB = {dx:1, dy:dy}; }
+    else if(dx !== 0 && dy === 0){ altA = {dx:dx, dy:-1}; altB = {dx:dx, dy:1}; }
+    else { altA = {dx:dx, dy:0}; altB = {dx:0, dy:dy}; }
+    return [{dx:dx, dy:dy}, altA, altB];
+  }
+
+  function simTick(){
+    var g = gravityVector();
+    var offsets = primaryAndSlideOffsets(g);
+    // snapshot occupancy so a grain can't move twice in the same tick,
+    // and can't move into a cell another grain is also moving into
+    var claimed = [];
+    for(var r = 0; r < rows; r++) claimed[r] = [];
+
+    // process starting from cells already farthest "downhill" so chains
+    // of motion read as a believable single pass
+    var order = [];
+    for(var r2 = 0; r2 < rows; r2++) for(var c2 = 0; c2 < cols; c2++) if(grid[r2][c2]) order.push({r:r2, c:c2});
+    order.sort(function(a, b){
+      return (b.r*g.y + b.c*g.x) - (a.r*g.y + a.c*g.x);
+    });
+
+    for(var i = 0; i < order.length; i++){
+      var r = order[i].r, c = order[i].c;
+      var moved = false;
+      for(var k = 0; k < offsets.length; k++){
+        var nr = r + offsets[k].dy, nc = c + offsets[k].dx;
+        if(offsets[k].dx === 0 && offsets[k].dy === 0) continue;
+        if(isInside(nr, nc) && !grid[nr][nc] && !claimed[nr][nc]){
+          grid[r][c] = false;
+          grid[nr][nc] = true;
+          claimed[nr][nc] = true;
+          moved = true;
+          break;
+        }
+      }
+      if(!moved) claimed[r][c] = true;
     }
+  }
+
+  // a flip triggers once the chamber currently "uphill" (against gravity,
+  // i.e. the one draining) has no grains left in it
+  function checkFlip(){
+    if(rotating) return;
+    var parity = Math.round(rotationDeg / 180) % 2;
+    var rFrom, rTo;
+    if(parity === 0){ rFrom = 0; rTo = neckRow - 1; } else { rFrom = neckRow + 1; rTo = rows - 1; }
+    var count = 0;
+    for(var r = rFrom; r <= rTo; r++) for(var c = 0; c < cols; c++) if(grid[r][c]) count++;
+    if(count === 0) startFlip();
   }
 
   function clipToHourglass(){
     ctx.beginPath();
-    // left edge of top chamber, top to neck
     ctx.moveTo(rowBounds(0).left * cell, 0);
-    for(var r = 1; r <= neckRow; r++) ctx.lineTo(rowBounds(Math.min(r,neckRow-1)).left * cell, r * cell);
-    // left edge of bottom chamber, neck to floor
-    for(var r2 = neckRow; r2 < rows; r2++) ctx.lineTo(rowBounds(Math.max(r2,neckRow+1)).left * cell, r2 * cell);
+    for(var r = 1; r <= neckRow; r++) ctx.lineTo(rowBounds(Math.min(r, neckRow-1)).left * cell, r * cell);
+    for(var r2 = neckRow; r2 < rows; r2++) ctx.lineTo(rowBounds(Math.max(r2, neckRow+1)).left * cell, r2 * cell);
     ctx.lineTo(rowBounds(rows-1).left * cell, H);
-    // right edge, floor back up to top
     ctx.lineTo(rowBounds(rows-1).right * cell, H);
-    for(var r3 = rows - 1; r3 >= neckRow; r3--) ctx.lineTo(rowBounds(Math.max(r3,neckRow+1)).right * cell, r3 * cell);
-    for(var r4 = neckRow; r4 >= 0; r4--) ctx.lineTo(rowBounds(Math.min(r4,neckRow-1)).right * cell, r4 * cell);
+    for(var r3 = rows - 1; r3 >= neckRow; r3--) ctx.lineTo(rowBounds(Math.max(r3, neckRow+1)).right * cell, r3 * cell);
+    for(var r4 = neckRow; r4 >= 0; r4--) ctx.lineTo(rowBounds(Math.min(r4, neckRow-1)).right * cell, r4 * cell);
     ctx.closePath();
     ctx.clip();
   }
 
-  function frame(now){
-    if(!lastSpawn) lastSpawn = now;
-    if(now - lastSpawn >= SPAWN_MS){
-      lastSpawn = now;
-      trySpawn(now);
-    }
+  function render(){
     ctx.clearRect(0, 0, W, H);
     ctx.save();
     clipToHourglass();
-    ctx.fillStyle = (_matrixMode === 'red') ? 'rgba(255,60,60,0.72)' : 'rgba(60,255,120,0.72)';
-    drawChamber(listTop, filledTop, sourceIsTop);
-    drawChamber(listBot, filledBot, !sourceIsTop);
-
-    for(var i = falling.length - 1; i >= 0; i--){
-      var g = falling[i];
-      var p = (now - g.start) / g.dur;
-      if(p >= 1){
-        if(g.landDest === 'bot') filledBot++; else filledTop++;
-        falling.splice(i, 1);
-        continue;
+    ctx.fillStyle = (_matrixMode === 'red') ? 'rgba(255,50,50,0.92)' : 'rgba(40,255,110,0.92)';
+    for(var r = 0; r < rows; r++){
+      for(var c = 0; c < cols; c++){
+        if(grid[r][c]) ctx.fillRect(c * cell + 0.3, r * cell + 0.3, cell - 0.6, cell - 0.6);
       }
-      var x, y;
-      if(p < 0.5){
-        var e1 = ease(p / 0.5);
-        x = g.fromPx.x + (neckPx.x - g.fromPx.x) * e1;
-        y = g.fromPx.y + (neckPx.y - g.fromPx.y) * e1;
-      } else {
-        var e2 = ease((p - 0.5) / 0.5);
-        x = neckPx.x + (g.toPx.x - neckPx.x) * e2;
-        y = neckPx.y + (g.toPx.y - neckPx.y) * e2;
-      }
-      ctx.fillRect(x - cell/2 + 0.5, y - cell/2 + 0.5, cell - 1, cell - 1);
     }
     ctx.restore();
+  }
+
+  var lastTick = 0;
+  var TICK_MS = 150;
+  function frame(now){
+    updateRotation(now);
+    if(now - lastTick >= TICK_MS){
+      lastTick = now;
+      simTick();
+      checkFlip();
+    }
+    render();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

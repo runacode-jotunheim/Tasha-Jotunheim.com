@@ -247,7 +247,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .hero-title{font-family:'Cinzel',serif;font-size:clamp(24px,4.5vw,42px);font-weight:900;letter-spacing:2px;color:var(--accent);text-shadow:0 0 20px rgba(0,255,65,0.45),0 0 50px rgba(0,255,65,0.18);text-transform:uppercase;line-height:1.25;margin-bottom:16px}
 .hero-sub{font-size:12px;line-height:1.95;color:#c8ffda;max-width:400px;margin-bottom:28px}
 .hero-runes{font-family:'VT323',monospace;font-size:18px;letter-spacing:7px;color:rgba(0,255,65,0.3);margin-bottom:28px}
-.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 34px;border:1px solid var(--accent);border-radius:6px;font-family:'VT323',monospace;font-size:19px;letter-spacing:5px;color:var(--accent);text-decoration:none;text-transform:uppercase;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);position:relative;overflow:hidden;transition:color .25s}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 34px;border:1px solid var(--accent);border-radius:6px;font-family:'VT323','Share Tech Mono',monospace;font-size:19px;letter-spacing:5px;color:var(--accent);text-decoration:none;text-transform:uppercase;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);position:relative;overflow:hidden;transition:color .25s}
 .hero-cta::before{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;z-index:-1}
 .hero-cta:hover::before{transform:scaleX(1)}
 .hero-cta:hover{color:#000}
@@ -2206,10 +2206,17 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   function doFlip(){
     flipping = true;
+    canvas.style.transition = 'opacity .5s ease';
+    canvas.style.opacity = '0';
     rotationDeg += 180; // strictly increasing -> always clockwise, never reverses
     wrap.style.transform = 'rotate(' + rotationDeg + 'deg)';
     setTimeout(function(){
-      sourceIsTop = !sourceIsTop;
+      sourceIsTop = !sourceIsTop; // swapped while invisible, mid-rotation
+    }, 1000);
+    setTimeout(function(){
+      canvas.style.opacity = '1'; // fades back in already settled, before rotation finishes
+    }, 1550);
+    setTimeout(function(){
       flipping = false;
     }, 2000);
   }
@@ -2219,8 +2226,24 @@ window.loadMoreCatalog = loadMoreCatalog;
   function drawChamber(list, count, isSource){
     for(var i = 0; i < count; i++){
       var s = isSource ? sourceCellAt(list, count, i) : destCellAt(list, count, i);
-      ctx.fillRect(s.col * cell + 0.5, s.row * cell + 0.5, cell - 1, cell - 1);
+      ctx.fillRect(s.col * cell + 0.3, s.row * cell + 0.3, cell - 0.5, cell - 0.5);
     }
+  }
+
+  function clipToHourglass(){
+    ctx.beginPath();
+    // left edge of top chamber, top to neck
+    ctx.moveTo(rowBounds(0).left * cell, 0);
+    for(var r = 1; r <= neckRow; r++) ctx.lineTo(rowBounds(Math.min(r,neckRow-1)).left * cell, r * cell);
+    // left edge of bottom chamber, neck to floor
+    for(var r2 = neckRow; r2 < rows; r2++) ctx.lineTo(rowBounds(Math.max(r2,neckRow+1)).left * cell, r2 * cell);
+    ctx.lineTo(rowBounds(rows-1).left * cell, H);
+    // right edge, floor back up to top
+    ctx.lineTo(rowBounds(rows-1).right * cell, H);
+    for(var r3 = rows - 1; r3 >= neckRow; r3--) ctx.lineTo(rowBounds(Math.max(r3,neckRow+1)).right * cell, r3 * cell);
+    for(var r4 = neckRow; r4 >= 0; r4--) ctx.lineTo(rowBounds(Math.min(r4,neckRow-1)).right * cell, r4 * cell);
+    ctx.closePath();
+    ctx.clip();
   }
 
   function frame(now){
@@ -2230,7 +2253,9 @@ window.loadMoreCatalog = loadMoreCatalog;
       trySpawn(now);
     }
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = (_matrixMode === 'red') ? '#ff2020' : '#00ff41';
+    ctx.save();
+    clipToHourglass();
+    ctx.fillStyle = (_matrixMode === 'red') ? 'rgba(255,60,60,0.72)' : 'rgba(60,255,120,0.72)';
     drawChamber(listTop, filledTop, sourceIsTop);
     drawChamber(listBot, filledBot, !sourceIsTop);
 
@@ -2254,6 +2279,7 @@ window.loadMoreCatalog = loadMoreCatalog;
       }
       ctx.fillRect(x - cell/2 + 0.5, y - cell/2 + 0.5, cell - 1, cell - 1);
     }
+    ctx.restore();
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

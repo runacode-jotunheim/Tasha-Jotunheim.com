@@ -2214,7 +2214,11 @@ window.loadMoreCatalog = loadMoreCatalog;
     return {x: Math.sin(rad), y: Math.cos(rad)};
   }
 
-  function simTick(){
+  // Fast background settling: any number of grains may move per pass, but
+  // each stays strictly within its OWN chamber (never crosses the neck row
+  // here) - this just lets the pile find its natural shape quickly and is
+  // not the "one at a time" moment the neck itself is.
+  function bulkSettle(){
     var g = gravityVector();
     var dx = Math.round(g.x), dy = Math.round(g.y);
     if(dx === 0 && dy === 0) dy = 1;
@@ -2223,37 +2227,30 @@ window.loadMoreCatalog = loadMoreCatalog;
     else if(dx !== 0 && dy === 0){ altA = {dx:dx, dy:-1}; altB = {dx:dx, dy:1}; }
     else { altA = {dx:dx, dy:0}; altB = {dx:0, dy:dy}; }
     var primary = {dx:dx, dy:dy};
-    // perpendicular-to-gravity directions: when a grain can't go down or
-    // diagonally-down at all (stacked on a pile, or resting at the floor),
-    // it should still be able to roll sideways to spread into a natural
-    // heap instead of freezing into a single narrow column.
     var sideA = {dx:-dy, dy:dx}, sideB = {dx:dy, dy:-dx};
 
-    // snapshot occupancy so a grain can't move twice in the same tick,
-    // and can't move into a cell another grain is also moving into
     var claimed = [];
     for(var r = 0; r < rows; r++) claimed[r] = [];
-
-    // process starting from cells already farthest "downhill" so chains
-    // of motion read as a believable single pass
     var order = [];
     for(var r2 = 0; r2 < rows; r2++) for(var c2 = 0; c2 < cols; c2++) if(grid[r2][c2]) order.push({r:r2, c:c2});
-    order.sort(function(a, b){
-      return (b.r*g.y + b.c*g.x) - (a.r*g.y + a.c*g.x);
-    });
+    order.sort(function(a, b){ return (b.r*g.y + b.c*g.x) - (a.r*g.y + a.c*g.x); });
 
     for(var i = 0; i < order.length; i++){
       var r = order[i].r, c = order[i].c;
-      // each grain independently rolls which diagonal it prefers, so a
-      // whole tick's worth of grains don't all lean the same way at once
+      var isTopChamber = r <= neckRow - 1;
       var down2 = Math.random() < 0.5 ? [altA, altB] : [altB, altA];
       var side2 = Math.random() < 0.5 ? [sideA, sideB] : [sideB, sideA];
       var offsets = [primary].concat(down2, side2);
       var moved = false;
       for(var k = 0; k < offsets.length; k++){
-        var nr = r + offsets[k].dy, nc = c + offsets[k].dx;
-        if(offsets[k].dx === 0 && offsets[k].dy === 0) continue;
-        if(isInside(nr, nc) && !grid[nr][nc] && !claimed[nr][nc]){
+        var off = offsets[k];
+        if(off.dx === 0 && off.dy === 0) continue;
+        var nr = r + off.dy, nc = c + off.dx;
+        // never cross the neck via bulk settling - that's the single-file part
+        if(isTopChamber && nr >= neckRow) continue;
+        if(!isTopChamber && nr <= neckRow) continue;
+        if(isInside(nr, nc) && !grid[nr][nc] && !claimed[nr][nc] &&
+           !(reservedCell && reservedCell.r === nr && reservedCell.c === nc)){
           grid[r][c] = false;
           grid[nr][nc] = true;
           claimed[nr][nc] = true;
@@ -2265,16 +2262,69 @@ window.loadMoreCatalog = loadMoreCatalog;
     }
   }
 
-  // a flip triggers once the chamber currently "uphill" (against gravity,
-  // i.e. the one draining) has no grains left in it
-  function checkFlip(){
-    if(rotating) return;
+  // resolve where a single grain comes to rest after entering the far
+  // chamber, starting right at the point it crossed the neck
+  function settleAfterCrossing(r, c, g){
+    var guard = 0, lastDx = null, lastDy = null;
+    while(guard++ < 80){
+      var dx = Math.round(g.x), dy = Math.round(g.y);
+      if(dx === 0 && dy === 0) dy = 1;
+      var altA, altB;
+      if(dy !== 0 && dx === 0){ altA = {dx:-1, dy:dy}; altB = {dx:1, dy:dy}; }
+      else if(dx !== 0 && dy === 0){ altA = {dx:dx, dy:-1}; altB = {dx:dx, dy:1}; }
+      else { altA = {dx:dx, dy:0}; altB = {dx:0, dy:dy}; }
+      var sideA = {dx:-dy, dy:dx}, sideB = {dx:dy, dy:-dx};
+      var down2 = Math.random() < 0.5 ? [altA, altB] : [altB, altA];
+      var side2 = Math.random() < 0.5 ? [sideA, sideB] : [sideB, sideA];
+      var offsets = [{dx:dx, dy:dy}].concat(down2, side2);
+      var moved = false;
+      for(var k = 0; k < offsets.length; k++){
+        var off = offsets[k];
+        if(off.dx === 0 && off.dy === 0) continue;
+        if(lastDx !== null && off.dx === -lastDx && off.dy === -lastDy) continue; // no immediate U-turn
+        var nr = r + off.dy, nc = c + off.dx;
+        if(isInside(nr, nc) && !grid[nr][nc]){ r = nr; c = nc; moved = true; lastDx = off.dx; lastDy = off.dy; break; }
+      }
+      if(!moved) break;
+    }
+    return {r:r, c:c};
+  }
+
+  var flying = null, reservedCell = null, lastSpawn = 0;
+  var SPAWN_MS = 30, FLY_MS = 220;
+
+  // the neck is only ~2 cells wide - realistically only one grain passes
+  // through it at a time, so crossing (unlike bulk settling) is a single
+  // visible event with its own little flight animation
+  function crossingTick(now){
+    if(rotating || flying) return;
+    if(now - lastSpawn < SPAWN_MS) return;
     var parity = Math.round(rotationDeg / 180) % 2;
-    var rFrom, rTo;
-    if(parity === 0){ rFrom = 0; rTo = neckRow - 1; } else { rFrom = neckRow + 1; rTo = rows - 1; }
-    var count = 0;
-    for(var r = rFrom; r <= rTo; r++) for(var c = 0; c < cols; c++) if(grid[r][c]) count++;
-    if(count === 0) startFlip();
+    var edgeRow = parity === 0 ? neckRow - 1 : neckRow + 1;
+    var g = gravityVector();
+    var dx = Math.round(g.x), dy = Math.round(g.y);
+    if(dx === 0 && dy === 0) dy = 1;
+    var options = [];
+    for(var c = 0; c < cols; c++){
+      if(!grid[edgeRow][c]) continue;
+      var nr = edgeRow + dy, nc = c + dx;
+      if(isInside(nr, nc) && !grid[nr][nc]) options.push({r:edgeRow, c:c, tr:nr, tc:nc});
+    }
+    if(options.length === 0){
+      var rFrom, rTo;
+      if(parity === 0){ rFrom = 0; rTo = neckRow - 1; } else { rFrom = neckRow + 1; rTo = rows - 1; }
+      var count = 0;
+      for(var r = rFrom; r <= rTo; r++) for(var cc = 0; cc < cols; cc++) if(grid[r][cc]) count++;
+      if(count === 0) startFlip();
+      return;
+    }
+    options.sort(function(a, b){ return Math.abs(a.c - centerCol) - Math.abs(b.c - centerCol); });
+    var pick = options[0];
+    lastSpawn = now;
+    grid[pick.r][pick.c] = false;
+    var dest = settleAfterCrossing(pick.tr, pick.tc, g);
+    flying = {from:{r:pick.tr, c:pick.tc}, dest:dest, start:now};
+    reservedCell = {r:dest.r, c:dest.c};
   }
 
   function traceHourglassPath(){
@@ -2289,7 +2339,7 @@ window.loadMoreCatalog = loadMoreCatalog;
     ctx.closePath();
   }
 
-  function render(){
+  function render(now){
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     ctx.save();
     // rotate outline + grains together as a single unit, using the exact
@@ -2322,19 +2372,27 @@ window.loadMoreCatalog = loadMoreCatalog;
     }
     ctx.restore();
 
+    if(flying){
+      var p = Math.min(1, (now - flying.start) / FLY_MS);
+      var e = p * p; // accelerate like gravity
+      var fx = (flying.from.c + 0.5) + ((flying.dest.c + 0.5) - (flying.from.c + 0.5)) * e;
+      var fy = (flying.from.r + 0.5) + ((flying.dest.r + 0.5) - (flying.from.r + 0.5)) * e;
+      ctx.fillRect(fx * cell - cell/2 + 0.3, fy * cell - cell/2 + 0.3, cell - 0.6, cell - 0.6);
+    }
+
     ctx.restore();
   }
 
   var lastTick = 0;
-  var TICK_MS = 150;
+  var TICK_MS = 50; // background chamber-settling rate (fast, invisible-ish)
   function frame(now){
     updateRotation(now);
     if(now - lastTick >= TICK_MS){
       lastTick = now;
-      simTick();
-      checkFlip();
+      bulkSettle();
     }
-    render();
+    crossingTick(now);
+    render(now);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

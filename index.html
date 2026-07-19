@@ -697,12 +697,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
   <div class="bento-categories" id="categories">
     <div class="cat-grid">
-      <div class="cat-tile glass reveal" onclick="filterCatalog('bracelet')">
+      <div class="cat-tile glass reveal" onclick="filterCatalog('браслет')">
         <span class="cat-icon">ᚱ</span>
         <div class="cat-name">Браслеты</div>
         <div class="cat-count">23 артефакта</div>
       </div>
-      <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('pendant')">
+      <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('кулон')">
         <span class="cat-icon">ᛏ</span>
         <div class="cat-name">Кулоны</div>
         <div class="cat-count">11 артефактов</div>
@@ -763,8 +763,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <button class="scroll-nav-arrow left" onclick="scrollByAmount('collectionFilter',-1)" aria-label="Прокрутить влево">&#10094;</button>
     <div class="collections-scroll reveal" id="collectionFilter" style="margin-bottom:32px">
       <div class="collection-chip active" onclick="filterCatalog('all',this)">Все</div>
-      <div class="collection-chip" onclick="filterCatalog('bracelet',this)">Браслеты</div>
-      <div class="collection-chip" onclick="filterCatalog('pendant',this)">Кулоны</div>
+      <div class="collection-chip" onclick="filterCatalog('браслет',this)">Браслеты</div>
+      <div class="collection-chip" onclick="filterCatalog('кулон',this)">Кулоны</div>
       <div class="collection-chip" onclick="filterCatalog('jotun-vibe',this)">Йотун Вайб</div>
       <div class="collection-chip" onclick="filterCatalog('авторская',this)">Авторские</div>
       <div class="collection-chip" onclick="filterCatalog('мабон',this)">Мабон</div>
@@ -784,7 +784,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <div class="product-grid" id="productGrid">
 
     <!-- JOTUN VIBE -->
-    <div class="product-card glass show" data-tags="jotun-vibe bracelet" data-id="1" data-price="7900" data-name="Браслет Йотун Вайб" onclick="openProductModal(1)">
+    <div class="product-card glass show" data-tags="jotun-vibe браслет" data-id="1" data-price="7900" data-name="Браслет Йотун Вайб" onclick="openProductModal(1)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/jotun-vibe.jpg" alt="Браслет Йотун Вайб" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Топ продаж</span></div>
@@ -800,7 +800,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="jotun-vibe pendant" data-id="2" data-price="12000" data-name="Кулон Твой Вечный Прайм" onclick="openProductModal(2)">
+    <div class="product-card glass show" data-tags="jotun-vibe кулон" data-id="2" data-price="12000" data-name="Кулон Твой Вечный Прайм" onclick="openProductModal(2)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/prime-pendant.jpg" alt="Кулон Твой Вечный Прайм" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-top">Хит</span></div>
@@ -816,7 +816,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="jotun-vibe bracelet" data-id="3" data-price="9500" data-name="Браслет Твой Вечный Прайм" onclick="openProductModal(3)">
+    <div class="product-card glass show" data-tags="jotun-vibe браслет" data-id="3" data-price="9500" data-name="Браслет Твой Вечный Прайм" onclick="openProductModal(3)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/prime-bracelet.jpg" alt="Браслет Твой Вечный Прайм" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -1006,14 +1006,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
           <span class="product-price">29 900 ₽</span><div style="font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px;font-weight:600">заряжен в некрополе (Египет) · последний экземпляр</div>
           <button class="product-btn" onclick="event.stopPropagation(); addToCart(17,'Весы Осириса',29900,'ᛁ')">В корзину</button>
         </div>
-      </div>
-    </div>
-
-    <div class="collection-banner show" data-tags="йоль">
-      <img src="assets/img/products/yol-banner-stranger-things.jpg" alt="Йоль — Странные дела в год Наутиза">
-      <div class="collection-banner-text">
-        <div class="cb-eyebrow">Йоль · Год Наутиза</div>
-        <div class="cb-title">Очень странные дела</div>
       </div>
     </div>
 
@@ -1273,7 +1265,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="путь bracelet" data-id="4" data-price="8500" data-name="Путь ясной мысли" onclick="openProductModal(4)">
+    <div class="product-card glass show" data-tags="путь браслет" data-id="4" data-price="8500" data-name="Путь ясной мысли" onclick="openProductModal(4)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᚺ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-season">Авторская</span></div>
@@ -1289,7 +1281,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="lotus pendant" data-id="5" data-price="11000" data-name="Лотос души" onclick="openProductModal(5)">
+    <div class="product-card glass show" data-tags="lotus кулон" data-id="5" data-price="11000" data-name="Лотос души" onclick="openProductModal(5)">
       <div class="product-img-wrap">
         <img class="product-img" src="assets/img/products/lotos-dushi.jpg" alt="Лотос души" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Авторская</span></div>
@@ -1305,7 +1297,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="product-card glass show" data-tags="jotun-vibe pendant" data-id="6" data-price="13500" data-name="Счастье — кулон" onclick="openProductModal(6)">
+    <div class="product-card glass show" data-tags="jotun-vibe кулон" data-id="6" data-price="13500" data-name="Счастье — кулон" onclick="openProductModal(6)">
       <div class="product-img-wrap">
         <div class="product-img-placeholder">ᚹ</div>
         <div class="product-badge-wrap"><span class="product-badge badge-new">Новинка</span></div>
@@ -1994,8 +1986,7 @@ function renderCatalogVisibility(){
     var tags = c.getAttribute('data-tags') || '';
     return tag === 'all' || tags.indexOf(tag) !== -1;
   });
-  var paged = tag === 'all';
-  var visibleCount = paged ? Math.min(catalogLimit, matching.length) : matching.length;
+  var visibleCount = Math.min(catalogLimit, matching.length);
 
   allCards.forEach(function(c){ c.classList.remove('show'); });
   matching.slice(0, visibleCount).forEach(function(c){ c.classList.add('show'); });
@@ -2008,12 +1999,12 @@ function renderCatalogVisibility(){
   var wrap = document.getElementById('catalogLoadMoreWrap');
   var btn = document.getElementById('catalogLoadMoreBtn');
   var countEl = document.getElementById('catalogCount');
-  if(paged && matching.length > visibleCount){
+  if(matching.length > visibleCount){
     wrap.style.display = 'block';
     btn.style.display = 'inline-flex';
     countEl.textContent = 'Показано ' + visibleCount + ' из ' + matching.length;
-  } else if(paged){
-    wrap.style.display = matching.length > CATALOG_PAGE_SIZE ? 'block' : 'none';
+  } else if(matching.length > CATALOG_PAGE_SIZE){
+    wrap.style.display = 'block';
     btn.style.display = 'none';
     countEl.textContent = 'Показаны все ' + matching.length;
   } else {

@@ -148,8 +148,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .new-card-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
 .new-card-price{font-family:'VT323',monospace;font-size:20px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
 .countdown-card{max-width:480px;margin:0 auto;padding:32px;text-align:center}
-.hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px;transition:transform .7s cubic-bezier(.4,.1,.2,1)}
-.hourglass-wrap.flip{transform:rotate(180deg)}
+.hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px;transition:transform 2s cubic-bezier(.45,.05,.15,1)}
 .hourglass-wrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hourglass-wrap polygon{fill:none;stroke:var(--accent);stroke-width:2.5;filter:drop-shadow(0 0 6px var(--accent))}
 #hourglassCanvas{position:absolute;inset:0;width:100%;height:100%;clip-path:polygon(6% 4%,94% 4%,52% 50%,52% 50%,94% 96%,6% 96%,48% 50%,48% 50%)}
@@ -2115,40 +2114,99 @@ window.loadMoreCatalog = loadMoreCatalog;
   document.getElementById('seasonCard').setAttribute('data-rune', s.sym);
 })();
 
-/* ══ HOURGLASS: matrix-styled countdown ornament ══ */
+/* ══ HOURGLASS: pixel sand simulation ══ */
 (function(){
   var canvas = document.getElementById('hourglassCanvas');
-  if(!canvas) return;
+  var wrap = document.getElementById('hourglassWrap');
+  if(!canvas || !wrap) return;
   var ctx = canvas.getContext('2d');
-  var alphabet = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ01';
-  var W = canvas.width, H = canvas.height;
-  var colStep = 9, fontSize = 10;
-  var cols = Math.ceil(W / colStep);
-  var drops = [];
-  for(var i = 0; i < cols; i++) drops[i] = -Math.random() * H;
+  var W = canvas.width, H = canvas.height; // 72 x 108
+  var cell = 4;
+  var cols = Math.floor(W / cell);          // 18
+  var rows = Math.floor(H / cell);          // 27
+  var neckRow = Math.floor(rows / 2);       // 13
+  var centerCol = cols / 2;
+  var maxHalf = cols / 2 - 1;               // wide end
+  var minHalf = 0.5;                        // neck
 
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, W, H);
+  function halfWidthAtRow(r){
+    var t;
+    if(r <= neckRow) t = 1 - (r / neckRow);
+    else t = (r - neckRow) / (rows - 1 - neckRow);
+    t = Math.max(0, Math.min(1, t));
+    return minHalf + t * (maxHalf - minHalf);
+  }
+  function rowBounds(r){
+    var hw = halfWidthAtRow(r);
+    var left = Math.round(centerCol - hw), right = Math.round(centerCol + hw);
+    return {left:left, right:Math.max(right, left+1)};
+  }
 
-  function tick(){
-    var color = (_matrixMode === 'red') ? '#ff2020' : '#00ff41';
-    ctx.fillStyle = 'rgba(0,0,0,0.28)';
-    ctx.fillRect(0, 0, W, H);
-    ctx.font = fontSize + 'px monospace';
-    ctx.fillStyle = color;
-    for(var i = 0; i < cols; i++){
-      var ch = alphabet[Math.floor(Math.random() * alphabet.length)];
-      ctx.fillText(ch, i * colStep, drops[i]);
-      if(drops[i] > H && Math.random() > 0.95) drops[i] = -fontSize;
-      drops[i] += fontSize * 0.75;
+  // rows ordered by fill priority: chamber A (canvas-top) fills/empties closest-to-neck first
+  var rowsA = []; // row indices 0..neckRow-1, ordered neck-outward
+  for(var r = neckRow - 1; r >= 0; r--) rowsA.push(r);
+  var rowsB = []; // row indices neckRow+1..end, ordered floor(outward)-inward toward neck
+  for(var r2 = rows - 1; r2 > neckRow; r2--) rowsB.push(r2);
+
+  function capacityOf(rowList){
+    var total = 0;
+    rowList.forEach(function(r){ var b = rowBounds(r); total += (b.right - b.left); });
+    return total;
+  }
+  var totalCapacity = Math.min(capacityOf(rowsA), capacityOf(rowsB));
+
+  var grainsA = Math.round(totalCapacity * 0.70); // top starts 70% full (30% already drained)
+  var grainsB = totalCapacity - grainsA;
+  var sourceIsA = true;
+  var flipping = false;
+  var rotationDeg = 0;
+
+  function drawChamber(rowList, grains){
+    var remaining = grains;
+    for(var i = 0; i < rowList.length && remaining > 0; i++){
+      var r = rowList[i];
+      var b = rowBounds(r);
+      var cap = b.right - b.left;
+      var fillCount = Math.min(cap, remaining);
+      var startCol = b.left + Math.floor((cap - fillCount) / 2);
+      for(var c = 0; c < fillCount; c++){
+        ctx.fillRect((startCol + c) * cell + 0.5, r * cell + 0.5, cell - 1, cell - 1);
+      }
+      remaining -= fillCount;
     }
   }
-  setInterval(tick, 120);
 
-  var wrap = document.getElementById('hourglassWrap');
-  if(wrap){
-    setInterval(function(){ wrap.classList.toggle('flip'); }, 3000);
+  function render(){
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = (_matrixMode === 'red') ? '#ff2020' : '#00ff41';
+    drawChamber(rowsA, grainsA);
+    drawChamber(rowsB, grainsB);
   }
+
+  function doFlip(){
+    flipping = true;
+    rotationDeg += 180; // always positive increment -> strictly clockwise, never reverses
+    wrap.style.transform = 'rotate(' + rotationDeg + 'deg)';
+    setTimeout(function(){
+      sourceIsA = !sourceIsA;
+      flipping = false;
+    }, 2000);
+  }
+
+  function tick(){
+    if(!flipping){
+      if(sourceIsA){
+        if(grainsA > 0){ grainsA--; grainsB++; }
+        else doFlip();
+      } else {
+        if(grainsB > 0){ grainsB--; grainsA++; }
+        else doFlip();
+      }
+    }
+    render();
+  }
+  render();
+  setInterval(tick, 160);
 })();
 (function(){
   var holidays = [

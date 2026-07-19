@@ -450,6 +450,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .footer-links a{color:rgba(0,255,65,0.45);font-size:10px;letter-spacing:2px;text-decoration:none;text-transform:uppercase;transition:color .2s;cursor:none}
 .footer-links a:hover{color:var(--accent)}
 .footer-copy{font-size:9px;letter-spacing:2px;color:rgba(0,255,65,0.2);text-transform:uppercase;line-height:2}
+.footer-legal-note{font-size:9px;letter-spacing:.5px;color:rgba(0,255,65,0.25);text-transform:none;line-height:1.6;max-width:480px;margin:10px auto 0;text-align:center;padding:0 20px}
 .footer-irklink{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:2px;color:rgba(0,255,65,0.35);text-decoration:none;border:1px solid rgba(0,255,65,0.15);border-radius:20px;padding:5px 14px;transition:all .2s;cursor:none}
 .footer-irklink:hover{color:var(--accent);border-color:var(--accent)}
 </style>
@@ -1381,7 +1382,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <h2 class="section-title reveal">Контакты</h2>
   <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap" class="reveal">
     <a href="https://t.me/JotunSpirit" target="_blank" class="hero-cta" style="font-size:16px;padding:12px 28px">Telegram</a>
-    <a href="#" target="_blank" class="hero-cta" style="font-size:16px;padding:12px 28px">Instagram</a>
+    <a href="#" target="_blank" class="hero-cta" style="font-size:16px;padding:12px 28px">Нельзяграмм*</a>
     <a href="#" target="_blank" class="hero-cta" style="font-size:16px;padding:12px 28px">VK</a>
   </div>
 </div>
@@ -1390,11 +1391,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <div class="footer-runes">ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ</div>
   <div class="footer-links">
     <a href="https://t.me/JotunSpirit">Telegram</a>
-    <a href="#">Instagram</a>
+    <a href="#">Нельзяграмм*</a>
     <a href="#">VK</a>
   </div>
   <a href="https://runacode-jotunheim.ru" target="_blank" class="footer-irklink">&#9654; Узнать свой Индивидуальный Рунический Код</a>
   <div class="footer-copy" style="margin-top:16px">&#9608; Артефакты Йотунхейм · 2026 · ИП Йотунхейм Таша Владимировна</div>
+  <div class="footer-legal-note">* Инстаграм — продукт компании Meta Platforms Inc., деятельность которой признана экстремистской и запрещена на территории Российской Федерации</div>
 </footer>
 
 </div><!-- /main -->
@@ -2163,7 +2165,7 @@ window.loadMoreCatalog = loadMoreCatalog;
   var listTop = buildSlots(nearFarTop);
   var listBot = buildSlots(nearFarBot);
 
-  var TOTAL_GRAINS = 60;
+  var TOTAL_GRAINS = 88;
   var filledTop = Math.round(TOTAL_GRAINS * 0.70); // ~30% already progressed
   var filledBot = TOTAL_GRAINS - filledTop;
   var sourceIsTop = true;

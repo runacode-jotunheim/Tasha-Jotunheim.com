@@ -63,10 +63,8 @@ img { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
 body:active .cursor-sprite{transform:scale(0.88)}
 .cursor-sprite.red{filter:hue-rotate(-120deg) saturate(1.3)}
 .cursor-sprite.mode-busy{background-image:url('assets/cursors/busy-sprite.png');background-size:1600px 32px;animation:cursorAnimBusy 3.3s steps(50) infinite}
-.cursor-sprite.mode-move{background-image:url('assets/cursors/move-sprite.png');background-size:832px 32px;animation:cursorAnimMove 1.7s steps(26) infinite}
 @keyframes cursorAnimMain{from{background-position:0 0}to{background-position:-512px 0}}
 @keyframes cursorAnimBusy{from{background-position:0 0}to{background-position:-1600px 0}}
-@keyframes cursorAnimMove{from{background-position:0 0}to{background-position:-832px 0}}
 
 /* ══ MAIN ══ */
 #main{opacity:0;transition:opacity .8s ease .2s}
@@ -1601,35 +1599,14 @@ window._updateCursorColor = function(t){
   _curSprite.classList.toggle('red', t === 'red');
 };
 
-// cursor mode: main (default) / busy (loading) / move (draggable scroll areas)
+// cursor mode: main (default) / busy (loading)
 function setCursorMode(mode){
-  _curSprite.classList.remove('mode-busy','mode-move');
+  _curSprite.classList.remove('mode-busy');
   if(mode === 'busy') _curSprite.classList.add('mode-busy');
-  else if(mode === 'move') _curSprite.classList.add('mode-move');
 }
 window.setCursorMode = setCursorMode;
 
-var _moveZoneIds = ['collectionFilter','topSalesScroll'];
-
-function resyncCursorMode(){
-  var el = document.elementFromPoint(_mouseX, _mouseY);
-  var inMoveZone = false;
-  while(el){
-    if(el.id && _moveZoneIds.indexOf(el.id) !== -1){ inMoveZone = true; break; }
-    el = el.parentElement;
-  }
-  setCursorMode(inMoveZone ? 'move' : 'main');
-}
-window.resyncCursorMode = resyncCursorMode;
-
 setCursorMode('busy'); // busy while the loader is up
-
-_moveZoneIds.forEach(function(id){
-  var el = document.getElementById(id);
-  if(!el) return;
-  el.addEventListener('mouseenter', function(){ setCursorMode('move'); });
-  el.addEventListener('mouseleave', function(){ setCursorMode('main'); });
-});
 
 /* ══ THEME ══ */
 var _matrixMode = 'green';
@@ -1848,7 +1825,6 @@ function closeProductModal(){
   document.getElementById('product-modal').classList.remove('open');
   if(_modalViewTimer){ clearTimeout(_modalViewTimer); _modalViewTimer = null; }
   _modalViewId = null;
-  if(window.resyncCursorMode) resyncCursorMode();
 }
 var _modalViewTimer = null;
 var _modalViewId = null;

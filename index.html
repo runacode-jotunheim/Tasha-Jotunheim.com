@@ -2157,7 +2157,13 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   var TOTAL_GRAINS = 88;
   var grid = [];
-  for(var ri = 0; ri < rows; ri++){ grid[ri] = []; for(var ci = 0; ci < cols; ci++) grid[ri][ci] = false; }
+  var lastDir = []; // remembers each settled grain's most recent move, so
+                     // bulk settling never immediately undoes its own move
+                     // (that back-and-forth is what read as "shivering sideways")
+  for(var ri = 0; ri < rows; ri++){
+    grid[ri] = []; lastDir[ri] = [];
+    for(var ci = 0; ci < cols; ci++){ grid[ri][ci] = false; lastDir[ri][ci] = null; }
+  }
 
   function randCellInBand(rowFrom, rowTo){
     for(var tries = 0; tries < 60; tries++){
@@ -2245,6 +2251,8 @@ window.loadMoreCatalog = loadMoreCatalog;
       for(var k = 0; k < offsets.length; k++){
         var off = offsets[k];
         if(off.dx === 0 && off.dy === 0) continue;
+        var last = lastDir[r][c];
+        if(last && off.dx === -last.dx && off.dy === -last.dy) continue; // no immediate U-turn
         var nr = r + off.dy, nc = c + off.dx;
         // never cross the neck via bulk settling - that's the single-file part
         if(isTopChamber && nr >= neckRow) continue;
@@ -2253,12 +2261,14 @@ window.loadMoreCatalog = loadMoreCatalog;
            !(reservedCell && reservedCell.r === nr && reservedCell.c === nc)){
           grid[r][c] = false;
           grid[nr][nc] = true;
+          lastDir[nr][nc] = off;
+          lastDir[r][c] = null;
           claimed[nr][nc] = true;
           moved = true;
           break;
         }
       }
-      if(!moved) claimed[r][c] = true;
+      if(!moved){ claimed[r][c] = true; lastDir[r][c] = null; }
     }
   }
 

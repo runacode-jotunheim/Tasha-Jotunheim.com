@@ -670,7 +670,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="countdown-card glass reveal">
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="72" height="108"></canvas>
-          <svg viewBox="0 0 72 108"><polygon points="4,4 68,4 37,54 37,54 68,104 4,104 35,54 35,54"/></svg>
+          <svg viewBox="0 0 72 108"><polygon points="4,4 68,4 40,54 40,54 68,104 4,104 32,54 32,54"/></svg>
         </div>
         <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
         <div class="countdown-clock">
@@ -2127,7 +2127,7 @@ window.loadMoreCatalog = loadMoreCatalog;
   var neckRow = Math.floor(rows / 2);
   var centerCol = cols / 2;
   var maxHalf = cols / 2 - 1;
-  var minHalf = 0.5;
+  var minHalf = 1.1;
 
   function halfWidthAtRow(r){
     var t;
@@ -2153,14 +2153,15 @@ window.loadMoreCatalog = loadMoreCatalog;
     });
     return list;
   }
-  // each chamber settles toward its OWN geometric low point: top chamber's apex points
-  // down at the neck (so sand rests neck-first, extending outward as level rises);
-  // bottom chamber's apex points up at the neck (so sand rests floor-first, extending
-  // toward the neck as level rises). This is fixed by shape, not by source/destination role.
-  var topRowsSettleOrder = []; for(var r = neckRow - 1; r >= 0; r--) topRowsSettleOrder.push(r); // neck -> edge
-  var botRowsSettleOrder = []; for(var r2 = rows - 1; r2 > neckRow; r2--) botRowsSettleOrder.push(r2); // floor -> neck
-  var slotsTop = buildSlots(topRowsSettleOrder);
-  var slotsBot = buildSlots(botRowsSettleOrder);
+  // Both lists ordered near(neck)->far, per chamber's OWN neck-adjacent row.
+  // Which end is "settled first" depends on CURRENT ROLE, not on which physical
+  // chamber (top/bottom) it is — that's what changes correctly after every flip:
+  //   SOURCE   chamber: anchored near the neck (drains from the far end inward)
+  //   DESTINATION chamber: anchored at its far edge/floor (fills toward the neck)
+  var nearFarTop = []; for(var r = neckRow - 1; r >= 0; r--) nearFarTop.push(r);
+  var nearFarBot = []; for(var r2 = neckRow + 1; r2 < rows; r2++) nearFarBot.push(r2);
+  var listTop = buildSlots(nearFarTop);
+  var listBot = buildSlots(nearFarBot);
 
   var TOTAL_GRAINS = 60;
   var filledTop = Math.round(TOTAL_GRAINS * 0.70); // ~30% already progressed
@@ -2178,19 +2179,24 @@ window.loadMoreCatalog = loadMoreCatalog;
   }
   var neckPx = {x: centerCol * cell, y: neckRow * cell};
 
+  // source: filled = list[0 .. count-1] (near-neck anchored)
+  // destination: filled = list[length-count .. length-1] (far-edge anchored)
+  function sourceCellAt(list, count, i){ return list[i]; }
+  function destCellAt(list, count, i){ return list[list.length - count + i]; }
+
   function trySpawn(now){
     if(flipping) return;
-    var srcSlots = sourceIsTop ? slotsTop : slotsBot;
+    var srcList = sourceIsTop ? listTop : listBot;
     var srcCount = sourceIsTop ? filledTop : filledBot;
     if(srcCount <= 0){
       if(falling.length === 0) doFlip();
       return;
     }
-    var dstSlots = sourceIsTop ? slotsBot : slotsTop;
+    var dstList = sourceIsTop ? listBot : listTop;
     var dstCount = sourceIsTop ? filledBot : filledTop;
-    var fromSlot = srcSlots[srcCount - 1];
-    var toSlot = dstSlots[dstCount];
-    if(!toSlot) return;
+    if(dstCount >= dstList.length) return;
+    var fromSlot = sourceCellAt(srcList, srcCount, srcCount - 1);
+    var toSlot = destCellAt(dstList, dstCount + 1, 0);
     if(sourceIsTop) filledTop--; else filledBot--;
     var fromPx = slotPixel(fromSlot), toPx = slotPixel(toSlot);
     falling.push({fromPx:fromPx, toPx:toPx, start:now, dur:FALL_MS, landDest:sourceIsTop ? 'bot' : 'top'});
@@ -2208,9 +2214,9 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   function ease(t){ return t * t; } // accelerate like gravity
 
-  function drawSettled(slots, count){
+  function drawChamber(list, count, isSource){
     for(var i = 0; i < count; i++){
-      var s = slots[i];
+      var s = isSource ? sourceCellAt(list, count, i) : destCellAt(list, count, i);
       ctx.fillRect(s.col * cell + 0.5, s.row * cell + 0.5, cell - 1, cell - 1);
     }
   }
@@ -2223,8 +2229,8 @@ window.loadMoreCatalog = loadMoreCatalog;
     }
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = (_matrixMode === 'red') ? '#ff2020' : '#00ff41';
-    drawSettled(slotsTop, filledTop);
-    drawSettled(slotsBot, filledBot);
+    drawChamber(listTop, filledTop, sourceIsTop);
+    drawChamber(listBot, filledBot, !sourceIsTop);
 
     for(var i = falling.length - 1; i >= 0; i--){
       var g = falling[i];

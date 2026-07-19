@@ -328,6 +328,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.product-grid{grid-template-columns:1fr}}
 .product-card{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:none;display:none}
+.product-card.newly-shown{animation:shamanicAppear .85s cubic-bezier(.2,.7,.25,1) both}
+@keyframes shamanicAppear{
+  0%{opacity:0;transform:scale(.82) translateY(22px);filter:blur(10px) brightness(2) saturate(1.6);box-shadow:0 0 50px var(--accent),0 0 90px var(--accent)}
+  35%{opacity:1;filter:blur(4px) brightness(1.6) saturate(1.3);box-shadow:0 0 35px var(--accent)}
+  70%{transform:scale(1.015) translateY(-2px);filter:blur(.5px) brightness(1.08);box-shadow:0 0 12px var(--accent)}
+  100%{opacity:1;transform:scale(1) translateY(0);filter:blur(0) brightness(1) saturate(1);box-shadow:0 0 0 transparent}
+}
 .product-card::before,.top-sale-card::before,.video-card::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.5px;background:linear-gradient(115deg,transparent 20%,var(--accent) 45%,#fff 50%,var(--accent) 55%,transparent 80%);background-size:250% 250%;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .35s;pointer-events:none;z-index:6}
 .product-card:hover::before,.top-sale-card:hover::before,.video-card:hover::before{opacity:1;animation:holoShift 2.8s linear infinite}
 @media(max-width:900px){
@@ -1963,7 +1970,7 @@ renderRecentlyViewed();
 renderCatalogVisibility();
 
 /* ══ CATALOG FILTER ══ */
-var CATALOG_PAGE_SIZE = 9;
+var CATALOG_PAGE_SIZE = window.innerWidth <= 700 ? 3 : 9;
 var catalogLimit = CATALOG_PAGE_SIZE;
 var catalogCurrentTag = 'all';
 
@@ -1988,8 +1995,20 @@ function renderCatalogVisibility(){
   });
   var visibleCount = Math.min(catalogLimit, matching.length);
 
-  allCards.forEach(function(c){ c.classList.remove('show'); });
-  matching.slice(0, visibleCount).forEach(function(c){ c.classList.add('show'); });
+  var previouslyShownIds = allCards.filter(function(c){ return c.classList.contains('show'); })
+    .map(function(c){ return c.getAttribute('data-id'); });
+
+  allCards.forEach(function(c){ c.classList.remove('show','newly-shown'); c.style.animationDelay = ''; });
+  var nowShown = matching.slice(0, visibleCount);
+  nowShown.forEach(function(c){ c.classList.add('show'); });
+
+  var newlyRevealed = nowShown.filter(function(c){
+    return previouslyShownIds.indexOf(c.getAttribute('data-id')) === -1;
+  });
+  newlyRevealed.forEach(function(c, i){
+    c.style.animationDelay = (i * 70) + 'ms';
+    c.classList.add('newly-shown');
+  });
 
   document.querySelectorAll('.collection-banner').forEach(function(b){
     var tags = b.getAttribute('data-tags') || '';

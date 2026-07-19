@@ -148,7 +148,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .new-card-name{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
 .new-card-price{font-family:'VT323',monospace;font-size:20px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
 .countdown-card{max-width:480px;margin:0 auto;padding:32px;text-align:center}
-.hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px}
+.hourglass-wrap{position:relative;width:138px;height:138px;margin:0 auto 10px}
 #hourglassCanvas{position:absolute;inset:0;width:100%;height:100%}
 .countdown-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:20px}
 .countdown-label span{color:var(--accent);font-weight:700}
@@ -668,7 +668,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <h2 class="section-title reveal" style="margin-bottom:16px">Следующий праздник</h2>
       <div class="countdown-card glass reveal">
         <div class="hourglass-wrap" id="hourglassWrap">
-          <canvas id="hourglassCanvas" width="72" height="108"></canvas>
+          <canvas id="hourglassCanvas" width="138" height="138"></canvas>
         </div>
         <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
         <div class="countdown-clock">
@@ -2119,7 +2119,9 @@ window.loadMoreCatalog = loadMoreCatalog;
   var wrap = document.getElementById('hourglassWrap');
   if(!canvas || !wrap) return;
   var ctx = canvas.getContext('2d');
-  var W = canvas.width, H = canvas.height; // 72 x 108
+  var CANVAS_SIZE = canvas.width; // 138 x 138 - big enough that the rotated shape never clips
+  var W = 72, H = 108; // the hourglass shape's own footprint, unchanged
+  var canvasCenter = CANVAS_SIZE / 2;
   var cell = 4;
   var cols = Math.floor(W / cell);
   var rows = Math.floor(H / cell);
@@ -2212,21 +2214,16 @@ window.loadMoreCatalog = loadMoreCatalog;
     return {x: Math.sin(rad), y: Math.cos(rad)};
   }
 
-  function primaryAndSlideOffsets(g){
+  function simTick(){
+    var g = gravityVector();
     var dx = Math.round(g.x), dy = Math.round(g.y);
     if(dx === 0 && dy === 0) dy = 1;
-    // two diagonal alternatives (perpendicular-ish) for natural sliding
-    // when the straight path is blocked, biased toward the true vector
     var altA, altB;
     if(dy !== 0 && dx === 0){ altA = {dx:-1, dy:dy}; altB = {dx:1, dy:dy}; }
     else if(dx !== 0 && dy === 0){ altA = {dx:dx, dy:-1}; altB = {dx:dx, dy:1}; }
     else { altA = {dx:dx, dy:0}; altB = {dx:0, dy:dy}; }
-    return [{dx:dx, dy:dy}, altA, altB];
-  }
+    var primary = {dx:dx, dy:dy};
 
-  function simTick(){
-    var g = gravityVector();
-    var offsets = primaryAndSlideOffsets(g);
     // snapshot occupancy so a grain can't move twice in the same tick,
     // and can't move into a cell another grain is also moving into
     var claimed = [];
@@ -2242,6 +2239,9 @@ window.loadMoreCatalog = loadMoreCatalog;
 
     for(var i = 0; i < order.length; i++){
       var r = order[i].r, c = order[i].c;
+      // each grain independently rolls which diagonal it prefers, so a
+      // whole tick's worth of grains don't all lean the same way at once
+      var offsets = Math.random() < 0.5 ? [primary, altA, altB] : [primary, altB, altA];
       var moved = false;
       for(var k = 0; k < offsets.length; k++){
         var nr = r + offsets[k].dy, nc = c + offsets[k].dx;
@@ -2283,12 +2283,14 @@ window.loadMoreCatalog = loadMoreCatalog;
   }
 
   function render(){
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     ctx.save();
     // rotate outline + grains together as a single unit, using the exact
     // same angle that drives gravity - the two can never fall out of sync
     // because there is only one canvas, one transform, one source of truth.
-    ctx.translate(W/2, H/2);
+    // Pivot is the CANVAS's center (with headroom margin); the shape itself
+    // is then re-centered onto that pivot before drawing in its own 0..W/0..H space.
+    ctx.translate(canvasCenter, canvasCenter);
     ctx.rotate(rotationDeg * Math.PI / 180);
     ctx.translate(-W/2, -H/2);
 

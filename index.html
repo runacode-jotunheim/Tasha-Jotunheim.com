@@ -151,7 +151,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px;transition:transform 2s cubic-bezier(.45,.05,.15,1)}
 .hourglass-wrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hourglass-wrap polygon{fill:none;stroke:var(--accent);stroke-width:2.5;filter:drop-shadow(0 0 6px var(--accent))}
-#hourglassCanvas{position:absolute;inset:0;width:100%;height:100%;clip-path:polygon(6% 4%,94% 4%,52% 50%,52% 50%,94% 96%,6% 96%,48% 50%,48% 50%)}
+#hourglassCanvas{position:absolute;inset:0;width:100%;height:100%}
 .countdown-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:20px}
 .countdown-label span{color:var(--accent);font-weight:700}
 .countdown-clock{display:flex;align-items:center;justify-content:center;gap:14px}
@@ -2114,7 +2114,7 @@ window.loadMoreCatalog = loadMoreCatalog;
   document.getElementById('seasonCard').setAttribute('data-rune', s.sym);
 })();
 
-/* ══ HOURGLASS: pixel sand simulation ══ */
+/* ══ HOURGLASS: individual pixel-grain gravity simulation ══ */
 (function(){
   var canvas = document.getElementById('hourglassCanvas');
   var wrap = document.getElementById('hourglassWrap');
@@ -2122,12 +2122,12 @@ window.loadMoreCatalog = loadMoreCatalog;
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height; // 72 x 108
   var cell = 4;
-  var cols = Math.floor(W / cell);          // 18
-  var rows = Math.floor(H / cell);          // 27
-  var neckRow = Math.floor(rows / 2);       // 13
+  var cols = Math.floor(W / cell);
+  var rows = Math.floor(H / cell);
+  var neckRow = Math.floor(rows / 2);
   var centerCol = cols / 2;
-  var maxHalf = cols / 2 - 1;               // wide end
-  var minHalf = 0.5;                        // neck
+  var maxHalf = cols / 2 - 1;
+  var minHalf = 0.5;
 
   function halfWidthAtRow(r){
     var t;
@@ -2141,72 +2141,110 @@ window.loadMoreCatalog = loadMoreCatalog;
     var left = Math.round(centerCol - hw), right = Math.round(centerCol + hw);
     return {left:left, right:Math.max(right, left+1)};
   }
-
-  // rows ordered by fill priority: chamber A (canvas-top) fills/empties closest-to-neck first
-  var rowsA = []; // row indices 0..neckRow-1, ordered neck-outward
-  for(var r = neckRow - 1; r >= 0; r--) rowsA.push(r);
-  var rowsB = []; // row indices neckRow+1..end, ordered floor(outward)-inward toward neck
-  for(var r2 = rows - 1; r2 > neckRow; r2--) rowsB.push(r2);
-
-  function capacityOf(rowList){
-    var total = 0;
-    rowList.forEach(function(r){ var b = rowBounds(r); total += (b.right - b.left); });
-    return total;
+  // canonical neck->edge slot order per chamber, columns center-out within each row
+  function buildSlots(rowOrder){
+    var list = [];
+    rowOrder.forEach(function(r){
+      var b = rowBounds(r);
+      var cs = [];
+      for(var c = b.left; c < b.right; c++) cs.push(c);
+      cs.sort(function(a,b2){ return Math.abs(a+0.5-centerCol) - Math.abs(b2+0.5-centerCol); });
+      cs.forEach(function(c){ list.push({row:r, col:c}); });
+    });
+    return list;
   }
-  var totalCapacity = Math.min(capacityOf(rowsA), capacityOf(rowsB));
+  var topRowsNeckToEdge = []; for(var r = neckRow - 1; r >= 0; r--) topRowsNeckToEdge.push(r);
+  var botRowsNeckToEdge = []; for(var r2 = neckRow + 1; r2 < rows; r2++) botRowsNeckToEdge.push(r2);
+  var slotsTop = buildSlots(topRowsNeckToEdge);
+  var slotsBot = buildSlots(botRowsNeckToEdge);
 
-  var grainsA = Math.round(totalCapacity * 0.70); // top starts 70% full (30% already drained)
-  var grainsB = totalCapacity - grainsA;
-  var sourceIsA = true;
+  var TOTAL_GRAINS = 60;
+  var filledTop = Math.round(TOTAL_GRAINS * 0.70); // ~30% already progressed
+  var filledBot = TOTAL_GRAINS - filledTop;
+  var sourceIsTop = true;
   var flipping = false;
   var rotationDeg = 0;
+  var falling = [];
+  var lastSpawn = 0;
+  var SPAWN_MS = 10000 / TOTAL_GRAINS; // ~167ms per grain -> ~10s to fully drain one chamber
+  var FALL_MS = 480;
 
-  function drawChamber(rowList, grains){
-    var remaining = grains;
-    for(var i = 0; i < rowList.length && remaining > 0; i++){
-      var r = rowList[i];
-      var b = rowBounds(r);
-      var cap = b.right - b.left;
-      var fillCount = Math.min(cap, remaining);
-      var startCol = b.left + Math.floor((cap - fillCount) / 2);
-      for(var c = 0; c < fillCount; c++){
-        ctx.fillRect((startCol + c) * cell + 0.5, r * cell + 0.5, cell - 1, cell - 1);
-      }
-      remaining -= fillCount;
-    }
+  function slotPixel(slot){
+    return {x:(slot.col + 0.5) * cell, y:(slot.row + 0.5) * cell};
   }
+  var neckPx = {x: centerCol * cell, y: neckRow * cell};
 
-  function render(){
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = (_matrixMode === 'red') ? '#ff2020' : '#00ff41';
-    drawChamber(rowsA, grainsA);
-    drawChamber(rowsB, grainsB);
+  function trySpawn(now){
+    if(flipping) return;
+    var srcSlots = sourceIsTop ? slotsTop : slotsBot;
+    var srcCount = sourceIsTop ? filledTop : filledBot;
+    if(srcCount <= 0){
+      if(falling.length === 0) doFlip();
+      return;
+    }
+    var dstSlots = sourceIsTop ? slotsBot : slotsTop;
+    var dstCount = sourceIsTop ? filledBot : filledTop;
+    var fromSlot = srcSlots[srcCount - 1];
+    var toSlot = dstSlots[dstCount];
+    if(!toSlot) return;
+    if(sourceIsTop) filledTop--; else filledBot--;
+    var fromPx = slotPixel(fromSlot), toPx = slotPixel(toSlot);
+    falling.push({fromPx:fromPx, toPx:toPx, start:now, dur:FALL_MS, landDest:sourceIsTop ? 'bot' : 'top'});
   }
 
   function doFlip(){
     flipping = true;
-    rotationDeg += 180; // always positive increment -> strictly clockwise, never reverses
+    rotationDeg += 180; // strictly increasing -> always clockwise, never reverses
     wrap.style.transform = 'rotate(' + rotationDeg + 'deg)';
     setTimeout(function(){
-      sourceIsA = !sourceIsA;
+      sourceIsTop = !sourceIsTop;
       flipping = false;
     }, 2000);
   }
 
-  function tick(){
-    if(!flipping){
-      if(sourceIsA){
-        if(grainsA > 0){ grainsA--; grainsB++; }
-        else doFlip();
-      } else {
-        if(grainsB > 0){ grainsB--; grainsA++; }
-        else doFlip();
-      }
+  function ease(t){ return t * t; } // accelerate like gravity
+
+  function drawSettled(slots, count){
+    for(var i = 0; i < count; i++){
+      var s = slots[i];
+      ctx.fillRect(s.col * cell + 0.5, s.row * cell + 0.5, cell - 1, cell - 1);
     }
-    render();
   }
-  render();
-  setInterval(tick, 160);
+
+  function frame(now){
+    if(!lastSpawn) lastSpawn = now;
+    if(now - lastSpawn >= SPAWN_MS){
+      lastSpawn = now;
+      trySpawn(now);
+    }
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = (_matrixMode === 'red') ? '#ff2020' : '#00ff41';
+    drawSettled(slotsTop, filledTop);
+    drawSettled(slotsBot, filledBot);
+
+    for(var i = falling.length - 1; i >= 0; i--){
+      var g = falling[i];
+      var p = (now - g.start) / g.dur;
+      if(p >= 1){
+        if(g.landDest === 'bot') filledBot++; else filledTop++;
+        falling.splice(i, 1);
+        continue;
+      }
+      var x, y;
+      if(p < 0.5){
+        var e1 = ease(p / 0.5);
+        x = g.fromPx.x + (neckPx.x - g.fromPx.x) * e1;
+        y = g.fromPx.y + (neckPx.y - g.fromPx.y) * e1;
+      } else {
+        var e2 = ease((p - 0.5) / 0.5);
+        x = neckPx.x + (g.toPx.x - neckPx.x) * e2;
+        y = neckPx.y + (g.toPx.y - neckPx.y) * e2;
+      }
+      ctx.fillRect(x - cell/2 + 0.5, y - cell/2 + 0.5, cell - 1, cell - 1);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 })();
 (function(){
   var holidays = [

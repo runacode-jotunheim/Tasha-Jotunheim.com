@@ -383,15 +383,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 /* ══ CATEGORY TILES ══ */
 .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:0}
 @media(max-width:700px){.cat-grid{grid-template-columns:1fr}}
-.bento-grid{display:grid;grid-template-columns:1fr;grid-template-areas:"topsales" "season" "categories";gap:36px}
-@media(min-width:1200px){
-  .bento-grid{grid-template-columns:340px 1fr;grid-template-areas:"season topsales" "categories categories";gap:32px 40px}
-  .bento-season{display:flex;flex-direction:column}
-  .bento-season .season-card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:none;margin:0}
-}
-.bento-season{grid-area:season;min-width:0}
-.bento-topsales{grid-area:topsales;min-width:0}
-.bento-categories{grid-area:categories;min-width:0}
+.season-countdown-row{display:grid;grid-template-columns:1fr;gap:32px;margin-bottom:8px}
+@media(min-width:900px){.season-countdown-row{grid-template-columns:1fr 1fr;align-items:stretch}}
+.bento-season,.bento-countdown{min-width:0;display:flex;flex-direction:column}
+.bento-season .season-card,.bento-countdown .countdown-card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:none;margin:0}
+.bento-topsales{margin-top:8px}
 .cat-tile{padding:28px 20px;text-align:center;transition:transform .3s;cursor:none}
 .cat-tile:hover{transform:translateY(-3px)}
 .cat-icon{font-family:'VT323',monospace;font-size:38px;color:var(--accent);margin-bottom:12px;text-shadow:0 0 12px var(--accent);display:block;animation:glow-pulse 3s ease-in-out infinite}
@@ -616,13 +612,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
 <div class="divider reveal"><span>обзор</span></div>
 
-<!-- BENTO HUB: TOP SALES + SEASON + CATEGORIES -->
+<!-- BENTO HUB: SEASON+COUNTDOWN, TOP SALES, CATEGORIES -->
 <div class="section-wrap" id="bento-hub">
-  <div class="bento-grid">
 
+  <div class="season-countdown-row">
     <div class="bento-season" id="season">
       <span class="section-eye reveal">&#9658; колесо года</span>
-      <h2 class="section-title reveal" id="seasonTitle" style="text-align:left;margin-bottom:16px">...</h2>
+      <h2 class="section-title reveal" id="seasonTitle" style="margin-bottom:16px">...</h2>
       <div class="season-card glass reveal" id="seasonCard">
         <div class="season-symbol" id="seasonSymbol">ᛟ</div>
         <div class="season-name" id="seasonName">...</div>
@@ -631,90 +627,92 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
 
-    <div class="bento-topsales" id="top-sales">
-      <span class="section-eye reveal">&#9658; хиты</span>
-      <h2 class="section-title reveal" style="text-align:left;margin-bottom:16px">Топ заказов</h2>
-      <div class="scroll-nav-wrap">
-        <button class="scroll-nav-arrow left" onclick="scrollByAmount('topSalesScroll',-1)" aria-label="Прокрутить влево">&#10094;</button>
-        <div class="top-sales-scroll" id="topSalesScroll">
-          <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
-            <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
-            <div class="top-sale-info">
-              <div class="top-sale-name">Йотун Вайб</div>
-              <div class="top-sale-price">7 900 ₽</div>
-            </div>
-          </div>
-          <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(8)">
-            <div class="top-sale-img"><img src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy"></div>
-            <div class="top-sale-info">
-              <div class="top-sale-name">Эльфийская защита</div>
-              <div class="top-sale-price">7 800 ₽</div>
-            </div>
-          </div>
-          <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(7)">
-            <div class="top-sale-img"><img src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy"></div>
-            <div class="top-sale-info">
-              <div class="top-sale-name">Возвращение к жизни</div>
-              <div class="top-sale-price">8 800 ₽</div>
-            </div>
-          </div>
-          <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(9)">
-            <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
-            <div class="top-sale-info">
-              <div class="top-sale-name">Осознанная удача</div>
-              <div class="top-sale-price">13 000 ₽</div>
-            </div>
-          </div>
-          <div class="top-sale-card glass reveal" style="transition-delay:.24s" onclick="openProductModal(11)">
-            <div class="top-sale-img"><img src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy"></div>
-            <div class="top-sale-info">
-              <div class="top-sale-name">Алая ведьма</div>
-              <div class="top-sale-price">8 800 ₽</div>
-            </div>
-          </div>
+    <div class="bento-countdown" id="countdown-section">
+      <span class="section-eye reveal">&#9658; скоро</span>
+      <h2 class="section-title reveal" style="margin-bottom:16px">Следующий праздник</h2>
+      <div class="countdown-card glass reveal">
+        <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
+        <div class="countdown-clock">
+          <div class="cd-unit"><span id="cdDays">00</span><small>дней</small></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><span id="cdHours">00</span><small>часов</small></div>
         </div>
-        <button class="scroll-nav-arrow right" onclick="scrollByAmount('topSalesScroll',1)" aria-label="Прокрутить вправо">&#10095;</button>
+        <div class="countdown-sub" id="cdDate">...</div>
       </div>
     </div>
+  </div>
 
-    <div class="bento-categories" id="categories">
-      <div class="cat-grid">
-        <div class="cat-tile glass reveal" onclick="filterCatalog('bracelet')">
-          <span class="cat-icon">ᚱ</span>
-          <div class="cat-name">Браслеты</div>
-          <div class="cat-count">23 артефакта</div>
+  <div class="divider reveal"><span>хиты</span></div>
+
+  <div class="bento-topsales" id="top-sales">
+    <span class="section-eye reveal">&#9658; хиты</span>
+    <h2 class="section-title reveal" style="margin-bottom:16px">Топ заказов</h2>
+    <div class="scroll-nav-wrap">
+      <button class="scroll-nav-arrow left" onclick="scrollByAmount('topSalesScroll',-1)" aria-label="Прокрутить влево">&#10094;</button>
+      <div class="top-sales-scroll" id="topSalesScroll">
+        <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
+          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Йотун Вайб</div>
+            <div class="top-sale-price">7 900 ₽</div>
+          </div>
         </div>
-        <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('pendant')">
-          <span class="cat-icon">ᛏ</span>
-          <div class="cat-name">Кулоны</div>
-          <div class="cat-count">11 артефактов</div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(8)">
+          <div class="top-sale-img"><img src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Эльфийская защита</div>
+            <div class="top-sale-price">7 800 ₽</div>
+          </div>
         </div>
-        <div class="cat-tile glass reveal" style="transition-delay:.16s" onclick="filterCatalog('nail')">
-          <span class="cat-icon">ᛞ</span>
-          <div class="cat-name">Nail Amulets</div>
-          <div class="cat-count">скоро</div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(7)">
+          <div class="top-sale-img"><img src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Возвращение к жизни</div>
+            <div class="top-sale-price">8 800 ₽</div>
+          </div>
+        </div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(9)">
+          <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Осознанная удача</div>
+            <div class="top-sale-price">13 000 ₽</div>
+          </div>
+        </div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.24s" onclick="openProductModal(11)">
+          <div class="top-sale-img"><img src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy"></div>
+          <div class="top-sale-info">
+            <div class="top-sale-name">Алая ведьма</div>
+            <div class="top-sale-price">8 800 ₽</div>
+          </div>
         </div>
       </div>
+      <button class="scroll-nav-arrow right" onclick="scrollByAmount('topSalesScroll',1)" aria-label="Прокрутить вправо">&#10095;</button>
     </div>
-
   </div>
-</div>
 
-<div class="divider reveal"><span>скоро</span></div>
+  <div class="divider reveal"><span>категории</span></div>
 
-<!-- COUNTDOWN -->
-<div class="section-wrap" id="countdown-section" style="padding-top:20px;padding-bottom:20px">
-  <div class="countdown-card glass reveal">
-    <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
-    <div class="countdown-clock">
-      <div class="cd-unit"><span id="cdDays">00</span><small>дней</small></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-unit"><span id="cdHours">00</span><small>часов</small></div>
+  <div class="bento-categories" id="categories">
+    <div class="cat-grid">
+      <div class="cat-tile glass reveal" onclick="filterCatalog('bracelet')">
+        <span class="cat-icon">ᚱ</span>
+        <div class="cat-name">Браслеты</div>
+        <div class="cat-count">23 артефакта</div>
+      </div>
+      <div class="cat-tile glass reveal" style="transition-delay:.08s" onclick="filterCatalog('pendant')">
+        <span class="cat-icon">ᛏ</span>
+        <div class="cat-name">Кулоны</div>
+        <div class="cat-count">11 артефактов</div>
+      </div>
+      <div class="cat-tile glass reveal" style="transition-delay:.16s" onclick="filterCatalog('nail')">
+        <span class="cat-icon">ᛞ</span>
+        <div class="cat-name">Nail Amulets</div>
+        <div class="cat-count">скоро</div>
+      </div>
     </div>
-    <div class="countdown-sub" id="cdDate">...</div>
   </div>
-</div>
 
+</div>
 
 <div class="divider reveal"><span>особое предложение</span></div>
 
@@ -1611,9 +1609,22 @@ function setCursorMode(mode){
 }
 window.setCursorMode = setCursorMode;
 
+var _moveZoneIds = ['collectionFilter','topSalesScroll'];
+
+function resyncCursorMode(){
+  var el = document.elementFromPoint(_mouseX, _mouseY);
+  var inMoveZone = false;
+  while(el){
+    if(el.id && _moveZoneIds.indexOf(el.id) !== -1){ inMoveZone = true; break; }
+    el = el.parentElement;
+  }
+  setCursorMode(inMoveZone ? 'move' : 'main');
+}
+window.resyncCursorMode = resyncCursorMode;
+
 setCursorMode('busy'); // busy while the loader is up
 
-['collectionFilter','topSalesScroll'].forEach(function(id){
+_moveZoneIds.forEach(function(id){
   var el = document.getElementById(id);
   if(!el) return;
   el.addEventListener('mouseenter', function(){ setCursorMode('move'); });
@@ -1830,12 +1841,14 @@ function openProductModal(id){
   document.getElementById('product-modal').classList.add('open');
   _modalViewTimer = setTimeout(function(){ trackInterest(id); }, 3000);
   _modalViewId = id;
+  if(window.setCursorMode) setCursorMode('main');
 }
 function closeProductModal(){
   document.getElementById('modalOverlay').classList.remove('open');
   document.getElementById('product-modal').classList.remove('open');
   if(_modalViewTimer){ clearTimeout(_modalViewTimer); _modalViewTimer = null; }
   _modalViewId = null;
+  if(window.resyncCursorMode) resyncCursorMode();
 }
 var _modalViewTimer = null;
 var _modalViewId = null;

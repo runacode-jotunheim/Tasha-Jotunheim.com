@@ -149,8 +149,6 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .new-card-price{font-family:'VT323',monospace;font-size:20px;color:var(--accent);text-shadow:0 0 8px var(--accent)}
 .countdown-card{max-width:480px;margin:0 auto;padding:32px;text-align:center}
 .hourglass-wrap{position:relative;width:72px;height:108px;margin:0 auto 22px}
-.hourglass-wrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.hourglass-wrap polygon{fill:none;stroke:var(--accent);stroke-width:2.5;filter:drop-shadow(0 0 6px var(--accent))}
 #hourglassCanvas{position:absolute;inset:0;width:100%;height:100%}
 .countdown-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent-dim);margin-bottom:20px}
 .countdown-label span{color:var(--accent);font-weight:700}
@@ -671,7 +669,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="countdown-card glass reveal">
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="72" height="108"></canvas>
-          <svg viewBox="0 0 72 108"><polygon points="4,4 68,4 40,54 40,54 68,104 4,104 32,54 32,54"/></svg>
         </div>
         <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
         <div class="countdown-clock">
@@ -2205,7 +2202,6 @@ window.loadMoreCatalog = loadMoreCatalog;
     if(p >= 1){ p = 1; rotating = false; }
     var eased = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p+2, 2)/2; // ease-in-out, unhurried
     rotationDeg = rotFrom + (rotTo - rotFrom) * eased;
-    wrap.style.transform = 'rotate(' + rotationDeg + 'deg)';
   }
 
   // gravity direction expressed in the CANVAS's own local coordinate frame:
@@ -2274,7 +2270,7 @@ window.loadMoreCatalog = loadMoreCatalog;
     if(count === 0) startFlip();
   }
 
-  function clipToHourglass(){
+  function traceHourglassPath(){
     ctx.beginPath();
     ctx.moveTo(rowBounds(0).left * cell, 0);
     for(var r = 1; r <= neckRow; r++) ctx.lineTo(rowBounds(Math.min(r, neckRow-1)).left * cell, r * cell);
@@ -2284,19 +2280,39 @@ window.loadMoreCatalog = loadMoreCatalog;
     for(var r3 = rows - 1; r3 >= neckRow; r3--) ctx.lineTo(rowBounds(Math.max(r3, neckRow+1)).right * cell, r3 * cell);
     for(var r4 = neckRow; r4 >= 0; r4--) ctx.lineTo(rowBounds(Math.min(r4, neckRow-1)).right * cell, r4 * cell);
     ctx.closePath();
-    ctx.clip();
   }
 
   function render(){
     ctx.clearRect(0, 0, W, H);
     ctx.save();
-    clipToHourglass();
+    // rotate outline + grains together as a single unit, using the exact
+    // same angle that drives gravity - the two can never fall out of sync
+    // because there is only one canvas, one transform, one source of truth.
+    ctx.translate(W/2, H/2);
+    ctx.rotate(rotationDeg * Math.PI / 180);
+    ctx.translate(-W/2, -H/2);
+
+    var accentColor = (_matrixMode === 'red') ? '#ff3232' : '#28ff6e';
+
+    traceHourglassPath();
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 2;
+    ctx.shadowColor = accentColor;
+    ctx.shadowBlur = 6;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    ctx.save();
+    traceHourglassPath();
+    ctx.clip();
     ctx.fillStyle = (_matrixMode === 'red') ? 'rgba(255,50,50,0.92)' : 'rgba(40,255,110,0.92)';
     for(var r = 0; r < rows; r++){
       for(var c = 0; c < cols; c++){
         if(grid[r][c]) ctx.fillRect(c * cell + 0.3, r * cell + 0.3, cell - 0.6, cell - 0.6);
       }
     }
+    ctx.restore();
+
     ctx.restore();
   }
 

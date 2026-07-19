@@ -2223,6 +2223,11 @@ window.loadMoreCatalog = loadMoreCatalog;
     else if(dx !== 0 && dy === 0){ altA = {dx:dx, dy:-1}; altB = {dx:dx, dy:1}; }
     else { altA = {dx:dx, dy:0}; altB = {dx:0, dy:dy}; }
     var primary = {dx:dx, dy:dy};
+    // perpendicular-to-gravity directions: when a grain can't go down or
+    // diagonally-down at all (stacked on a pile, or resting at the floor),
+    // it should still be able to roll sideways to spread into a natural
+    // heap instead of freezing into a single narrow column.
+    var sideA = {dx:-dy, dy:dx}, sideB = {dx:dy, dy:-dx};
 
     // snapshot occupancy so a grain can't move twice in the same tick,
     // and can't move into a cell another grain is also moving into
@@ -2241,7 +2246,9 @@ window.loadMoreCatalog = loadMoreCatalog;
       var r = order[i].r, c = order[i].c;
       // each grain independently rolls which diagonal it prefers, so a
       // whole tick's worth of grains don't all lean the same way at once
-      var offsets = Math.random() < 0.5 ? [primary, altA, altB] : [primary, altB, altA];
+      var down2 = Math.random() < 0.5 ? [altA, altB] : [altB, altA];
+      var side2 = Math.random() < 0.5 ? [sideA, sideB] : [sideB, sideA];
+      var offsets = [primary].concat(down2, side2);
       var moved = false;
       for(var k = 0; k < offsets.length; k++){
         var nr = r + offsets[k].dy, nc = c + offsets[k].dx;

@@ -180,7 +180,10 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
         <div class="calc-result-rune" id="resultRune">ᛟ</div>
         <div class="calc-result-title" id="resultTitle">Твой символ подбирается</div>
         <div class="calc-result-text" id="resultText">Здесь появится персональная рекомендация амулета — руна, значение и рекомендуемое размещение. Логика расчёта сейчас в разработке.</div>
-        <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Пройти заново</button>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px">
+          <button class="calc-btn" id="rerollBtn" style="display:none" onclick="runUniversePick()">&#9860; Ещё раз</button>
+          <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Пройти заново</button>
+        </div>
       </div>
     </div>
 
@@ -360,8 +363,7 @@ document.querySelectorAll('.calc-options').forEach(function(group){
 function handleAnswer(groupKey, val){
   if(groupKey === 'trustUniverse'){
     if(val === 'yes'){
-      calcGoTo('oracle');
-      runOracleAnimation(function(){ showResult(randomSphereKey()); });
+      runUniversePick();
     } else {
       calcGoTo('sphereAsk');
     }
@@ -369,8 +371,15 @@ function handleAnswer(groupKey, val){
     if(val === 'yes') calcGoTo('sphere');
     else calcGoTo('deadend');
   } else if(groupKey === 'sphere'){
-    showResult(val);
+    showResult(val, false);
   }
+}
+
+function runUniversePick(){
+  calcGoTo('oracle');
+  var pick = randomSphereKey();
+  var amulet = AMULET_POOL[pick];
+  runOracleAnimation(amulet.rune, function(){ showResult(pick, true); });
 }
 
 function randomSphereKey(){
@@ -378,17 +387,18 @@ function randomSphereKey(){
   return keys[Math.floor(Math.random() * keys.length)];
 }
 
-function showResult(sphereKey){
+function showResult(sphereKey, fromUniverse){
   var amulet = AMULET_POOL[sphereKey] || AMULET_POOL.luck;
   document.getElementById('resultRune').textContent = amulet.rune;
   document.getElementById('resultTitle').textContent = amulet.title;
   document.getElementById('resultText').textContent = amulet.text;
+  document.getElementById('rerollBtn').style.display = fromUniverse ? 'inline-flex' : 'none';
   calcGoTo('result');
 }
 
 /* ══ ORACLE: rune materializes out of the matrix ══ */
 function easeIn(t){ return t * t; }
-function runOracleAnimation(cb){
+function runOracleAnimation(targetRune, cb){
   var canvas = document.getElementById('oracleCanvas');
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
@@ -429,7 +439,7 @@ function runOracleAnimation(cb){
       ctx.shadowColor = accentColor; ctx.shadowBlur = 24 * rp;
       ctx.font = (36 + 26 * rp) + "px 'VT323'";
       ctx.fillStyle = accentColor;
-      ctx.fillText('ᛟ', cx, cy);
+      ctx.fillText(targetRune, cx, cy);
       ctx.restore();
     }
     if(t < 1){ requestAnimationFrame(frame); } else { setTimeout(cb, 250); }

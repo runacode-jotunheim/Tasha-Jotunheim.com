@@ -460,8 +460,7 @@ function runOracleAnimation(targetRune, cb){
       // middle instead of switching on at a hard boundary
       var pull = Math.pow(pr, 1.4); // visible motion from the first frame, still accelerating
       var r = p.radius0 * (1 - pull);
-      var spinWeight = smoothstep(0.4, 0.92, pr);
-      var angle = p.angle0 + spinWeight * SPIRAL_TURNS * Math.PI * 2;
+      var angle = p.angle0;
       var x = cx + Math.cos(angle) * r;
       var y = cy + Math.sin(angle) * r;
       ctx.globalAlpha = Math.max(0, 1 - pr * 1.15);

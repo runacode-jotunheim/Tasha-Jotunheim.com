@@ -14,6 +14,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{overflow-x:hidden;max-width:100%;-webkit-overflow-scrolling:touch;background:#000;scroll-behavior:smooth}
 body{color:var(--accent);font-family:'Share Tech Mono',monospace;transition:color .4s}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 * { cursor:auto }
 
 #matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -76,6 +77,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .calc-result-title{font-family:'Cinzel',serif;font-size:20px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
 .calc-result-text{font-size:13px;line-height:1.8;color:rgba(0,255,65,0.75);max-width:420px;margin:0 auto 24px}
 .calc-soon-note{margin-top:30px;font-size:10px;letter-spacing:1px;color:rgba(0,255,65,0.3);text-align:center;line-height:1.6}
+.oracle-wrap{display:flex;justify-content:center;padding:20px 0 10px}
+.oracle-label{text-align:center;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);animation:blink 1.2s infinite}
 
 /* THEME TOGGLE */
 #theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -123,40 +126,55 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
   <div class="glass calc-card">
 
-    <div class="calc-progress" id="calcProgress"></div>
-
-    <!-- Step 1: energy to attract + sphere, together -->
-    <div class="calc-step active" data-step="0">
-      <div class="calc-q-label">Вопрос 1 из 2</div>
-      <div class="calc-q-text">Какую энергию ты хочешь привлечь?</div>
-      <div class="calc-options" data-group="energy">
-        <button class="calc-opt" data-value="protection">Защита и опора</button>
-        <button class="calc-opt" data-value="luck">Удача и лёгкость</button>
-        <button class="calc-opt" data-value="love">Любовь и притяжение</button>
-        <button class="calc-opt" data-value="abundance">Изобилие</button>
-        <button class="calc-opt" data-value="power">Сила и уверенность</button>
-      </div>
-      <div class="calc-q-text" style="margin-top:22px">Выбери сферу</div>
-      <div class="calc-options" data-group="sphere">
-        <button class="calc-opt" data-value="love">Любовь и отношения</button>
-        <button class="calc-opt" data-value="money">Деньги и карьера</button>
-        <button class="calc-opt" data-value="health">Здоровье и тело</button>
-        <button class="calc-opt" data-value="home">Дом и семья</button>
-        <button class="calc-opt" data-value="self">Личная сила</button>
-      </div>
-    </div>
-
-    <!-- Step 2: universe advice -->
-    <div class="calc-step" data-step="1">
-      <div class="calc-q-label">Вопрос 2 из 2</div>
-      <div class="calc-q-text">Хочешь воспользоваться советом вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— то есть узнать, что тебе нужно именно сейчас</span></div>
-      <div class="calc-options" data-group="universe">
+    <!-- Step: trust the universe? -->
+    <div class="calc-step active" data-step="universe">
+      <div class="calc-q-text">Хочешь довериться вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— пусть символ выберет за тебя</span></div>
+      <div class="calc-options" data-group="trustUniverse">
         <button class="calc-opt" data-value="yes">Да, доверюсь</button>
-        <button class="calc-opt" data-value="no">Нет, иду по своему выбору</button>
+        <button class="calc-opt" data-value="no">Нет, выберу сама</button>
       </div>
     </div>
 
-    <!-- Result (placeholder) -->
+    <!-- Step: want to pick a specific sphere? -->
+    <div class="calc-step" data-step="sphereAsk">
+      <div class="calc-q-text">Хочешь выбрать конкретную сферу?</div>
+      <div class="calc-options" data-group="wantSphere">
+        <button class="calc-opt" data-value="yes">Да</button>
+        <button class="calc-opt" data-value="no">Нет</button>
+      </div>
+    </div>
+
+    <!-- Step: pick the sphere -->
+    <div class="calc-step" data-step="sphere">
+      <div class="calc-q-text">Выбери сферу</div>
+      <div class="calc-options" data-group="sphere">
+        <button class="calc-opt" data-value="money">Деньги</button>
+        <button class="calc-opt" data-value="beauty">Красота</button>
+        <button class="calc-opt" data-value="health">Здоровье</button>
+        <button class="calc-opt" data-value="opportunities">Возможности</button>
+        <button class="calc-opt" data-value="luck">Удача</button>
+        <button class="calc-opt" data-value="endurance">Выносливость</button>
+        <button class="calc-opt" data-value="happiness">Счастье</button>
+      </div>
+    </div>
+
+    <!-- Step: playful dead-end for people who decline everything -->
+    <div class="calc-step" data-step="deadend">
+      <div class="calc-result">
+        <div class="calc-result-rune">¯\_(ツ)_/¯</div>
+        <div class="calc-result-title">Хм...</div>
+        <div class="calc-result-text">Не довериться вселенной и не выбрать сферу — смелый выбор. А тогда зачем открывала калькулятор? &#128521;</div>
+        <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Ладно, давай заново</button>
+      </div>
+    </div>
+
+    <!-- Step: materializing-rune animation for the universe path -->
+    <div class="calc-step" data-step="oracle">
+      <div class="oracle-wrap"><canvas id="oracleCanvas" width="220" height="220"></canvas></div>
+      <div class="oracle-label">гадаем на матрице&#8230;</div>
+    </div>
+
+    <!-- Result -->
     <div class="calc-step" data-step="result">
       <div class="calc-result">
         <div class="calc-result-rune" id="resultRune">ᛟ</div>
@@ -168,7 +186,6 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <div class="calc-nav" id="calcNav">
       <button class="calc-btn calc-btn-ghost" id="calcBackBtn" onclick="calcBack()">&#9664; назад</button>
-      <button class="calc-btn" id="calcNextBtn" disabled>Далее &#9654;</button>
     </div>
 
   </div>
@@ -292,47 +309,40 @@ window.addEventListener('scroll', function(){
 /* ══ PLACEHOLDER CALCULATOR ══
    Demonstration flow only - swap the AMULET_POOL / pick logic once the
    real amulet set and matching rules are ready. */
-var calcSteps = ['0','1','result'];
-var calcIndex = 0;
-var calcAnswers = {}; // energy, sphere, universe
-
-var SPHERE_LABELS = {love:'любовь и отношения', money:'деньги и карьеру', health:'здоровье и тело', home:'дом и семью', self:'личную силу'};
+var calcHistory = ['universe'];
 
 var AMULET_POOL = {
-  protection: {rune:'ᛉ', title:'Альгиз — Щит', text:'Символ защиты и опоры. Отводит чужое влияние, помогает держать личные границы и чувствовать себя в безопасности.'},
-  luck:       {rune:'ᚠ', title:'Феху — Удача', text:'Символ лёгкости и притока. Открывает путь новым возможностям, помогает не упускать удачные моменты.'},
-  love:       {rune:'ᚷ', title:'Гебо — Притяжение', text:'Символ гармоничного обмена и притяжения. Помогает выстраивать тёплые, взаимные отношения.'},
-  abundance:  {rune:'ᛟ', title:'Отал — Изобилие', text:'Символ ресурса и накопления. Работает с ощущением достатка и стабильности.'},
-  power:      {rune:'ᚢ', title:'Уруз — Сила', text:'Символ внутренней силы и уверенности. Помогает действовать решительно и опираться на себя.'}
+  money:         {rune:'ᚠ', title:'Феху — Ресурс', text:'Символ денежного потока и стабильности. Помогает удерживать и приумножать заработанное.'},
+  beauty:        {rune:'ᛒ', title:'Беркана — Расцвет', text:'Символ роста и обновления. Работает с внешней и внутренней красотой, лёгкостью в теле.'},
+  health:        {rune:'ᚢ', title:'Уруз — Жизненная сила', text:'Символ здоровья и выносливости тела. Помогает восстановлению и укреплению.'},
+  opportunities: {rune:'ᚨ', title:'Ансуз — Знак пути', text:'Символ новых дверей и верных решений. Помогает вовремя увидеть и не упустить возможность.'},
+  luck:          {rune:'ᛃ', title:'Йера — Урожай', text:'Символ своевременной удачи и вознаграждения за усилия. Работает с ощущением лёгкости.'},
+  endurance:     {rune:'ᛉ', title:'Альгиз — Опора', text:'Символ стойкости и защиты ресурса. Помогает выдерживать нагрузку без надлома.'},
+  happiness:     {rune:'ᚷ', title:'Гебо — Гармония', text:'Символ баланса и внутреннего согласия. Работает с ощущением полноты жизни.'}
 };
 
-function calcRenderProgress(){
-  var wrap = document.getElementById('calcProgress');
-  wrap.innerHTML = '';
-  for(var i = 0; i < 2; i++){
-    var dot = document.createElement('div');
-    dot.className = 'calc-progress-dot' + (i < calcIndex || calcIndex === 2 ? ' done' : '');
-    wrap.appendChild(dot);
+function calcShowStep(step){
+  document.querySelectorAll('.calc-step').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelector('.calc-step[data-step="' + step + '"]').classList.add('active');
+  var hideNav = (step === 'result' || step === 'deadend' || step === 'oracle');
+  document.getElementById('calcNav').style.display = hideNav ? 'none' : 'flex';
+  document.getElementById('calcBackBtn').style.visibility = calcHistory.length > 1 ? 'visible' : 'hidden';
+}
+function calcGoTo(step){
+  calcHistory.push(step);
+  calcShowStep(step);
+}
+function calcBack(){
+  if(calcHistory.length > 1){
+    calcHistory.pop();
+    document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
+    calcShowStep(calcHistory[calcHistory.length - 1]);
   }
 }
-
-function calcShowStep(i){
-  document.querySelectorAll('.calc-step').forEach(function(el){ el.classList.remove('active'); });
-  document.querySelector('.calc-step[data-step="' + calcSteps[i] + '"]').classList.add('active');
-  var nav = document.getElementById('calcNav');
-  nav.style.display = calcSteps[i] === 'result' ? 'none' : 'flex';
-  document.getElementById('calcBackBtn').style.visibility = i === 0 ? 'hidden' : 'visible';
-  updateNextState();
-  calcRenderProgress();
-}
-
-function updateNextState(){
-  var next = document.getElementById('calcNextBtn');
-  var ready;
-  if(calcIndex === 0) ready = !!(calcAnswers.energy && calcAnswers.sphere);
-  else ready = !!calcAnswers.universe;
-  next.disabled = !ready;
-  next.textContent = calcIndex === 1 ? 'Узнать результат ▶' : 'Далее ▶';
+function calcRestart(){
+  calcHistory = ['universe'];
+  document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
+  calcShowStep('universe');
 }
 
 document.querySelectorAll('.calc-options').forEach(function(group){
@@ -341,59 +351,93 @@ document.querySelectorAll('.calc-options').forEach(function(group){
     btn.addEventListener('click', function(){
       group.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
       btn.classList.add('selected');
-      calcAnswers[groupKey] = btn.getAttribute('data-value');
-      updateNextState();
+      var val = btn.getAttribute('data-value');
+      setTimeout(function(){ handleAnswer(groupKey, val); }, 160);
     });
   });
 });
 
-function calcNext(){
-  if(calcIndex < 1){
-    calcIndex++;
-    calcShowStep(calcIndex);
-  } else {
-    calcIndex = 2;
-    calcShowResult();
+function handleAnswer(groupKey, val){
+  if(groupKey === 'trustUniverse'){
+    if(val === 'yes'){
+      calcGoTo('oracle');
+      runOracleAnimation(function(){ showResult(randomSphereKey()); });
+    } else {
+      calcGoTo('sphereAsk');
+    }
+  } else if(groupKey === 'wantSphere'){
+    if(val === 'yes') calcGoTo('sphere');
+    else calcGoTo('deadend');
+  } else if(groupKey === 'sphere'){
+    showResult(val);
   }
 }
-function calcBack(){
-  if(calcIndex > 0 && calcIndex < 2){
-    calcIndex--;
-    calcShowStep(calcIndex);
-  }
-}
-function calcRestart(){
-  calcAnswers = {};
-  calcIndex = 0;
-  document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
-  calcShowStep(0);
-}
-function calcShowResult(){
-  document.querySelectorAll('.calc-step').forEach(function(el){ el.classList.remove('active'); });
-  document.querySelector('.calc-step[data-step="result"]').classList.add('active');
-  document.getElementById('calcNav').style.display = 'none';
-  calcRenderProgress();
 
-  // placeholder pick logic - if "universe advice" was chosen, override the
-  // deliberate energy choice with a random pick (real rules TBD)
+function randomSphereKey(){
   var keys = Object.keys(AMULET_POOL);
-  var pickKey = calcAnswers.universe === 'yes'
-    ? keys[Math.floor(Math.random() * keys.length)]
-    : calcAnswers.energy;
-  var amulet = AMULET_POOL[pickKey] || AMULET_POOL.protection;
-  var sphereLabel = SPHERE_LABELS[calcAnswers.sphere] || 'выбранную сферу';
+  return keys[Math.floor(Math.random() * keys.length)];
+}
 
+function showResult(sphereKey){
+  var amulet = AMULET_POOL[sphereKey] || AMULET_POOL.luck;
   document.getElementById('resultRune').textContent = amulet.rune;
   document.getElementById('resultTitle').textContent = amulet.title;
-  document.getElementById('resultText').textContent = amulet.text +
-    (calcAnswers.universe === 'yes'
-      ? ' Вселенная услышала твой запрос — ' + sphereLabel + ' обретёт новую опору.'
-      : ' Подходит для запроса на ' + sphereLabel + '.');
+  document.getElementById('resultText').textContent = amulet.text;
+  calcGoTo('result');
 }
 
-document.getElementById('calcNextBtn').addEventListener('click', calcNext);
+/* ══ ORACLE: rune materializes out of the matrix ══ */
+function easeIn(t){ return t * t; }
+function runOracleAnimation(cb){
+  var canvas = document.getElementById('oracleCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
+  var alphabet = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ';
+  var particles = [];
+  for(var i = 0; i < 42; i++){
+    var angle = Math.random() * Math.PI * 2;
+    var radius = 65 + Math.random() * 35;
+    particles.push({
+      startX: cx + Math.cos(angle) * radius,
+      startY: cy + Math.sin(angle) * radius,
+      char: alphabet[Math.floor(Math.random() * alphabet.length)],
+      speedMul: 0.85 + Math.random() * 0.5
+    });
+  }
+  var start = performance.now();
+  var DURATION = 1700;
+  function frame(now){
+    var t = Math.min(1, (now - start) / DURATION);
+    ctx.clearRect(0, 0, W, H);
+    var accentColor = (_matrixMode === 'red') ? '#ff3232' : '#28ff6e';
+    ctx.font = "20px 'VT323'";
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    particles.forEach(function(p){
+      var pr = Math.min(1, t * 1.25 * p.speedMul);
+      var e = easeIn(pr);
+      var x = p.startX + (cx - p.startX) * e;
+      var y = p.startY + (cy - p.startY) * e;
+      ctx.globalAlpha = Math.max(0, 1 - pr * 0.85);
+      ctx.fillStyle = accentColor;
+      ctx.fillText(p.char, x, y);
+    });
+    ctx.globalAlpha = 1;
+    if(t > 0.65){
+      var rp = (t - 0.65) / 0.35;
+      ctx.save();
+      ctx.globalAlpha = rp;
+      ctx.shadowColor = accentColor; ctx.shadowBlur = 24 * rp;
+      ctx.font = (36 + 26 * rp) + "px 'VT323'";
+      ctx.fillStyle = accentColor;
+      ctx.fillText('ᛟ', cx, cy);
+      ctx.restore();
+    }
+    if(t < 1){ requestAnimationFrame(frame); } else { setTimeout(cb, 250); }
+  }
+  requestAnimationFrame(frame);
+}
 
-calcShowStep(0);
+calcShowStep('universe');
 </script>
 
 </body>

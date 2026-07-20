@@ -448,11 +448,16 @@ function runOracleAnimation(targetRune, cb){
   var start = performance.now();
   var DURATION = 3700;
   function frame(now){
-    var t = Math.min(1, (now - start) / DURATION);
+    var elapsed = now - start;
+    var t = Math.min(1, elapsed / DURATION);
     ctx.clearRect(0, 0, W, H);
     var accentColor = (_matrixMode === 'red') ? '#ff3232' : '#28ff6e';
     ctx.font = "20px 'VT323'";
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var FADE_MS = 200;
+    var lateFade = elapsed > DURATION - FADE_MS
+      ? Math.max(0, 1 - (elapsed - (DURATION - FADE_MS)) / FADE_MS)
+      : 1;
     particles.forEach(function(p){
       var pr = Math.min(1, t * 1.15 * p.speedMul);
       // one continuous accelerating pull toward center for the whole
@@ -463,7 +468,7 @@ function runOracleAnimation(targetRune, cb){
       var angle = p.angle0;
       var x = cx + Math.cos(angle) * r;
       var y = cy + Math.sin(angle) * r;
-      ctx.globalAlpha = Math.max(0, 1 - pr * 1.15);
+      ctx.globalAlpha = lateFade; // full brightness throughout, only fades right at the very end
       ctx.fillStyle = accentColor;
       ctx.fillText(p.char, x, y);
     });

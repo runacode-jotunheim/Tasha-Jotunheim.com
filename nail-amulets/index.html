@@ -436,16 +436,16 @@ function runOracleAnimation(targetRune, cb){
       var pr = Math.min(1, t * 1.25 * p.speedMul);
       var r, angle;
       if(pr < 0.5){
-        // phase 1: soft outward drift, no rotation yet
+        // phase 1: narrows straight toward center, no rotation yet
         var lt = pr / 0.5;
-        var expand = 1 - Math.pow(1 - lt, 3); // ease-out cubic, gentle
-        r = p.radius0 * (1 + expand * 0.16);
+        var narrow = 1 - Math.pow(1 - lt, 3); // ease-out cubic, gentle
+        r = p.radius0 * (1 - narrow * 0.4);
         angle = p.angle0;
       } else {
         // phase 2: spiral inward, accelerating as it nears center
         var lt2 = (pr - 0.5) / 0.5;
         var shrink = lt2 * lt2 * lt2; // ease-in cubic, soft start then rushes in
-        r = p.radius0 * 1.16 * (1 - shrink);
+        r = p.radius0 * 0.6 * (1 - shrink);
         angle = p.angle0 + shrink * SPIRAL_TURNS * Math.PI * 2;
       }
       var x = cx + Math.cos(angle) * r;

@@ -382,9 +382,13 @@ function runUniversePick(){
   runOracleAnimation(amulet.rune, function(){ showResult(pick, true); });
 }
 
+var lastUniversePick = null;
 function randomSphereKey(){
   var keys = Object.keys(AMULET_POOL);
-  return keys[Math.floor(Math.random() * keys.length)];
+  if(lastUniversePick){ keys = keys.filter(function(k){ return k !== lastUniversePick; }); }
+  var pick = keys[Math.floor(Math.random() * keys.length)];
+  lastUniversePick = pick;
+  return pick;
 }
 
 function showResult(sphereKey, fromUniverse){
@@ -403,17 +407,19 @@ function runOracleAnimation(targetRune, cb){
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
   var alphabet = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ';
+  var SPIRAL_TURNS = 2.6;
   var particles = [];
   for(var i = 0; i < 42; i++){
-    var angle = Math.random() * Math.PI * 2;
-    var radius = 85 + Math.random() * 55;
     particles.push({
-      startX: cx + Math.cos(angle) * radius,
-      startY: cy + Math.sin(angle) * radius,
+      angle0: Math.random() * Math.PI * 2,
+      radius0: 85 + Math.random() * 55,
       char: alphabet[Math.floor(Math.random() * alphabet.length)],
       speedMul: 0.85 + Math.random() * 0.5
     });
   }
+  var rays = [];
+  for(var j = 0; j < 8; j++) rays.push(j * (Math.PI * 2 / 8));
+
   var start = performance.now();
   var DURATION = 3700;
   function frame(now){
@@ -425,8 +431,11 @@ function runOracleAnimation(targetRune, cb){
     particles.forEach(function(p){
       var pr = Math.min(1, t * 1.25 * p.speedMul);
       var e = easeIn(pr);
-      var x = p.startX + (cx - p.startX) * e;
-      var y = p.startY + (cy - p.startY) * e;
+      var r = p.radius0 * (1 - e);
+      var spin = Math.pow(pr, 2.2) * SPIRAL_TURNS * Math.PI * 2; // accelerates as it nears center
+      var angle = p.angle0 + spin;
+      var x = cx + Math.cos(angle) * r;
+      var y = cy + Math.sin(angle) * r;
       ctx.globalAlpha = Math.max(0, 1 - pr * 0.85);
       ctx.fillStyle = accentColor;
       ctx.fillText(p.char, x, y);
@@ -434,6 +443,22 @@ function runOracleAnimation(targetRune, cb){
     ctx.globalAlpha = 1;
     if(t > 0.65){
       var rp = (t - 0.65) / 0.35;
+      // star-burst flash right as the rune materializes
+      if(rp < 0.5){
+        var burst = rp / 0.5;
+        ctx.save();
+        ctx.globalAlpha = (1 - burst) * 0.9;
+        ctx.strokeStyle = accentColor;
+        ctx.lineWidth = 1.5;
+        var rayLen = 14 + burst * 46;
+        rays.forEach(function(a){
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a) * 10, cy + Math.sin(a) * 10);
+          ctx.lineTo(cx + Math.cos(a) * rayLen, cy + Math.sin(a) * rayLen);
+          ctx.stroke();
+        });
+        ctx.restore();
+      }
       ctx.save();
       ctx.globalAlpha = rp;
       ctx.shadowColor = accentColor; ctx.shadowBlur = 24 * rp;

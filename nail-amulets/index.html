@@ -128,7 +128,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <!-- Step: trust the universe? -->
     <div class="calc-step active" data-step="universe">
-      <div class="calc-q-text">Хочешь довериться вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— открой тайны вселенной для тебя</span></div>
+      <div class="calc-q-text">Хочешь довериться вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— открой тайны вселенной для себя</span></div>
       <div class="calc-options" data-group="trustUniverse">
         <button class="calc-opt" data-value="yes">Да, доверюсь</button>
         <button class="calc-opt" data-value="no">Нет, выберу сама</button>
@@ -287,6 +287,10 @@ function initMatrix(canvas){
   setInterval(draw, 1000/24);
 }
 initMatrix(document.getElementById('matrix-canvas'));
+if(document.fonts && document.fonts.load){
+  document.fonts.load("20px 'VT323'");
+  document.fonts.load("70px 'VT323'");
+}
 
 /* ══ THEME TOGGLE ══ */
 function togglePills(){ document.getElementById('pillChoices').classList.toggle('open'); }
@@ -379,7 +383,15 @@ function runUniversePick(){
   calcGoTo('oracle');
   var pick = randomSphereKey();
   var amulet = AMULET_POOL[pick];
-  runOracleAnimation(amulet.rune, function(){ showResult(pick, true); });
+  var begin = function(){ runOracleAnimation(amulet.rune, function(){ showResult(pick, true); }); };
+  if(document.fonts && document.fonts.load){
+    Promise.all([
+      document.fonts.load("20px 'VT323'"),
+      document.fonts.load("70px 'VT323'")
+    ]).then(begin, begin);
+  } else {
+    begin();
+  }
 }
 
 var lastUniversePick = null;

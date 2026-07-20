@@ -383,10 +383,14 @@ function runUniversePick(){
 }
 
 var lastUniversePick = null;
+var lastUniverseStreak = 0;
 function randomSphereKey(){
   var keys = Object.keys(AMULET_POOL);
-  if(lastUniversePick){ keys = keys.filter(function(k){ return k !== lastUniversePick; }); }
+  if(lastUniversePick && lastUniverseStreak >= 2){
+    keys = keys.filter(function(k){ return k !== lastUniversePick; });
+  }
   var pick = keys[Math.floor(Math.random() * keys.length)];
+  lastUniverseStreak = (pick === lastUniversePick) ? lastUniverseStreak + 1 : 1;
   lastUniversePick = pick;
   return pick;
 }

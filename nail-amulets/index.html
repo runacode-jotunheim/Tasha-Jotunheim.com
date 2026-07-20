@@ -125,35 +125,34 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <div class="calc-progress" id="calcProgress"></div>
 
-    <!-- Step 1 (placeholder question) -->
+    <!-- Step 1: energy to attract + sphere, together -->
     <div class="calc-step active" data-step="0">
-      <div class="calc-q-label">Вопрос 1 из 3</div>
-      <div class="calc-q-text">Какая энергия тебе сейчас ближе всего?</div>
-      <div class="calc-options">
+      <div class="calc-q-label">Вопрос 1 из 2</div>
+      <div class="calc-q-text">Какую энергию ты хочешь привлечь?</div>
+      <div class="calc-options" data-group="energy">
         <button class="calc-opt" data-value="protection">Защита и опора</button>
         <button class="calc-opt" data-value="luck">Удача и лёгкость</button>
         <button class="calc-opt" data-value="love">Любовь и притяжение</button>
+        <button class="calc-opt" data-value="abundance">Изобилие</button>
         <button class="calc-opt" data-value="power">Сила и уверенность</button>
       </div>
-    </div>
-
-    <!-- Step 2 (placeholder question) -->
-    <div class="calc-step" data-step="1">
-      <div class="calc-q-label">Вопрос 2 из 3</div>
-      <div class="calc-q-text">Какой формат тебе ближе?</div>
-      <div class="calc-options">
-        <button class="calc-opt" data-value="minimal">Минимализм, один символ</button>
-        <button class="calc-opt" data-value="detailed">Развёрнутая композиция</button>
+      <div class="calc-q-text" style="margin-top:22px">Выбери сферу</div>
+      <div class="calc-options" data-group="sphere">
+        <button class="calc-opt" data-value="love">Любовь и отношения</button>
+        <button class="calc-opt" data-value="money">Деньги и карьера</button>
+        <button class="calc-opt" data-value="health">Здоровье и тело</button>
+        <button class="calc-opt" data-value="home">Дом и семья</button>
+        <button class="calc-opt" data-value="self">Личная сила</button>
       </div>
     </div>
 
-    <!-- Step 3 (placeholder question) -->
-    <div class="calc-step" data-step="2">
-      <div class="calc-q-label">Вопрос 3 из 3</div>
-      <div class="calc-q-text">Как часто ты обновляешь маникюр?</div>
-      <div class="calc-options">
-        <button class="calc-opt" data-value="often">Часто, люблю перемены</button>
-        <button class="calc-opt" data-value="rare">Редко, предпочитаю стабильность</button>
+    <!-- Step 2: universe advice -->
+    <div class="calc-step" data-step="1">
+      <div class="calc-q-label">Вопрос 2 из 2</div>
+      <div class="calc-q-text">Хочешь воспользоваться советом вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— то есть узнать, что тебе нужно именно сейчас</span></div>
+      <div class="calc-options" data-group="universe">
+        <button class="calc-opt" data-value="yes">Да, доверюсь</button>
+        <button class="calc-opt" data-value="no">Нет, иду по своему выбору</button>
       </div>
     </div>
 
@@ -174,7 +173,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
   </div>
 
-  <div class="calc-soon-note">Расчёт пока демонстрационный — точная логика и тексты появятся с полным запуском раздела</div>
+  <div class="calc-soon-note">Расчёт пока демонстрационный — точная логика подбора и тексты амулетов появятся с полным запуском раздела</div>
 </div>
 
 <footer>
@@ -291,18 +290,28 @@ window.addEventListener('scroll', function(){
 });
 
 /* ══ PLACEHOLDER CALCULATOR ══
-   Demonstration flow only - swap answersMap / result logic once the
-   real questions and rune-mapping rules are ready. */
-var calcSteps = ['0','1','2','result'];
+   Demonstration flow only - swap the AMULET_POOL / pick logic once the
+   real amulet set and matching rules are ready. */
+var calcSteps = ['0','1','result'];
 var calcIndex = 0;
-var calcAnswers = {};
+var calcAnswers = {}; // energy, sphere, universe
+
+var SPHERE_LABELS = {love:'любовь и отношения', money:'деньги и карьеру', health:'здоровье и тело', home:'дом и семью', self:'личную силу'};
+
+var AMULET_POOL = {
+  protection: {rune:'ᛉ', title:'Альгиз — Щит', text:'Символ защиты и опоры. Отводит чужое влияние, помогает держать личные границы и чувствовать себя в безопасности.'},
+  luck:       {rune:'ᚠ', title:'Феху — Удача', text:'Символ лёгкости и притока. Открывает путь новым возможностям, помогает не упускать удачные моменты.'},
+  love:       {rune:'ᚷ', title:'Гебо — Притяжение', text:'Символ гармоничного обмена и притяжения. Помогает выстраивать тёплые, взаимные отношения.'},
+  abundance:  {rune:'ᛟ', title:'Отал — Изобилие', text:'Символ ресурса и накопления. Работает с ощущением достатка и стабильности.'},
+  power:      {rune:'ᚢ', title:'Уруз — Сила', text:'Символ внутренней силы и уверенности. Помогает действовать решительно и опираться на себя.'}
+};
 
 function calcRenderProgress(){
   var wrap = document.getElementById('calcProgress');
   wrap.innerHTML = '';
-  for(var i = 0; i < 3; i++){
+  for(var i = 0; i < 2; i++){
     var dot = document.createElement('div');
-    dot.className = 'calc-progress-dot' + (i < calcIndex || calcIndex === 3 ? ' done' : '');
+    dot.className = 'calc-progress-dot' + (i < calcIndex || calcIndex === 2 ? ' done' : '');
     wrap.appendChild(dot);
   }
 }
@@ -318,34 +327,37 @@ function calcShowStep(i){
 }
 
 function updateNextState(){
-  var stepKey = calcSteps[calcIndex];
   var next = document.getElementById('calcNextBtn');
-  next.disabled = !calcAnswers[stepKey];
-  next.textContent = calcIndex === 2 ? 'Узнать результат ▶' : 'Далее ▶';
+  var ready;
+  if(calcIndex === 0) ready = !!(calcAnswers.energy && calcAnswers.sphere);
+  else ready = !!calcAnswers.universe;
+  next.disabled = !ready;
+  next.textContent = calcIndex === 1 ? 'Узнать результат ▶' : 'Далее ▶';
 }
 
-document.querySelectorAll('.calc-opt').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    var step = btn.closest('.calc-step');
-    var stepKey = step.getAttribute('data-step');
-    step.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
-    btn.classList.add('selected');
-    calcAnswers[stepKey] = btn.getAttribute('data-value');
-    updateNextState();
+document.querySelectorAll('.calc-options').forEach(function(group){
+  var groupKey = group.getAttribute('data-group');
+  group.querySelectorAll('.calc-opt').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      group.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      calcAnswers[groupKey] = btn.getAttribute('data-value');
+      updateNextState();
+    });
   });
 });
 
 function calcNext(){
-  if(calcIndex < 2){
+  if(calcIndex < 1){
     calcIndex++;
     calcShowStep(calcIndex);
   } else {
-    calcIndex = 3;
+    calcIndex = 2;
     calcShowResult();
   }
 }
 function calcBack(){
-  if(calcIndex > 0 && calcIndex < 3){
+  if(calcIndex > 0 && calcIndex < 2){
     calcIndex--;
     calcShowStep(calcIndex);
   }
@@ -361,7 +373,22 @@ function calcShowResult(){
   document.querySelector('.calc-step[data-step="result"]').classList.add('active');
   document.getElementById('calcNav').style.display = 'none';
   calcRenderProgress();
-  // placeholder result - replace with real rune-mapping logic later
+
+  // placeholder pick logic - if "universe advice" was chosen, override the
+  // deliberate energy choice with a random pick (real rules TBD)
+  var keys = Object.keys(AMULET_POOL);
+  var pickKey = calcAnswers.universe === 'yes'
+    ? keys[Math.floor(Math.random() * keys.length)]
+    : calcAnswers.energy;
+  var amulet = AMULET_POOL[pickKey] || AMULET_POOL.protection;
+  var sphereLabel = SPHERE_LABELS[calcAnswers.sphere] || 'выбранную сферу';
+
+  document.getElementById('resultRune').textContent = amulet.rune;
+  document.getElementById('resultTitle').textContent = amulet.title;
+  document.getElementById('resultText').textContent = amulet.text +
+    (calcAnswers.universe === 'yes'
+      ? ' Вселенная услышала твой запрос — ' + sphereLabel + ' обретёт новую опору.'
+      : ' Подходит для запроса на ' + sphereLabel + '.');
 }
 
 document.getElementById('calcNextBtn').addEventListener('click', calcNext);

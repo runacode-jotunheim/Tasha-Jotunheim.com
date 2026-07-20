@@ -170,7 +170,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <!-- Step: materializing-rune animation for the universe path -->
     <div class="calc-step" data-step="oracle">
-      <div class="oracle-wrap"><canvas id="oracleCanvas" width="220" height="220"></canvas></div>
+      <div class="oracle-wrap"><canvas id="oracleCanvas" width="280" height="280"></canvas></div>
       <div class="oracle-label">гадаем на матрице&#8230;</div>
     </div>
 
@@ -406,7 +406,7 @@ function runOracleAnimation(targetRune, cb){
   var particles = [];
   for(var i = 0; i < 42; i++){
     var angle = Math.random() * Math.PI * 2;
-    var radius = 65 + Math.random() * 35;
+    var radius = 85 + Math.random() * 55;
     particles.push({
       startX: cx + Math.cos(angle) * radius,
       startY: cy + Math.sin(angle) * radius,
@@ -415,7 +415,7 @@ function runOracleAnimation(targetRune, cb){
     });
   }
   var start = performance.now();
-  var DURATION = 1700;
+  var DURATION = 3700;
   function frame(now){
     var t = Math.min(1, (now - start) / DURATION);
     ctx.clearRect(0, 0, W, H);

@@ -464,7 +464,7 @@ function runOracleAnimation(targetRune, cb){
       var angle = p.angle0 + spinWeight * SPIRAL_TURNS * Math.PI * 2;
       var x = cx + Math.cos(angle) * r;
       var y = cy + Math.sin(angle) * r;
-      ctx.globalAlpha = Math.max(0, 1 - pr * 0.85);
+      ctx.globalAlpha = Math.max(0, 1 - pr * 1.15);
       ctx.fillStyle = accentColor;
       ctx.fillText(p.char, x, y);
     });

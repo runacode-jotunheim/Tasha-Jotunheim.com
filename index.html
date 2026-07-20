@@ -1719,7 +1719,9 @@ function handleSearchInput(){
     var collection = (c.querySelector('.product-collection') ? c.querySelector('.product-collection').textContent : '').toLowerCase();
     var tagline = (c.querySelector('.product-tagline') ? c.querySelector('.product-tagline').textContent : '').toLowerCase();
     var tags = (c.getAttribute('data-tags') || '').toLowerCase();
-    return name.indexOf(q) !== -1 || collection.indexOf(q) !== -1 || tagline.indexOf(q) !== -1 || tags.indexOf(q) !== -1;
+    var descEl = document.querySelector('#fullDescriptions [data-desc-id="' + c.getAttribute('data-id') + '"]');
+    var description = (descEl ? descEl.textContent : '').toLowerCase();
+    return name.indexOf(q) !== -1 || collection.indexOf(q) !== -1 || tagline.indexOf(q) !== -1 || tags.indexOf(q) !== -1 || description.indexOf(q) !== -1;
   }).slice(0, 10);
 
   if(matches.length === 0){

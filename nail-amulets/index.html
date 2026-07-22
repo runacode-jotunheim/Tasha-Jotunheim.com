@@ -156,8 +156,8 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <!-- Step: choose the instrument -->
     <div class="calc-step active" data-step="instrument">
-      <div class="calc-intro-text">Привет! Я — Таша Йотунхейм, создательница уникальных нейл-амулетов. Мои особенные таро и рунические амулеты придадут твоим ногтям волшебства и привлекут нужные энергии в твою жизнь.</div>
-      <div class="calc-q-text">Приготовься погрузиться в удивительный мир нейл-амулетов! Для начала выбери, энергии каких сил мы будем привлекать в твою жизнь.</div>
+      <div class="calc-intro-text" id="calcIntroText">Привет! Я — Таша Йотунхейм, создательница уникальных нейл-амулетов. Мои особенные таро и рунические амулеты придадут твоим ногтям волшебства и привлекут нужные энергии в твою жизнь.</div>
+      <div class="calc-q-text" id="instrumentQText">Приготовься погрузиться в удивительный мир нейл-амулетов! Для начала выбери, энергии каких сил мы будем привлекать в твою жизнь.</div>
       <div class="calc-options" data-group="instrument">
         <button class="calc-opt" data-value="rune">Руны</button>
         <button class="calc-opt" data-value="tarot">Таро</button>
@@ -166,7 +166,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <!-- Step: self-pick by sphere, or trust the universe -->
     <div class="calc-step" data-step="method">
-      <div class="calc-q-text">Отлично! Теперь нужно определить сферу жизни, которую ты хочешь прокачать.<br><span style="color:rgba(0,255,65,0.5);font-size:12px">Выбери нейл-амулет из перечня по сферам жизни — или доверься Вселенной, и она подскажет, какая энергия соответствует твоим нуждам прямо сейчас.</span></div>
+      <div class="calc-q-text" id="methodQText">Отлично! Теперь нужно определить сферу жизни, которую ты хочешь прокачать.<br><span style="color:rgba(0,255,65,0.5);font-size:12px">Выбери нейл-амулет из перечня по сферам жизни — или доверься Вселенной, и она подскажет, какая энергия соответствует твоим нуждам прямо сейчас.</span></div>
       <div class="calc-options" data-group="method">
         <button class="calc-opt" data-value="self">Выбрать самостоятельно</button>
         <button class="calc-opt" data-value="universe">Довериться Вселенной</button>
@@ -525,6 +525,8 @@ function calcRestart(){
   calcHistory = ['instrument'];
   clearOptSelections();
   resetUniverseChain();
+  firstPass = true;
+  renderInstrumentCopy();
   calcShowStep('instrument');
 }
 
@@ -557,10 +559,28 @@ document.querySelectorAll('.calc-options').forEach(function(group){
   if(group.id !== 'sphereList') bindOptionGroup(group); // sphereList already bound above
 });
 
+// Presentation ("Привет, я Таша..." + explanations) only shows on the
+// very first pass through the flow. From the second amulet in the same
+// session onward, instrument/method screens skip straight to the choice.
+var firstPass = true;
+
+function renderInstrumentCopy(){
+  document.getElementById('calcIntroText').style.display = firstPass ? 'block' : 'none';
+  document.getElementById('instrumentQText').textContent = firstPass
+    ? 'Приготовься погрузиться в удивительный мир нейл-амулетов! Для начала выбери, энергии каких сил мы будем привлекать в твою жизнь.'
+    : 'Выбери инструмент';
+}
+function enterInstrumentStep(){
+  renderInstrumentCopy();
+  calcGoTo('instrument');
+}
+
 function handleAnswer(groupKey, val){
   if(groupKey === 'instrument'){
     currentInstrument = val;
-    resetUniverseChain();
+    document.getElementById('methodQText').innerHTML = firstPass
+      ? 'Отлично! Теперь нужно определить сферу жизни, которую ты хочешь прокачать.<br><span style="color:rgba(0,255,65,0.5);font-size:12px">Выбери нейл-амулет из перечня по сферам жизни — или доверься Вселенной, и она подскажет, какая энергия соответствует твоим нуждам прямо сейчас.</span>'
+      : 'Выбрать по сфере, или довериться Вселенной?';
     calcGoTo('method');
   } else if(groupKey === 'method'){
     if(val === 'universe') runUniversePick();
@@ -572,8 +592,8 @@ function handleAnswer(groupKey, val){
   } else if(groupKey === 'continueAsk'){
     if(val === 'yes'){
       clearOptSelections();
-      resetUniverseChain();
-      calcGoTo('instrument');
+      firstPass = false;
+      enterInstrumentStep();
     } else {
       calcGoTo('activation');
     }
@@ -601,8 +621,11 @@ function showSphereOptions(sphereKey){
   calcGoTo('sphereOptions');
 }
 
-/* ══ "TRUST THE UNIVERSE": random draw, up to 3 energies per pass ══ */
-var universeChain = []; // amulet objects revealed in the current pass (max 3)
+/* ══ AMULET HISTORY: up to 3 energies shown as small squares, filled on
+   every result regardless of how it was reached (sphere pick or "trust
+   the universe"), and persists across instrument switches for the whole
+   session - only a full restart clears it ══ */
+var universeChain = []; // {item, canReroll} entries, most recent last (max 3)
 var _streak = { rune: {last:null, count:0}, tarot: {last:null, count:0} };
 var _imgCache = {};
 
@@ -618,6 +641,12 @@ function loadImg(src){
 
 function resetUniverseChain(){
   universeChain = [];
+  renderChainSlots();
+}
+
+function pushToChain(amulet, canReroll){
+  if(universeChain.length >= 3){ universeChain = []; } // 4th reveal clears the row and starts over
+  universeChain.push({item: amulet, canReroll: !!canReroll});
   renderChainSlots();
 }
 
@@ -640,9 +669,6 @@ function runUniversePick(){
   var amulet = pool[pick];
 
   function afterReveal(){
-    if(universeChain.length >= 3){ universeChain = []; } // 4th draw clears the row and starts over
-    universeChain.push(amulet);
-    renderChainSlots();
     showResult(amulet, true);
   }
 
@@ -664,12 +690,13 @@ function runUniversePick(){
 }
 
 // small squares above the reveal window: every energy already drawn in
-// this pass except the one currently shown big - click one to reopen it
+// this session except the one currently shown big - click one to reopen it
 function renderChainSlots(){
   var row = document.getElementById('chainSlotsRow');
   row.innerHTML = '';
   var shown = universeChain.slice(0, -1);
-  shown.forEach(function(item){
+  shown.forEach(function(entry){
+    var item = entry.item;
     var sq = document.createElement('div');
     sq.className = 'chain-slot';
     sq.title = item.title;
@@ -680,13 +707,13 @@ function renderChainSlots(){
     } else {
       sq.textContent = item.rune;
     }
-    sq.addEventListener('click', function(){ renderResultCard(item, true); calcShowStep('result'); });
+    sq.addEventListener('click', function(){ renderResultCard(item, entry.canReroll); calcShowStep('result'); });
     row.appendChild(sq);
   });
   document.getElementById('chainSlots').style.display = (shown.length > 0) ? 'flex' : 'none';
 }
 
-function renderResultCard(amulet, fromUniverse){
+function renderResultCard(amulet, canReroll){
   var runeEl = document.getElementById('resultRune');
   var imgEl = document.getElementById('resultTarotImg');
   var numEl = document.getElementById('resultNumeral');
@@ -704,11 +731,12 @@ function renderResultCard(amulet, fromUniverse){
   }
   document.getElementById('resultTitle').textContent = amulet.title;
   document.getElementById('resultText').textContent = amulet.text;
-  document.getElementById('rerollBtn').style.display = fromUniverse ? 'inline-flex' : 'none';
+  document.getElementById('rerollBtn').style.display = canReroll ? 'inline-flex' : 'none';
 }
 
-function showResult(amulet, fromUniverse){
-  renderResultCard(amulet, fromUniverse);
+function showResult(amulet, canReroll){
+  pushToChain(amulet, canReroll);
+  renderResultCard(amulet, canReroll);
   calcGoTo('result');
 }
 

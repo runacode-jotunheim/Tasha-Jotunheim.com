@@ -615,6 +615,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <p>Кулон особенно хорошо подходит, если нужен заметный, ощутимый сдвиг — не постепенный фон, а именно рывок.</p>
     </div>
     <div class="ag-secret-note">Сама формула не раскрывается до покупки — она подбирается индивидуально под тебя и твой запрос. Даже одна и та же цель у разных людей даёт разную формулу.</div>
+    <button class="hero-cta" style="display:block;margin:24px auto 0;font-size:14px;padding:11px 26px" onclick="agContinueToCatalog('кулон')">Смотреть кулоны &#9654;</button>
   </div>
 
   <div class="ag-step" data-ag="bracelet">
@@ -627,6 +628,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <p>Рост может быть и плавным, и достаточно ощутимым — зависит от конкретной формулы, не от самого формата.</p>
     </div>
     <div class="ag-secret-note">Сама формула не раскрывается до покупки — она подбирается индивидуально под тебя и твой запрос. Даже одна и та же цель у разных людей даёт разную формулу.</div>
+    <button class="hero-cta" style="display:block;margin:24px auto 0;font-size:14px;padding:11px 26px" onclick="agContinueToCatalog('браслет')">Смотреть браслеты &#9654;</button>
   </div>
 
   <div class="ag-step" data-ag="both">
@@ -705,6 +707,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
       <span style="color:var(--accent)">ᚠ Каждый артефакт создаётся под конкретного человека и его запрос.</span>
     </div>
+  </div>
+</div>
+
+<div class="divider reveal"><span>подбор</span></div>
+
+<!-- ARTIFACT GUIDE TRIGGER -->
+<div class="section-wrap" style="padding-top:20px;padding-bottom:20px">
+  <div class="glass artifact-guide-card reveal" onclick="openArtifactGuide()">
+    <span class="section-eye" style="margin-bottom:14px">&#9658; не знаешь, с чего начать?</span>
+    <h2 class="section-title" style="margin-bottom:14px">Кулон или браслет?</h2>
+    <p style="font-size:13px;color:rgba(0,255,65,0.65);max-width:480px;margin:0 auto 20px;line-height:1.7">У них разная механика действия — и формула для каждого человека всегда своя, даже под один и тот же запрос.</p>
+    <button class="hero-cta" style="font-size:14px;padding:11px 26px">Узнать разницу</button>
   </div>
 </div>
 
@@ -883,18 +897,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <h2 class="section-title reveal" style="margin-bottom:8px">Ваши последние интересы</h2>
   <span class="rv-clear" onclick="clearRecentlyViewed()">Очистить ✕</span>
   <div class="rv-scroll" id="rvScroll"></div>
-</div>
-
-<div class="divider reveal"><span>подбор</span></div>
-
-<!-- ARTIFACT GUIDE TRIGGER -->
-<div class="section-wrap" style="padding-top:20px;padding-bottom:20px">
-  <div class="glass artifact-guide-card reveal" onclick="openArtifactGuide()">
-    <span class="section-eye" style="margin-bottom:14px">&#9658; не знаешь, с чего начать?</span>
-    <h2 class="section-title" style="margin-bottom:14px">Кулон или браслет?</h2>
-    <p style="font-size:13px;color:rgba(0,255,65,0.65);max-width:480px;margin:0 auto 20px;line-height:1.7">У них разная механика действия — и формула для каждого человека всегда своя, даже под один и тот же запрос.</p>
-    <button class="hero-cta" style="font-size:14px;padding:11px 26px">Узнать разницу</button>
-  </div>
 </div>
 
 <div class="divider reveal"><span>Коллекции</span></div>
@@ -1936,6 +1938,15 @@ function agShow(step){
 window.openArtifactGuide = openArtifactGuide;
 window.closeArtifactGuide = closeArtifactGuide;
 window.agShow = agShow;
+function agContinueToCatalog(tag){
+  closeArtifactGuide();
+  var chip = null;
+  document.querySelectorAll('.collection-chip').forEach(function(c){
+    if(c.textContent.trim().toLowerCase() === (tag === 'кулон' ? 'кулоны' : 'браслеты')) chip = c;
+  });
+  setTimeout(function(){ filterCatalog(tag, chip); }, 350);
+}
+window.agContinueToCatalog = agContinueToCatalog;
 
 function openProductModal(id){
   var card = document.querySelector('.product-card[data-id="'+id+'"]');

@@ -313,12 +313,15 @@ window.addEventListener('scroll', function(){
   document.getElementById('scroll-top-btn').classList.toggle('show', window.scrollY > 400);
 });
 
-/* ══ PLACEHOLDER CALCULATOR ══
-   Demonstration flow only - swap the AMULET_POOL / pick logic once the
-   real amulet set and matching rules are ready. */
+/* ══ CALCULATOR DATA ══
+   Two separate pools:
+   - SPHERE_POOL: manual "choose a sphere" path (7 life areas)
+   - RUNE_POOL: "trust the universe" path (all 24 Elder Futhark runes)
+   Titles/texts below are draft copy in house style - swap for final
+   wording whenever ready, keys and structure can stay the same. */
 var calcHistory = ['universe'];
 
-var AMULET_POOL = {
+var SPHERE_POOL = {
   money:         {rune:'ᚠ', title:'Феху — Ресурс', text:'Символ денежного потока и стабильности. Помогает удерживать и приумножать заработанное.'},
   beauty:        {rune:'ᛒ', title:'Беркана — Расцвет', text:'Символ роста и обновления. Работает с внешней и внутренней красотой, лёгкостью в теле.'},
   health:        {rune:'ᚢ', title:'Уруз — Жизненная сила', text:'Символ здоровья и выносливости тела. Помогает восстановлению и укреплению.'},
@@ -326,6 +329,33 @@ var AMULET_POOL = {
   luck:          {rune:'ᛃ', title:'Йера — Урожай', text:'Символ своевременной удачи и вознаграждения за усилия. Работает с ощущением лёгкости.'},
   endurance:     {rune:'ᛉ', title:'Альгиз — Опора', text:'Символ стойкости и защиты ресурса. Помогает выдерживать нагрузку без надлома.'},
   happiness:     {rune:'ᚷ', title:'Гебо — Гармония', text:'Символ баланса и внутреннего согласия. Работает с ощущением полноты жизни.'}
+};
+
+var RUNE_POOL = {
+  fehu:     {rune:'ᚠ', title:'Феху — Достаток',      text:'Руна текущего богатства и обменных потоков. Указывает на прирост там, где ты уже вложила силы.'},
+  uruz:     {rune:'ᚢ', title:'Уруз — Сила',           text:'Руна первобытной жизненной мощи. Даёт физическую выносливость и волю пробиваться через препятствия.'},
+  thurisaz: {rune:'ᚦ', title:'Турисаз — Прорыв',      text:'Руна защитного удара и разрушения старого. Убирает то, что мешает, даже если процесс болезненный.'},
+  ansuz:    {rune:'ᚨ', title:'Ансуз — Знак',          text:'Руна вести и озарения. Указывает на важное сообщение, встречу или инсайт, который нельзя пропустить.'},
+  raidho:   {rune:'ᚱ', title:'Райдо — Путь',          text:'Руна движения и верного направления. Помогает довести начатое до цели без лишних кругов.'},
+  kenaz:    {rune:'ᚲ', title:'Кано — Огонь знания',   text:'Руна внутреннего света и мастерства. Раскрывает талант и даёт ясность в том, что раньше было туманно.'},
+  gebo:     {rune:'ᚷ', title:'Гебо — Дар',            text:'Руна обмена и равновесия. Работает с гармонией в отношениях и честным балансом отдавать и получать.'},
+  wunjo:    {rune:'ᚹ', title:'Вуньо — Радость',       text:'Руна лёгкости и удовлетворения. Приносит ощущение, что усилия наконец начинают приносить плоды.'},
+  hagalaz:  {rune:'ᚺ', title:'Хагалаз — Перемена',    text:'Руна резкой трансформации. Разрушает старую форму, чтобы освободить место для нового порядка.'},
+  nauthiz:  {rune:'ᚾ', title:'Науд — Испытание',      text:'Руна необходимости и внутренней стойкости. Учит справляться с нехваткой и находить силу в ограничении.'},
+  isa:      {rune:'ᛁ', title:'Иса — Стазис',          text:'Руна остановки и концентрации. Замедляет процессы, чтобы дать время осмыслить следующий шаг.'},
+  jera:     {rune:'ᛃ', title:'Йера — Урожай',         text:'Руна своевременного результата. Показывает, что усилия прошлого периода скоро принесут плоды.'},
+  eihwaz:   {rune:'ᛇ', title:'Эйваз — Ось',           text:'Руна устойчивости между мирами. Даёт опору в переходный период и защиту на грани перемен.'},
+  perthro:  {rune:'ᛈ', title:'Перто — Тайна',         text:'Руна скрытого и судьбы. Открывает то, что было спрятано, и запускает то, что давно назрело.'},
+  algiz:    {rune:'ᛉ', title:'Альгиз — Защита',       text:'Руна щита и связи с высшим. Оберегает энергию человека и не даёт ей утекать во внешнее.'},
+  sowilo:   {rune:'ᛋ', title:'Соулу — Победа',        text:'Руна солнечной силы и успеха. Даёт энергию довести дело до триумфального финала.'},
+  tiwaz:    {rune:'ᛏ', title:'Тейваз — Воин',         text:'Руна справедливой борьбы и чести. Даёт решимость отстоять своё, даже когда это трудно.'},
+  berkana:  {rune:'ᛒ', title:'Беркана — Расцвет',     text:'Руна роста и обновления. Работает с телом, красотой и мягким, но неотвратимым развитием.'},
+  ehwaz:    {rune:'ᛖ', title:'Эваз — Союз',           text:'Руна доверия и совместного движения. Укрепляет партнёрство и слаженность действий с другими.'},
+  mannaz:   {rune:'ᛗ', title:'Манназ — Личность',     text:'Руна человека и самопознания. Помогает увидеть себя честно и найти опору в собственной природе.'},
+  laguz:    {rune:'ᛚ', title:'Лагуз — Поток',         text:'Руна интуиции и текучести. Учит доверять внутреннему чутью там, где логика бессильна.'},
+  ingwaz:   {rune:'ᛜ', title:'Ингуз — Семя',          text:'Руна внутреннего потенциала. Копит силу перед рождением нового этапа, даже если снаружи пока тихо.'},
+  othala:   {rune:'ᛟ', title:'Одал — Наследие',       text:'Руна корней и родового ресурса. Связывает с опорой рода, дома и того, что принадлежит по праву.'},
+  dagaz:    {rune:'ᛞ', title:'Дагаз — Рассвет',       text:'Руна прорыва к свету. Обозначает точку необратимого позитивного перелома в ситуации.'}
 };
 
 function calcShowStep(step){
@@ -375,15 +405,15 @@ function handleAnswer(groupKey, val){
     if(val === 'yes') calcGoTo('sphere');
     else calcGoTo('deadend');
   } else if(groupKey === 'sphere'){
-    showResult(val, false);
+    showResult(SPHERE_POOL[val], false);
   }
 }
 
 function runUniversePick(){
   calcGoTo('oracle');
-  var pick = randomSphereKey();
-  var amulet = AMULET_POOL[pick];
-  var begin = function(){ runOracleAnimation(amulet.rune, function(){ showResult(pick, true); }); };
+  var pick = randomRuneKey();
+  var amulet = RUNE_POOL[pick];
+  var begin = function(){ runOracleAnimation(amulet.rune, function(){ showResult(RUNE_POOL[pick], true); }); };
   if(document.fonts && document.fonts.load){
     Promise.all([
       document.fonts.load("20px 'VT323'"),
@@ -396,8 +426,8 @@ function runUniversePick(){
 
 var lastUniversePick = null;
 var lastUniverseStreak = 0;
-function randomSphereKey(){
-  var keys = Object.keys(AMULET_POOL);
+function randomRuneKey(){
+  var keys = Object.keys(RUNE_POOL);
   if(lastUniversePick && lastUniverseStreak >= 2){
     keys = keys.filter(function(k){ return k !== lastUniversePick; });
   }
@@ -407,8 +437,7 @@ function randomSphereKey(){
   return pick;
 }
 
-function showResult(sphereKey, fromUniverse){
-  var amulet = AMULET_POOL[sphereKey] || AMULET_POOL.luck;
+function showResult(amulet, fromUniverse){
   document.getElementById('resultRune').textContent = amulet.rune;
   document.getElementById('resultTitle').textContent = amulet.title;
   document.getElementById('resultText').textContent = amulet.text;

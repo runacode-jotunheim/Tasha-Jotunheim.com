@@ -76,7 +76,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .calc-result-rune{font-size:56px;margin-bottom:18px;text-shadow:0 0 20px var(--accent)}
 .calc-result-title{font-family:'Cinzel',serif;font-size:20px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
 .calc-result-text{font-size:13px;line-height:1.8;color:rgba(0,255,65,0.75);max-width:420px;margin:0 auto 24px}
-.calc-soon-note{margin-top:30px;font-size:10px;letter-spacing:1px;color:rgba(0,255,65,0.3);text-align:center;line-height:1.6}
+.calc-result-text p{margin-bottom:14px}
+.calc-result-text p:last-child{margin-bottom:0}
 .oracle-wrap{display:flex;justify-content:center;padding:20px 0 10px}
 .oracle-label{text-align:center;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);animation:blink 1.2s infinite}
 
@@ -87,8 +88,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .chain-slots{display:none;flex-direction:column;align-items:center;gap:8px;margin-bottom:18px}
 .chain-slots-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim)}
 .chain-slots-row{display:flex;gap:10px}
-.chain-slot{width:38px;height:38px;border:1px solid rgba(0,255,65,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent);background:rgba(0,255,65,0.05);cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+.chain-slot{width:38px;height:38px;border:1px solid rgba(0,255,65,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent);background:rgba(0,255,65,0.05);cursor:pointer;transition:background .2s,border-color .2s,transform .15s;overflow:hidden}
 .chain-slot:hover{background:rgba(0,255,65,0.14);border-color:var(--accent);transform:translateY(-2px)}
+.chain-slot img{width:100%;height:100%;object-fit:cover;border-radius:6px}
+
+/* intro line above the instrument choice, from Tasha's own greeting copy */
+.calc-intro-text{font-size:12px;line-height:1.7;color:rgba(0,255,65,0.6);margin-bottom:22px}
+
+/* tarot result art + numeral, sits where the single rune glyph used to */
+.calc-result-numeral{font-size:10px;letter-spacing:3px;color:var(--accent-dim);text-transform:uppercase;margin-bottom:8px}
+.calc-result-tarot-img{display:inline-block;max-width:160px;width:55%;height:auto;border-radius:10px;margin-bottom:18px;box-shadow:0 0 24px rgba(0,255,65,0.25);border:1px solid rgba(0,255,65,0.25)}
+html.theme-red .calc-result-tarot-img,html.theme-red .chain-slot img{filter:hue-rotate(240deg) saturate(1.3)}
+
+.calc-opt-numeral{font-size:10px !important;letter-spacing:1px;min-width:26px;display:inline-block}
 
 /* THEME TOGGLE */
 #theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -124,7 +136,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 <div class="hero-nail">
   <div class="hero-nail-eyebrow">&#9658; новый раздел</div>
   <div class="hero-nail-title">Nail Amulets</div>
-  <p class="hero-nail-sub">Рунические амулеты для ногтей — миниатюрная магия на кончиках пальцев. Раздел в разработке, полное описание скоро появится здесь.</p>
+  <p class="hero-nail-sub">Рунические и таро-амулеты для ногтей — миниатюрная магия на кончиках пальцев. Пройди подбор ниже и узнай, какая энергия нужна тебе прямо сейчас.</p>
   <div class="hero-nail-badge">Скоро в коллекции</div>
 </div>
 
@@ -144,72 +156,36 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <!-- Step: choose the instrument -->
     <div class="calc-step active" data-step="instrument">
-      <div class="calc-q-text">Каким инструментом узнать свою энергию?</div>
+      <div class="calc-intro-text">Привет! Я — Таша Йотунхейм, создательница уникальных нейл-амулетов. Мои особенные таро и рунические амулеты придадут твоим ногтям волшебства и привлекут нужные энергии в твою жизнь.</div>
+      <div class="calc-q-text">Приготовься погрузиться в удивительный мир нейл-амулетов! Для начала выбери, энергии каких сил мы будем привлекать в твою жизнь.</div>
       <div class="calc-options" data-group="instrument">
-        <button class="calc-opt" data-value="rune">&#5792; Руны</button>
-        <button class="calc-opt" data-value="tarot">&#127183; Таро</button>
+        <button class="calc-opt" data-value="rune">Руны</button>
+        <button class="calc-opt" data-value="tarot">Таро</button>
       </div>
     </div>
 
-    <!-- Step: tarot placeholder (deck not connected yet) -->
-    <div class="calc-step" data-step="tarotSoon">
-      <div class="calc-result">
-        <div class="calc-result-rune">&#127183;</div>
-        <div class="calc-result-title">Таро — скоро</div>
-        <div class="calc-result-text">Расклад на Старших Арканах появится здесь совсем скоро. Пока можно узнать свою энергию через руны.</div>
-        <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; К выбору инструмента</button>
+    <!-- Step: self-pick by sphere, or trust the universe -->
+    <div class="calc-step" data-step="method">
+      <div class="calc-q-text">Отлично! Теперь нужно определить сферу жизни, которую ты хочешь прокачать.<br><span style="color:rgba(0,255,65,0.5);font-size:12px">Выбери нейл-амулет из перечня по сферам жизни — или доверься Вселенной, и она подскажет, какая энергия соответствует твоим нуждам прямо сейчас.</span></div>
+      <div class="calc-options" data-group="method">
+        <button class="calc-opt" data-value="self">Выбрать самостоятельно</button>
+        <button class="calc-opt" data-value="universe">Довериться Вселенной</button>
       </div>
     </div>
 
-    <!-- Step: trust the universe? -->
-    <div class="calc-step" data-step="universe">
-      <div class="calc-q-text">Хочешь довериться вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— открой тайны вселенной для себя</span></div>
-      <div class="calc-options" data-group="trustUniverse">
-        <button class="calc-opt" data-value="yes">Да, доверюсь</button>
-        <button class="calc-opt" data-value="no">Нет, выберу сама</button>
-      </div>
-    </div>
-
-    <!-- Step: want to pick a specific sphere? -->
-    <div class="calc-step" data-step="sphereAsk">
-      <div class="calc-q-text">Хочешь выбрать конкретную сферу?</div>
-      <div class="calc-options" data-group="wantSphere">
-        <button class="calc-opt" data-value="yes">Да</button>
-        <button class="calc-opt" data-value="no">Нет</button>
-      </div>
-    </div>
-
-    <!-- Step: pick the sphere -->
+    <!-- Step: pick the sphere (20 life spheres, populated in JS) -->
     <div class="calc-step" data-step="sphere">
       <div class="calc-q-text">Выбери сферу</div>
-      <div class="calc-options" data-group="sphere">
-        <button class="calc-opt" data-value="money">Деньги</button>
-        <button class="calc-opt" data-value="beauty">Красота</button>
-        <button class="calc-opt" data-value="health">Здоровье</button>
-        <button class="calc-opt" data-value="opportunities">Возможности</button>
-        <button class="calc-opt" data-value="luck">Удача</button>
-        <button class="calc-opt" data-value="endurance">Выносливость</button>
-        <button class="calc-opt" data-value="happiness">Счастье</button>
-      </div>
+      <div class="calc-options" data-group="sphere" id="sphereList"></div>
     </div>
 
-    <!-- Step: pick one of the 3-4 candidate energies for the chosen sphere -->
+    <!-- Step: pick one of the candidate energies for the chosen sphere -->
     <div class="calc-step" data-step="sphereOptions">
       <div class="calc-q-text">Вот несколько энергий для этой сферы — выбери, что откликается</div>
       <div class="calc-options" data-group="sphereOption" id="sphereOptionsList"></div>
     </div>
 
-    <!-- Step: playful dead-end for people who decline everything -->
-    <div class="calc-step" data-step="deadend">
-      <div class="calc-result">
-        <div class="calc-result-rune">¯\_(ツ)_/¯</div>
-        <div class="calc-result-title">Хм...</div>
-        <div class="calc-result-text">Не довериться вселенной и не выбрать сферу — смелый выбор. А тогда зачем открывала калькулятор? &#128521;</div>
-        <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Ладно, давай заново</button>
-      </div>
-    </div>
-
-    <!-- Step: materializing-rune animation for the universe path -->
+    <!-- Step: materializing animation for the universe path -->
     <div class="calc-step" data-step="oracle">
       <div class="oracle-wrap"><canvas id="oracleCanvas" width="280" height="280"></canvas></div>
       <div class="oracle-label">слушаем вселенную&#8230;</div>
@@ -218,13 +194,37 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
     <!-- Result -->
     <div class="calc-step" data-step="result">
       <div class="calc-result">
+        <div class="calc-result-numeral" id="resultNumeral" style="display:none"></div>
         <div class="calc-result-rune" id="resultRune">ᛟ</div>
+        <img class="calc-result-tarot-img" id="resultTarotImg" style="display:none" alt="">
         <div class="calc-result-title" id="resultTitle">Твой символ подбирается</div>
-        <div class="calc-result-text" id="resultText">Здесь появится персональная рекомендация амулета — руна, значение и рекомендуемое размещение. Логика расчёта сейчас в разработке.</div>
+        <div class="calc-result-text" id="resultText">Здесь появится персональная рекомендация амулета.</div>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px">
           <button class="calc-btn" id="rerollBtn" style="display:none" onclick="runUniversePick()">&#9860; Ещё раз</button>
-          <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Пройти заново</button>
+          <button class="calc-btn" onclick="clearOptSelections();calcGoTo('continueAsk')">Далее &#8594;</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Step: choose another amulet, or finish -->
+    <div class="calc-step" data-step="continueAsk">
+      <div class="calc-q-text">Выбрать ещё один нейл-амулет?</div>
+      <div class="calc-options" data-group="continueAsk">
+        <button class="calc-opt" data-value="yes">Да</button>
+        <button class="calc-opt" data-value="no">Нет</button>
+      </div>
+    </div>
+
+    <!-- Step: activation (fixed closing text) -->
+    <div class="calc-step" data-step="activation">
+      <div class="calc-result">
+        <div class="calc-result-title">Активация амулета</div>
+        <div class="calc-result-text">
+          <p>При создании маникюра с нейл-амулетами важно учесть особую силу мысли и намерения, связанные с выбранной сферой жизни или желанием привлечь определённую энергию с помощью рун или таро.</p>
+          <p>Помни, нейл-амулет — это мощный энергетический инструмент, который может стать твоим верным помощником в достижении желаемого. Однако без твоих действий и стремления он не сможет привести тебя к цели! Действуй, а мои амулеты тебе помогут!</p>
+          <p>Создавай волшебство на своих ногтях и отмечай меня в Instagram и Telegram — @TashaJotunheim #нейламулеты</p>
+        </div>
+        <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Пройти заново</button>
       </div>
     </div>
 
@@ -233,8 +233,6 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
     </div>
 
   </div>
-
-  <div class="calc-soon-note">Расчёт пока демонстрационный — точная логика подбора и тексты амулетов появятся с полным запуском раздела</div>
 </div>
 
 <footer>
@@ -264,6 +262,7 @@ var _matrixMode = localStorage.getItem('jv_theme') || 'green';
 if(_matrixMode === 'red'){
   document.documentElement.style.setProperty('--accent','var(--red)');
   document.documentElement.style.setProperty('--accent-dim','var(--red-dim)');
+  document.documentElement.classList.add('theme-red');
 }
 
 function initMatrix(canvas){
@@ -341,9 +340,11 @@ function setTheme(t){
   if(t === 'red'){
     root.style.setProperty('--accent','var(--red)');
     root.style.setProperty('--accent-dim','var(--red-dim)');
+    root.classList.add('theme-red');
   } else {
     root.style.setProperty('--accent','var(--green)');
     root.style.setProperty('--accent-dim','var(--green-dim)');
+    root.classList.remove('theme-red');
   }
   localStorage.setItem('jv_theme', t);
   document.getElementById('pillChoices').classList.remove('open');
@@ -355,56 +356,152 @@ window.addEventListener('scroll', function(){
 });
 
 /* ══ CALCULATOR DATA ══
-   Single source of truth: RUNE_POOL (all 24 Elder Futhark runes).
-   - "Trust the universe" path: random draw straight from RUNE_POOL.
-   - "Choose a sphere" path: SPHERE_RUNES maps each of the 7 life
-     spheres to 3-4 candidate keys from RUNE_POOL; the person then
-     picks whichever of those resonates.
-   Titles/texts below are draft copy in house style - swap for final
-   wording whenever ready, keys and structure can stay the same. */
+   Real, final copy from Tasha's own bot spec (not placeholder) - both
+   pools, both sphere maps, unedited wording. Two independent pools:
+   - RUNE_POOL: all 24 Elder Futhark runes
+   - TAROT_POOL: 13 Major Arcana cards currently in the deck
+   SPHERE_RUNES / SPHERE_TAROT each map the same 20 life-sphere keys to
+   the candidate cards/runes relevant to that sphere. */
 var calcHistory = ['instrument'];
+var currentInstrument = 'rune'; // 'rune' | 'tarot' - set on the first step
 
 var RUNE_POOL = {
-  fehu:     {rune:'ᚠ', title:'Феху — Достаток',      text:'Руна текущего богатства и обменных потоков. Указывает на прирост там, где ты уже вложила силы.'},
-  uruz:     {rune:'ᚢ', title:'Уруз — Сила',           text:'Руна первобытной жизненной мощи. Даёт физическую выносливость и волю пробиваться через препятствия.'},
-  thurisaz: {rune:'ᚦ', title:'Турисаз — Прорыв',      text:'Руна защитного удара и разрушения старого. Убирает то, что мешает, даже если процесс болезненный.'},
-  ansuz:    {rune:'ᚨ', title:'Ансуз — Знак',          text:'Руна вести и озарения. Указывает на важное сообщение, встречу или инсайт, который нельзя пропустить.'},
-  raidho:   {rune:'ᚱ', title:'Райдо — Путь',          text:'Руна движения и верного направления. Помогает довести начатое до цели без лишних кругов.'},
-  kenaz:    {rune:'ᚲ', title:'Кано — Огонь знания',   text:'Руна внутреннего света и мастерства. Раскрывает талант и даёт ясность в том, что раньше было туманно.'},
-  gebo:     {rune:'ᚷ', title:'Гебо — Дар',            text:'Руна обмена и равновесия. Работает с гармонией в отношениях и честным балансом отдавать и получать.'},
-  wunjo:    {rune:'ᚹ', title:'Вуньо — Радость',       text:'Руна лёгкости и удовлетворения. Приносит ощущение, что усилия наконец начинают приносить плоды.'},
-  hagalaz:  {rune:'ᚺ', title:'Хагалаз — Перемена',    text:'Руна резкой трансформации. Разрушает старую форму, чтобы освободить место для нового порядка.'},
-  nauthiz:  {rune:'ᚾ', title:'Науд — Испытание',      text:'Руна необходимости и внутренней стойкости. Учит справляться с нехваткой и находить силу в ограничении.'},
-  isa:      {rune:'ᛁ', title:'Иса — Стазис',          text:'Руна остановки и концентрации. Замедляет процессы, чтобы дать время осмыслить следующий шаг.'},
-  jera:     {rune:'ᛃ', title:'Йера — Урожай',         text:'Руна своевременного результата. Показывает, что усилия прошлого периода скоро принесут плоды.'},
-  eihwaz:   {rune:'ᛇ', title:'Эйваз — Ось',           text:'Руна устойчивости между мирами. Даёт опору в переходный период и защиту на грани перемен.'},
-  perthro:  {rune:'ᛈ', title:'Перто — Тайна',         text:'Руна скрытого и судьбы. Открывает то, что было спрятано, и запускает то, что давно назрело.'},
-  algiz:    {rune:'ᛉ', title:'Альгиз — Защита',       text:'Руна щита и связи с высшим. Оберегает энергию человека и не даёт ей утекать во внешнее.'},
-  sowilo:   {rune:'ᛋ', title:'Соулу — Победа',        text:'Руна солнечной силы и успеха. Даёт энергию довести дело до триумфального финала.'},
-  tiwaz:    {rune:'ᛏ', title:'Тейваз — Воин',         text:'Руна справедливой борьбы и чести. Даёт решимость отстоять своё, даже когда это трудно.'},
-  berkana:  {rune:'ᛒ', title:'Беркана — Расцвет',     text:'Руна роста и обновления. Работает с телом, красотой и мягким, но неотвратимым развитием.'},
-  ehwaz:    {rune:'ᛖ', title:'Эваз — Союз',           text:'Руна доверия и совместного движения. Укрепляет партнёрство и слаженность действий с другими.'},
-  mannaz:   {rune:'ᛗ', title:'Манназ — Личность',     text:'Руна человека и самопознания. Помогает увидеть себя честно и найти опору в собственной природе.'},
-  laguz:    {rune:'ᛚ', title:'Лагуз — Поток',         text:'Руна интуиции и текучести. Учит доверять внутреннему чутью там, где логика бессильна.'},
-  ingwaz:   {rune:'ᛜ', title:'Ингуз — Семя',          text:'Руна внутреннего потенциала. Копит силу перед рождением нового этапа, даже если снаружи пока тихо.'},
-  othala:   {rune:'ᛟ', title:'Одал — Наследие',       text:'Руна корней и родового ресурса. Связывает с опорой рода, дома и того, что принадлежит по праву.'},
-  dagaz:    {rune:'ᛞ', title:'Дагаз — Рассвет',       text:'Руна прорыва к свету. Обозначает точку необратимого позитивного перелома в ситуации.'}
+  fehu:     {rune:'ᚠ', title:'Феху',     text:'Нейл-амулет с руной Феху символизирует процветание и материальное благополучие. Он помогает привлечь изобилие и процветание в твою жизнь, поддерживает финансовую стабильность и успешное воплощение твоих целей. Этот амулет стимулирует твой предпринимательский дух и помогает преодолеть финансовые трудности, открывая путь к финансовым успехам и благополучию.'},
+  uruz:     {rune:'ᚢ', title:'Уруз',     text:'Нейл-амулет с руной Уруз приносит силу и энергию. Он помогает обрести физическую силу, восстановить энергию и преодолеть трудности. Этот амулет поддерживает самоутверждение и развитие внутренней силы, помогая преодолеть препятствия и достичь успеха.'},
+  thurisaz: {rune:'ᚦ', title:'Турисаз', text:'Нейл-амулет с руной Турисаз обладает силой защиты и поддержки. Он помогает оберегать от негативных энергий и опасностей, а также придаёт уверенности и стабильности. Этот амулет поможет тебе справиться с трудностями и принять мудрые решения для достижения желаемого успеха.'},
+  ansuz:    {rune:'ᚨ', title:'Ансуз',    text:'Нейл-амулет с руной Ансуз обладает силой коммуникации и мудрости. Он помогает улучшить общение, привлечь вдохновение и понимание окружающих. Этот амулет развивает интеллектуальные способности и помогает обрести новые знания и идеи для роста и развития.'},
+  raidho:   {rune:'ᚱ', title:'Райдо',    text:'Нейл-амулет с руной Райдо обладает силой перемещения и прогресса. Он помогает справляться с переменами в жизни, способствует успешным путешествиям и позволяет двигаться вперёд к новым возможностям. Этот амулет стимулирует личный рост и развитие, помогая достичь целей и преодолеть препятствия на пути к успеху.'},
+  kenaz:    {rune:'ᚲ', title:'Кеназ',    text:'Нейл-амулет с руной Кеназ обладает силой творчества и преображения. Он помогает развивать творческие способности, приносит вдохновение и способствует преображению жизни. Этот амулет поддерживает процесс самовыражения и преобразования, помогая создать путь к новым возможностям и позитивным изменениям.'},
+  gebo:     {rune:'ᚷ', title:'Гебо',     text:'Нейл-амулет с руной Гебо символизирует равновесие, обмен и притяжение любви. Он помогает привлечь гармонию во взаимоотношениях и поддерживает взаимопонимание между людьми. Этот амулет способствует справедливому обмену и помогает находить взаимовыгодные соглашения, а также притягивает положительную энергию любви и доброты.'},
+  wunjo:    {rune:'ᚹ', title:'Вуньо',    text:'Нейл-амулет с руной Вуньо символизирует радость и счастье. Он помогает привлечь радостные события и положительные изменения в жизни. Этот амулет поддерживает чувство внутреннего равновесия и способствует достижению гармонии внутри себя. Он также способствует привлечению удачи и благополучия.'},
+  hagalaz:  {rune:'ᚺ', title:'Хагалаз',  text:'Нейл-амулет с руной Хагалаз обладает силой изменений, трансформации и преобразований. Он помогает справляться с неожиданными событиями и преодолевать препятствия на пути личного роста. Этот амулет способствует очищению от старых образов и вредных привычек, позволяя возродиться в новое сильное «Я». Принося энергию перемен, он помогает принять вызовы и стать лучшей версией себя.'},
+  nauthiz:  {rune:'ᚾ', title:'Наутиз',  text:'Нейл-амулет с руной Наутиз придаёт силы в ответственные моменты, помогает сдерживаться в сложные периоды жизни и развивает дисциплину. Он способствует самоограничению и аскетизму, что полезно, когда нужно выжидать и переносить трудности. Нейл-амулет Наутиз принимает на себя негатив и давящие обстоятельства, обеспечивая защиту и поддержку.'},
+  isa:      {rune:'ᛁ', title:'Иса',     text:'Нейл-амулет с руной Иса символизирует стабильность и терпение. Он помогает преодолевать временные трудности, приносит спокойствие и помогает сохранять баланс в жизни. Этот амулет способствует внутреннему успокоению и укреплению воли, что помогает преодолеть препятствия и достичь долгосрочных целей.'},
+  jera:     {rune:'ᛃ', title:'Йера',     text:'Нейл-амулет с руной Йера символизирует процесс изменений, обновления и успешное воплощение труда в материальные плоды. Он помогает преодолеть старое и открыться для новых возможностей, что может привести к процветанию и финансовому благополучию. Этот амулет способствует личному росту и преображению, помогая обрести новое начало и гармонию внутри себя, а также получить достойное вознаграждение за свой труд.'},
+  eihwaz:   {rune:'ᛇ', title:'Эйваз',    text:'Амулет с руной Эйваз символизирует равновесие, гармонию и баланс. Он помогает находить верные решения в сложных ситуациях и осознавать себя и окружающий мир. Этот амулет помогает убрать излишние эмоции и разрешить конфликты между людьми. Он также поддерживает личный рост и помогает справляться с зависимостями. Амулет Эйваз открывает возможности для перемен и помогает принять новые начинания. Оберег с руной Эйваз носит защитную энергию, но важно иметь чистые и благие намерения.'},
+  perthro:  {rune:'ᛈ', title:'Перт',     text:'Нейл-амулет с руной Перт символизирует удачу и раскрытие магического потенциала. Он помогает привлечь благоприятные обстоятельства и везение в жизни. Этот амулет поддерживает развитие магических способностей и помогает раскрыть внутреннюю силу. Он способствует глубокому самоанализу и помогает открывать новые пути к личному росту и развитию. Амулет Перт помогает смело шагать вперёд, доверяя своим интуитивным знаниям и внутреннему мудрецу.'},
+  algiz:    {rune:'ᛉ', title:'Альгиз',   text:'Нейл-амулет с руной Альгиз символизирует защиту и поддержку. Он помогает привлечь защитные энергии и оберегает от негатива. Этот амулет способствует укреплению внутренней силы и дарит чувство безопасности. Он также помогает преодолеть страхи и смело идти вперёд, зная, что ты под защитой Высших сил. Амулет Альгиз помогает ощущать гармонию и стабильность внутри себя и вокруг.'},
+  sowilo:   {rune:'ᛋ', title:'Соуло',    text:'Нейл-амулет с руной Соуло символизирует успешность и притягательность. Он помогает преобразиться и обрести внутреннее сияние, стать центром внимания, как вокруг солнца крутятся планеты. Этот амулет поддерживает уверенность и притягивает внимание окружающих, позволяя выступать с чарующей привлекательностью. Он также способствует личному развитию и позитивным изменениям, что делает тебя звездой собственной жизни. Амулет Соуло помогает раскрыть свои потенциалы и сиять ярко в мире.'},
+  tiwaz:    {rune:'ᛏ', title:'Тейваз',   text:'Нейл-амулет с руной Тейваз символизирует защиту и победу над трудностями. Он помогает преодолеть испытания и преграды на пути к успеху. Этот амулет способствует развитию волевой силы и дисциплинированности. Он также помогает обрести ясность целей и направить энергию на достижение успеха. Амулет Тейваз помогает принять вызовы и справиться с любыми сложностями, даруя силу и решительность.'},
+  berkana:  {rune:'ᛒ', title:'Беркана',  text:'Нейл-амулет с руной Беркана — символ красооты и привлекательности, который раскрывает женскую энергию и притягивает энергию изобилия. Этот амулет помогает обрести гармонию и притянуть позитивные события в жизнь. Он поддерживает женскую силу и помогает раскрыть свой потенциал. Амулет Беркана дарит возможность проявиться во всей красе и стать магнетическим центром притяжения.'},
+  ehwaz:    {rune:'ᛖ', title:'Эваз',     text:'Нейл-амулет с руной Эваз — это символ удачи, везения и любви. Он помогает привлечь позитивные события и благоприятные обстоятельства. Этот амулет поддерживает удачу на твоём пути и способствует успешным начинаниям. Он также помогает обрести чувство уверенности и веры в свои силы, что приводит к ещё большим возможностям и успехам. Амулет Эваз подарит тебе уникальную возможность раскрыть свой потенциал и притянуть любовь и гармонию в свою жизнь.'},
+  mannaz:   {rune:'ᛗ', title:'Манназ',   text:'Нейл-амулет с руной Манназ поможет тебе стать примером для других. Ты будешь привлекать к себе внимание и вдохновлять окружающих. Амулет поддержит твоё хорошее самочувствие, добавит гармонии и ясности ума. Ты укрепишь социальные связи и лучше поймёшь других людей. Благодаря Манназ, ты будешь обладательницей обаяния и привлекательным собеседником.'},
+  laguz:    {rune:'ᛚ', title:'Лагуз',    text:'Нейл-амулет с руной Лагуз открывает поток интуиции и помогает гармонизировать внутренний мир. Он позволяет легче воспринимать свои эмоции и обретать внутреннюю ясность. Этот амулет способствует раскрытию магического потенциала и привлечению энергии изобилия. Также он поддерживает удачу и везение в жизни, помогая притягивать положительные события и возможности.'},
+  ingwaz:   {rune:'ᛜ', title:'Ингуз',    text:'Нейл-амулет с руной Ингуз поднимет тебя на новый уровень жизни и сознания. Он поможет тебе осознать свой потенциал и внутреннюю силу, ведя к личностному росту и развитию. Амулет Ингуз также активизирует твою сексуальность и станет магнитом для привлечения мужчин. Ты будешь обладать особой притягательностью и обаянием, которые будут притягивать к тебе внимание и интерес окружающих.'},
+  othala:   {rune:'ᛟ', title:'Отал',     text:'Нейл-амулет с руной Отал приносит стабильность и упорядоченность в жизни. Он помогает укрепить связь с корнями и духовными истоками своего рода, что дарит чувство принадлежности и силы. Амулет Отал также способствует привлечению большого достатка и материального благополучия. Ты будешь чувствовать уверенность и магнетизм, притягивая благоприятные возможности для финансового роста.'},
+  dagaz:    {rune:'ᛞ', title:'Дагаз',    text:'Нейл-амулет с руной Дагаз обладает силой трансформации и удачи. Он способствует положительным переменам в жизни и пробуждает скрытые возможности. Этот амулет помогает обрести ясность, осознание и прозрение, открывая новые пути и перспективы. Благодаря Дагаз ты притягиваешь удачу и светлые события, становишься хозяином собственной судьбы и открываешься для созидательных перемен. С этим амулетом ты обретаешь силу преобразования и становишься воплощением своего собственного сияния.'}
 };
 
-var SPHERE_RUNES = {
-  money:         ['fehu', 'jera', 'othala', 'ansuz'],
-  beauty:        ['berkana', 'wunjo', 'sowilo', 'laguz'],
-  health:        ['uruz', 'algiz', 'isa', 'berkana'],
-  opportunities: ['ansuz', 'raidho', 'perthro', 'dagaz'],
-  luck:          ['jera', 'sowilo', 'wunjo', 'fehu'],
-  endurance:     ['algiz', 'thurisaz', 'nauthiz', 'uruz'],
-  happiness:     ['gebo', 'wunjo', 'ehwaz', 'mannaz']
+var TAROT_POOL = {
+  kolesnitsa: {numeral:'VII',  title:'Колесница', image:'../assets/img/tarot/kolesnitsa.webp',
+    text:'Нейл-амулет с арканом «Колесница» символизирует движение вперёд, достижение целей и контроль над жизненным путём. Этот амулет помогает преодолевать препятствия, развивать лидерские качества и принимать решения с уверенностью. Он придаёт силу и решительность, помогая воплотить мечты и стремления в реальность. Амулет «Колесница» позволяет вести жизнь активно, находить внутренний баланс и достигать успеха.'},
+  sila:       {numeral:'VIII', title:'Сила',    image:'../assets/img/tarot/sila.webp',
+    text:'Нейл-амулет с арканом «Сила» придаёт силу и мощь. Он помогает преодолеть трудности и препятствия, дарит уверенность и самообладание. Этот амулет способствует развитию внутренней силы и стойкости, а также позволяет контролировать свои эмоции. Он помогает преодолеть страхи и достичь успеха.'},
+  zvezda:     {numeral:'XVII', title:'Звезда',  image:'../assets/img/tarot/zvezda.webp',
+    text:'Нейл-амулет с арканом «Звезда» обладает силой надежды, вдохновения и позитивных изменений. Он помогает привлечь удачу и успех, поддерживает стремление к целям и достижению мечтаний. Амулет «Звезда» дарит светлое будущее и помогает обрести ясность и веру в себя.'},
+  shut:       {numeral:'0',    title:'Шут',    image:'../assets/img/tarot/shut.webp',
+    text:'Нейл-амулет с арканом «Шут» символизирует свободу, нестандартное мышление и новые возможности. Он помогает привлечь удачу и приключения, позволяет смело идти вперёд, не боясь рисковать. Амулет «Шут» вдохновляет на креативность и ощущение радости от жизни.'},
+  dyavol:     {numeral:'XV',   title:'Дьявол',  image:'../assets/img/tarot/dyavol.webp',
+    text:'Нейл-амулет с арканом «Дьявол» помогает привлечь деньги и благополучие. Он также поддерживает смелость и уверенность в общении с окружающими, способствуя решительным действиям. Амулет «Дьявол» помогает быстро изменить ситуацию к лучшему и преодолеть трудности в жизни. Он дарит энергию и силу для достижения желаемых целей.'},
+  otshelnik:  {numeral:'IX',   title:'Отшельник', image:'../assets/img/tarot/otshelnik.webp',
+    text:'Нейл-амулет с арканом «Отшельник» — это магическая защита и источник вдохновения. Он помогает найти путь к самопознанию и личному развитию. Амулет поддерживает мудрые решения и развивает интуицию, позволяя обрести внутренний покой и гармонию. Он вдохновляет на поиск мудрости и способствует духовному росту. Также амулет «Отшельник» защищает от негатива и оберегает от внешних влияний, позволяя найти ответы внутри себя и быть самостоятельным. Он побуждает к размышлениям и медитации, что помогает развить внутренний мир и найти глубокое понимание жизненных ценностей. Этот амулет — мощный инструмент для тех, кто стремится к духовному росту и саморазвитию.'},
+  poveshenny: {numeral:'XII',  title:'Повешенный', image:'../assets/img/tarot/poveshenny.webp',
+    text:'Нейл-амулет с арканом «Повешенный» — символ обновления и преодоления трудностей. Он помогает принять необходимые жизненные изменения и освободиться от старых установок и убеждений. Амулет побуждает к самопожертвованию и осознанию, что иногда нужно отказаться от чего-то старого, чтобы получить новые возможности и рост. Этот амулет — мощный символ преобразования и принятия перемен в жизни.'},
+  umerennost: {numeral:'XIV',  title:'Умеренность', image:'../assets/img/tarot/umerennost.webp',
+    text:'Нейл-амулет с арканом «Умеренность» — символ гармонии и баланса. Он помогает обрести уравновешенность в жизни и находить золотую середину во всём. Амулет способствует преодолению крайностей, помогает избежать чрезмерных вспышек эмоций и сосредотачиваться на мере и умеренности. Он поддерживает душевное спокойствие и помогает в достижении гармонии с собой и окружающим миром. Этот амулет — мощный символ духовного развития и мудрости.'},
+  luna:       {numeral:'XVIII',title:'Луна',    image:'../assets/img/tarot/luna.webp',
+    text:'Нейл-амулет с арканом «Луна» — символ интуиции и женской силы. Он помогает раскрыть творческий потенциал и глубокую интуицию. Амулет поддерживает эмоциональное равновесие и позволяет легче понимать свои чувства и эмоции. Он также способствует притяжению женской энергии и гармонии. Этот амулет поможет обрести внутреннее спокойствие и связь с внутренним «Я».'},
+  smert:      {numeral:'XIII', title:'Смерть',  image:'../assets/img/tarot/smert.webp',
+    text:'Нейл-амулет с арканом «Смерть» символизирует трансформацию и переход к новому этапу жизни. Он помогает освобождаться от старых образов и привычек, чтобы появилось место для новых возможностей. Амулет способствует преображению и росту, позволяя смело идти вперёд к позитивным переменам. Он помогает преодолевать страх перед изменениями и принимать новые начинания с открытым сердцем.'},
+  imperator:  {numeral:'IV',   title:'Император', image:'../assets/img/tarot/imperator.webp',
+    text:'Нейл-амулет с арканом «Император» символизирует власть, стабильность и рациональность. Он помогает укрепить лидерские качества и принимать решения с уверенностью. Амулет способствует достижению успеха в деловой сфере и позволяет легче осуществлять свои планы и цели. Он поддерживает организованность и дисциплинированность, что способствует достижению высоких результатов.'},
+  mir:        {numeral:'XXI',  title:'Мир',    image:'../assets/img/tarot/mir.webp',
+    text:'Нейл-амулет с арканом «Мир» символизирует гармонию, согласие и завершение цикла. Он помогает привнести мир и спокойствие в жизнь, разрешить конфликты и привлечь позитивные энергии. Амулет способствует достижению внутреннего равновесия и принятию своего пути. Он также помогает завершить начатые проекты и достичь успеха в различных аспектах жизни.'},
+  wheel:      {numeral:'X',    title:'Колесо Фортуны', image:'../assets/img/tarot/koleso-fortuny.webp',
+    text:'Нейл-амулет с арканом «Колесо Фортуны» символизирует перемены, удачу и судьбоносные события. Он помогает привлечь позитивные изменения, счастливые повороты и благоприятные возможности в жизни. Амулет способствует раскрытию потенциала и привлечению удачи, позволяя наслаждаться путешествием к успеху и процветанию.'}
 };
+
+/* all 20 life spheres, shared between both instruments */
+var SPHERE_LIST = [
+  {key:'money',         label:'Деньги'},
+  {key:'love',          label:'Любовь и отношения'},
+  {key:'harmony',       label:'Гармония, радость, счастье'},
+  {key:'transformation',label:'Трансформация и очищение'},
+  {key:'health',        label:'Здоровье и энергия'},
+  {key:'protection',    label:'Защита'},
+  {key:'beauty',        label:'Красота и сексуальность'},
+  {key:'intuition',     label:'Интуиция'},
+  {key:'growth',        label:'Личностный рост'},
+  {key:'ancestors',     label:'Работа с родом'},
+  {key:'luck',          label:'Удача'},
+  {key:'popularity',    label:'Популярность'},
+  {key:'abundance',     label:'Изобилие'},
+  {key:'travel',        label:'Путешествия'},
+  {key:'subconscious',  label:'Подсознание и внутренняя сила'},
+  {key:'magic',         label:'Раскрытие магического потенциала'},
+  {key:'success',       label:'Успех и возможности'},
+  {key:'discipline',    label:'Дисциплина и стойкость'},
+  {key:'stability',     label:'Стабильность'},
+  {key:'creativity',    label:'Творчество и вдохновение'}
+];
+
+var SPHERE_RUNES = {
+  money:          ['othala','jera','fehu'],
+  love:           ['mannaz','ehwaz','gebo'],
+  harmony:        ['laguz','mannaz','ehwaz','berkana','algiz','eihwaz','jera','wunjo','gebo'],
+  transformation: ['dagaz','ingwaz','laguz','jera','hagalaz'],
+  health:         ['mannaz','uruz'],
+  protection:     ['othala','tiwaz','algiz','eihwaz','nauthiz','thurisaz'],
+  beauty:         ['ingwaz','berkana','sowilo','kenaz'],
+  intuition:      ['laguz','perthro'],
+  growth:         ['ingwaz','mannaz','ehwaz','berkana','tiwaz','sowilo','perthro','eihwaz','jera','hagalaz','raidho','ansuz','uruz'],
+  ancestors:      ['othala'],
+  luck:           ['dagaz','laguz','ehwaz','tiwaz','perthro','wunjo'],
+  popularity:     ['mannaz','sowilo'],
+  abundance:      ['berkana','jera','fehu'],
+  travel:         ['raidho'],
+  subconscious:   ['algiz','perthro','eihwaz','jera','isa','nauthiz','hagalaz','wunjo','ansuz','thurisaz','uruz'],
+  magic:          ['laguz','perthro'],
+  success:        ['ehwaz','tiwaz','sowilo','eihwaz','jera','raidho','ansuz','thurisaz','uruz','fehu'],
+  discipline:     ['tiwaz','nauthiz','isa'],
+  stability:      ['algiz','isa','thurisaz','fehu'],
+  creativity:     ['kenaz','ansuz']
+};
+
+var SPHERE_TAROT = {
+  money:          ['wheel','mir','dyavol'],
+  love:           ['wheel','mir'],
+  harmony:        ['zvezda','shut','wheel','mir','luna','umerennost'],
+  transformation: ['wheel','mir','smert','umerennost','poveshenny'],
+  health:         ['sila','shut','wheel','mir','umerennost'],
+  protection:     ['kolesnitsa','sila','wheel','mir','imperator','otshelnik'],
+  beauty:         ['luna'],
+  intuition:      ['mir','luna','umerennost','otshelnik'],
+  growth:         ['sila','zvezda','shut','mir','smert','umerennost','poveshenny','otshelnik','dyavol'],
+  ancestors:      ['mir','imperator'],
+  luck:           ['kolesnitsa','zvezda','shut','wheel','mir','smert','dyavol'],
+  popularity:     ['shut','mir'],
+  abundance:      ['mir'],
+  travel:         ['kolesnitsa','shut','wheel','mir'],
+  subconscious:   ['kolesnitsa','zvezda','shut','wheel','mir','smert','luna'],
+  magic:          ['sila','wheel','mir','smert'],
+  success:        ['kolesnitsa','sila','zvezda','shut','wheel','mir','imperator','poveshenny'],
+  discipline:     ['kolesnitsa','sila','mir','imperator','umerennost'],
+  stability:      ['mir','imperator'],
+  creativity:     ['kolesnitsa','sila','zvezda','shut','wheel','mir','luna']
+};
+
+function currentPool(){ return currentInstrument === 'tarot' ? TAROT_POOL : RUNE_POOL; }
+function currentSphereMap(){ return currentInstrument === 'tarot' ? SPHERE_TAROT : SPHERE_RUNES; }
+
+function clearOptSelections(){
+  document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
+}
 
 function calcShowStep(step){
   document.querySelectorAll('.calc-step').forEach(function(el){ el.classList.remove('active'); });
   document.querySelector('.calc-step[data-step="' + step + '"]').classList.add('active');
-  var hideNav = (step === 'result' || step === 'deadend' || step === 'oracle' || step === 'tarotSoon');
+  var hideNav = (step === 'result' || step === 'oracle' || step === 'activation');
   document.getElementById('calcNav').style.display = hideNav ? 'none' : 'flex';
   document.getElementById('calcBackBtn').style.visibility = calcHistory.length > 1 ? 'visible' : 'hidden';
   // the energy-chain squares only make sense while looking at the oracle
@@ -420,20 +517,16 @@ function calcGoTo(step){
 function calcBack(){
   if(calcHistory.length > 1){
     calcHistory.pop();
-    document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
+    clearOptSelections();
     calcShowStep(calcHistory[calcHistory.length - 1]);
   }
 }
 function calcRestart(){
   calcHistory = ['instrument'];
-  document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
+  clearOptSelections();
   resetUniverseChain();
   calcShowStep('instrument');
 }
-
-document.querySelectorAll('.calc-options').forEach(function(group){
-  bindOptionGroup(group);
-});
 
 function bindOptionGroup(group){
   var groupKey = group.getAttribute('data-group');
@@ -447,38 +540,61 @@ function bindOptionGroup(group){
   });
 }
 
+// build the 20-sphere button list once (shared between rune/tarot instruments)
+(function renderSphereList(){
+  var list = document.getElementById('sphereList');
+  SPHERE_LIST.forEach(function(s){
+    var btn = document.createElement('button');
+    btn.className = 'calc-opt';
+    btn.setAttribute('data-value', s.key);
+    btn.textContent = s.label;
+    list.appendChild(btn);
+  });
+  bindOptionGroup(list);
+})();
+
+document.querySelectorAll('.calc-options').forEach(function(group){
+  if(group.id !== 'sphereList') bindOptionGroup(group); // sphereList already bound above
+});
+
 function handleAnswer(groupKey, val){
   if(groupKey === 'instrument'){
+    currentInstrument = val;
     resetUniverseChain();
-    if(val === 'rune') calcGoTo('universe');
-    else calcGoTo('tarotSoon');
-  } else if(groupKey === 'trustUniverse'){
-    if(val === 'yes'){
-      runUniversePick();
-    } else {
-      resetUniverseChain();
-      calcGoTo('sphereAsk');
-    }
-  } else if(groupKey === 'wantSphere'){
-    if(val === 'yes') calcGoTo('sphere');
-    else calcGoTo('deadend');
+    calcGoTo('method');
+  } else if(groupKey === 'method'){
+    if(val === 'universe') runUniversePick();
+    else calcGoTo('sphere');
   } else if(groupKey === 'sphere'){
     showSphereOptions(val);
   } else if(groupKey === 'sphereOption'){
-    showResult(RUNE_POOL[val], false);
+    showResult(currentPool()[val], false);
+  } else if(groupKey === 'continueAsk'){
+    if(val === 'yes'){
+      clearOptSelections();
+      resetUniverseChain();
+      calcGoTo('instrument');
+    } else {
+      calcGoTo('activation');
+    }
   }
 }
 
 function showSphereOptions(sphereKey){
-  var keys = SPHERE_RUNES[sphereKey] || [];
+  var pool = currentPool();
+  var keys = currentSphereMap()[sphereKey] || [];
   var list = document.getElementById('sphereOptionsList');
   list.innerHTML = '';
   keys.forEach(function(k){
-    var item = RUNE_POOL[k];
+    var item = pool[k];
+    if(!item) return;
     var btn = document.createElement('button');
     btn.className = 'calc-opt';
     btn.setAttribute('data-value', k);
-    btn.innerHTML = '<span class="calc-opt-rune">' + item.rune + '</span>' + item.title;
+    var icon = item.rune
+      ? '<span class="calc-opt-rune">' + item.rune + '</span>'
+      : '<span class="calc-opt-rune calc-opt-numeral">' + (item.numeral || '') + '</span>';
+    btn.innerHTML = icon + item.title;
     list.appendChild(btn);
   });
   bindOptionGroup(list);
@@ -487,45 +603,64 @@ function showSphereOptions(sphereKey){
 
 /* ══ "TRUST THE UNIVERSE": random draw, up to 3 energies per pass ══ */
 var universeChain = []; // amulet objects revealed in the current pass (max 3)
+var _streak = { rune: {last:null, count:0}, tarot: {last:null, count:0} };
+var _imgCache = {};
+
+function loadImg(src){
+  if(_imgCache[src]) return Promise.resolve(_imgCache[src]);
+  return new Promise(function(resolve){
+    var im = new Image();
+    im.onload = function(){ _imgCache[src] = im; resolve(im); };
+    im.onerror = function(){ resolve(im); };
+    im.src = src;
+  });
+}
 
 function resetUniverseChain(){
   universeChain = [];
   renderChainSlots();
 }
 
-function runUniversePick(){
-  calcGoTo('oracle');
-  var pick = randomRuneKey();
-  var amulet = RUNE_POOL[pick];
-  var begin = function(){
-    runOracleAnimation(amulet.rune, function(){
-      if(universeChain.length >= 3){ universeChain = []; } // 4th draw clears the row and starts over
-      universeChain.push(amulet);
-      renderChainSlots();
-      showResult(amulet, true);
-    });
-  };
-  if(document.fonts && document.fonts.load){
-    Promise.all([
-      document.fonts.load("20px 'VT323'"),
-      document.fonts.load("70px 'VT323'")
-    ]).then(begin, begin);
-  } else {
-    begin();
-  }
-}
-
-var lastUniversePick = null;
-var lastUniverseStreak = 0;
-function randomRuneKey(){
-  var keys = Object.keys(RUNE_POOL);
-  if(lastUniversePick && lastUniverseStreak >= 2){
-    keys = keys.filter(function(k){ return k !== lastUniversePick; });
+function randomPoolKey(pool){
+  var st = _streak[currentInstrument];
+  var keys = Object.keys(pool);
+  if(st.last && st.count >= 2){
+    keys = keys.filter(function(k){ return k !== st.last; });
   }
   var pick = keys[Math.floor(Math.random() * keys.length)];
-  lastUniverseStreak = (pick === lastUniversePick) ? lastUniverseStreak + 1 : 1;
-  lastUniversePick = pick;
+  st.count = (pick === st.last) ? st.count + 1 : 1;
+  st.last = pick;
   return pick;
+}
+
+function runUniversePick(){
+  calcGoTo('oracle');
+  var pool = currentPool();
+  var pick = randomPoolKey(pool);
+  var amulet = pool[pick];
+
+  function afterReveal(){
+    if(universeChain.length >= 3){ universeChain = []; } // 4th draw clears the row and starts over
+    universeChain.push(amulet);
+    renderChainSlots();
+    showResult(amulet, true);
+  }
+
+  if(currentInstrument === 'tarot'){
+    loadImg(amulet.image).then(function(img){
+      runOracleAnimation({kind:'tarot', img: img}, afterReveal);
+    });
+  } else {
+    var begin = function(){ runOracleAnimation({kind:'rune', char: amulet.rune}, afterReveal); };
+    if(document.fonts && document.fonts.load){
+      Promise.all([
+        document.fonts.load("20px 'VT323'"),
+        document.fonts.load("70px 'VT323'")
+      ]).then(begin, begin);
+    } else {
+      begin();
+    }
+  }
 }
 
 // small squares above the reveal window: every energy already drawn in
@@ -537,8 +672,14 @@ function renderChainSlots(){
   shown.forEach(function(item){
     var sq = document.createElement('div');
     sq.className = 'chain-slot';
-    sq.textContent = item.rune;
     sq.title = item.title;
+    if(item.image){
+      var im = document.createElement('img');
+      im.src = item.image; im.alt = item.title;
+      sq.appendChild(im);
+    } else {
+      sq.textContent = item.rune;
+    }
     sq.addEventListener('click', function(){ renderResultCard(item, true); calcShowStep('result'); });
     row.appendChild(sq);
   });
@@ -546,7 +687,21 @@ function renderChainSlots(){
 }
 
 function renderResultCard(amulet, fromUniverse){
-  document.getElementById('resultRune').textContent = amulet.rune;
+  var runeEl = document.getElementById('resultRune');
+  var imgEl = document.getElementById('resultTarotImg');
+  var numEl = document.getElementById('resultNumeral');
+  if(amulet.image){
+    runeEl.style.display = 'none';
+    imgEl.style.display = 'inline-block';
+    imgEl.src = amulet.image; imgEl.alt = amulet.title;
+    if(amulet.numeral){ numEl.style.display = 'block'; numEl.textContent = amulet.numeral; }
+    else { numEl.style.display = 'none'; }
+  } else {
+    imgEl.style.display = 'none';
+    runeEl.style.display = 'block';
+    runeEl.textContent = amulet.rune;
+    numEl.style.display = 'none';
+  }
   document.getElementById('resultTitle').textContent = amulet.title;
   document.getElementById('resultText').textContent = amulet.text;
   document.getElementById('rerollBtn').style.display = fromUniverse ? 'inline-flex' : 'none';
@@ -559,7 +714,7 @@ function showResult(amulet, fromUniverse){
 
 /* ══ ORACLE: rune materializes out of the matrix ══ */
 function easeIn(t){ return t * t; }
-function runOracleAnimation(targetRune, cb){
+function runOracleAnimation(target, cb){
   var canvas = document.getElementById('oracleCanvas');
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
@@ -635,9 +790,16 @@ function runOracleAnimation(targetRune, cb){
       ctx.save();
       ctx.globalAlpha = rp;
       ctx.shadowColor = accentColor; ctx.shadowBlur = 24 * rp;
-      ctx.font = (36 + 26 * rp) + "px 'VT323'";
-      ctx.fillStyle = accentColor;
-      ctx.fillText(targetRune, cx, cy);
+      if(target.kind === 'tarot' && target.img){
+        var maxW = 120;
+        var ratio = target.img.naturalHeight ? (target.img.naturalHeight / target.img.naturalWidth) : 1.6;
+        var w = maxW * rp, h = maxW * ratio * rp;
+        ctx.drawImage(target.img, cx - w / 2, cy - h / 2, w, h);
+      } else {
+        ctx.font = (36 + 26 * rp) + "px 'VT323'";
+        ctx.fillStyle = accentColor;
+        ctx.fillText(target.char, cx, cy);
+      }
       ctx.restore();
     }
     if(t < 1){ requestAnimationFrame(frame); } else { setTimeout(cb, 250); }

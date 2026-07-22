@@ -190,6 +190,38 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .modal-scroll{max-height:86vh;max-height:86dvh;overflow-y:auto}
 @media(max-width:700px){.modal-scroll{max-height:90vh;max-height:90dvh}}
 .modal-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.85);border:1.5px solid var(--accent);color:var(--accent);font-size:16px;font-weight:700;cursor:none;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,0.6),0 0 14px rgba(0,0,0,0.4);backdrop-filter:blur(6px)}
+
+.artifact-guide-card{max-width:640px;margin:0 auto;padding:36px 28px;text-align:center;cursor:none;transition:border-color .2s}
+.artifact-guide-card:hover{border-color:rgba(0,255,65,0.35)}
+#agOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:800;opacity:0;pointer-events:none;transition:opacity .3s ease}
+#agOverlay.open{opacity:1;pointer-events:auto}
+#agModal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:600px;max-height:86vh;max-height:86dvh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:801;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow-y:auto;padding:44px 32px}
+#agModal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+@media(max-width:700px){
+  #agModal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:88vh;max-height:88dvh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none;padding:36px 22px}
+  #agModal.open{transform:translateY(0)}
+}
+.ag-stroke{fill:none;stroke:var(--accent);stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px var(--accent))}
+.ag-step{display:none}
+.ag-step.active{display:block}
+.ag-title{font-family:'Cinzel',serif;font-size:19px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:8px;color:var(--accent)}
+.ag-sub{text-align:center;font-size:11px;letter-spacing:1px;color:rgba(0,255,65,0.5);margin-bottom:26px}
+.ag-choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:6px}
+@media(max-width:520px){.ag-choices{grid-template-columns:1fr}}
+.ag-choice{padding:20px 10px;border:1px solid rgba(0,255,65,0.18);border-radius:12px;cursor:none;transition:border-color .2s,background .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.ag-choice:hover{border-color:var(--accent);background:rgba(0,255,65,0.04)}
+.ag-choice svg{width:56px;height:56px}
+.ag-choice-label{font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.ag-back{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(0,255,65,0.5);cursor:none;margin-bottom:22px;display:inline-block}
+.ag-back:hover{color:var(--accent)}
+.ag-detail-icon{display:flex;justify-content:center;margin-bottom:18px}
+.ag-detail-icon svg{width:84px;height:84px}
+.ag-detail-text{font-size:13px;line-height:1.85;color:rgba(0,255,65,0.75)}
+.ag-detail-text p{margin-bottom:14px}
+.ag-detail-text b{color:var(--accent)}
+.ag-secret-note{margin-top:22px;padding:16px;border:1px dashed rgba(0,255,65,0.3);border-radius:10px;font-size:11px;line-height:1.7;color:rgba(0,255,65,0.6);text-align:center}
+.ag-both-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:6px}
+@media(max-width:520px){.ag-both-grid{grid-template-columns:1fr}}
 .modal-img-wrap{width:100%;height:38vh;height:38dvh;max-height:52vh;max-height:52dvh;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .modal-img-wrap img{width:100%;height:100%;max-height:52vh;max-height:52dvh;object-fit:contain;display:block}
 .modal-img-wrap .product-img-placeholder{width:auto;height:auto;aspect-ratio:auto;font-size:96px;padding:40px 0}
@@ -549,6 +581,73 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 </div>
 
 <!-- PRODUCT MODAL -->
+<!-- ARTIFACT GUIDE MODAL -->
+<div id="agOverlay" onclick="closeArtifactGuide()"></div>
+<div id="agModal">
+  <button class="modal-close" onclick="closeArtifactGuide()">&#10005;</button>
+
+  <div class="ag-step active" data-ag="choice">
+    <div class="ag-title">Какой артефакт тебе нужен?</div>
+    <div class="ag-sub">Выбери — расскажем, как он работает</div>
+    <div class="ag-choices">
+      <div class="ag-choice" onclick="agShow('pendant')">
+        <svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="2.5" d="M 78,12 Q 100,42 100,66"/><path class="ag-stroke" stroke-width="2.5" d="M 122,12 Q 100,42 100,66"/><rect class="ag-stroke" stroke-width="5" x="88" y="66" width="24" height="122" rx="6"/></svg>
+        <div class="ag-choice-label">Кулон</div>
+      </div>
+      <div class="ag-choice" onclick="agShow('bracelet')">
+        <svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="7" d="M 70.4,163.4 A 70,70 0 1 1 129.6,163.4"/></svg>
+        <div class="ag-choice-label">Браслет</div>
+      </div>
+      <div class="ag-choice" onclick="agShow('both')">
+        <svg viewBox="0 0 200 200"><text x="100" y="140" font-size="100" text-anchor="middle" font-family="Cinzel, serif" font-weight="900" fill="var(--accent)" style="filter:drop-shadow(0 0 6px var(--accent))">?</text></svg>
+        <div class="ag-choice-label">Какие бывают</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ag-step" data-ag="pendant">
+    <span class="ag-back" onclick="agShow('choice')">&#9664; назад</span>
+    <div class="ag-detail-icon"><svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="2.5" d="M 78,12 Q 100,42 100,66"/><path class="ag-stroke" stroke-width="2.5" d="M 122,12 Q 100,42 100,66"/><rect class="ag-stroke" stroke-width="5" x="88" y="66" width="24" height="122" rx="6"/></svg></div>
+    <div class="ag-title">Кулон</div>
+    <div class="ag-detail-text">
+      <p>Кулон работает <b>по вертикали</b>. Формула либо ведёт снизу вверх — от центра, от сердца, к голове, ступенями, подключая тебя к потоку вселенной. Либо сверху вниз — поток спускается через голову к центру.</p>
+      <p>Направление подбирается под конкретный запрос — это не универсальная схема, а часть индивидуальной формулы.</p>
+      <p>Кулон особенно хорошо подходит, если нужен заметный, ощутимый сдвиг — не постепенный фон, а именно рывок.</p>
+    </div>
+    <div class="ag-secret-note">Сама формула не раскрывается до покупки — она подбирается индивидуально под тебя и твой запрос. Даже одна и та же цель у разных людей даёт разную формулу.</div>
+  </div>
+
+  <div class="ag-step" data-ag="bracelet">
+    <span class="ag-back" onclick="agShow('choice')">&#9664; назад</span>
+    <div class="ag-detail-icon"><svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="7" d="M 70.4,163.4 A 70,70 0 1 1 129.6,163.4"/></svg></div>
+    <div class="ag-title">Браслет</div>
+    <div class="ag-detail-text">
+      <p>Формула браслета чаще всего <b>замкнута в кольцо</b> — эффект работает не разово, а постоянно, по кругу. Он фиксирует намерение в настоящем: либо отдаёт, либо принимает — зависит от того, на какой руке носишь.</p>
+      <p>Именно поэтому браслет особенно хорошо работает для <b>защиты и стабилизации</b> на постоянной основе — эффект должен быть рядом с тобой всегда, а не время от времени.</p>
+      <p>Рост может быть и плавным, и достаточно ощутимым — зависит от конкретной формулы, не от самого формата.</p>
+    </div>
+    <div class="ag-secret-note">Сама формула не раскрывается до покупки — она подбирается индивидуально под тебя и твой запрос. Даже одна и та же цель у разных людей даёт разную формулу.</div>
+  </div>
+
+  <div class="ag-step" data-ag="both">
+    <span class="ag-back" onclick="agShow('choice')">&#9664; назад</span>
+    <div class="ag-title">Какие бывают</div>
+    <div class="ag-both-grid">
+      <div class="ag-choice" onclick="agShow('pendant')" style="cursor:none">
+        <svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="2.5" d="M 78,12 Q 100,42 100,66"/><path class="ag-stroke" stroke-width="2.5" d="M 122,12 Q 100,42 100,66"/><rect class="ag-stroke" stroke-width="5" x="88" y="66" width="24" height="122" rx="6"/></svg>
+        <div class="ag-choice-label">Кулон</div>
+        <div style="font-size:11px;color:rgba(0,255,65,0.55);line-height:1.5">Вертикаль. Быстрый, заметный сдвиг.</div>
+      </div>
+      <div class="ag-choice" onclick="agShow('bracelet')" style="cursor:none">
+        <svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="7" d="M 70.4,163.4 A 70,70 0 1 1 129.6,163.4"/></svg>
+        <div class="ag-choice-label">Браслет</div>
+        <div style="font-size:11px;color:rgba(0,255,65,0.55);line-height:1.5">Цикл. Постоянный эффект, защита.</div>
+      </div>
+    </div>
+    <div class="ag-secret-note">Сама формула не раскрывается до покупки — она подбирается индивидуально под тебя и твой запрос.</div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalOverlay" onclick="closeProductModal()"></div>
 <div id="product-modal">
   <div class="modal-drag-handle"></div>
@@ -784,6 +883,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <h2 class="section-title reveal" style="margin-bottom:8px">Ваши последние интересы</h2>
   <span class="rv-clear" onclick="clearRecentlyViewed()">Очистить ✕</span>
   <div class="rv-scroll" id="rvScroll"></div>
+</div>
+
+<div class="divider reveal"><span>подбор</span></div>
+
+<!-- ARTIFACT GUIDE TRIGGER -->
+<div class="section-wrap" style="padding-top:20px;padding-bottom:20px">
+  <div class="glass artifact-guide-card reveal" onclick="openArtifactGuide()">
+    <span class="section-eye" style="margin-bottom:14px">&#9658; не знаешь, с чего начать?</span>
+    <h2 class="section-title" style="margin-bottom:14px">Кулон или браслет?</h2>
+    <p style="font-size:13px;color:rgba(0,255,65,0.65);max-width:480px;margin:0 auto 20px;line-height:1.7">У них разная механика действия — и формула для каждого человека всегда своя, даже под один и тот же запрос.</p>
+    <button class="hero-cta" style="font-size:14px;padding:11px 26px">Узнать разницу</button>
+  </div>
 </div>
 
 <div class="divider reveal"><span>Коллекции</span></div>
@@ -1806,6 +1917,26 @@ window.addToCart = addToCart; window.removeFromCart = removeFromCart;
 window.checkout = checkout;
 
 /* ══ PRODUCT MODAL ══ */
+/* ══ ARTIFACT GUIDE (кулон/браслет modal) ══ */
+function openArtifactGuide(){
+  agShow('choice');
+  document.getElementById('agOverlay').classList.add('open');
+  document.getElementById('agModal').classList.add('open');
+}
+function closeArtifactGuide(){
+  document.getElementById('agOverlay').classList.remove('open');
+  document.getElementById('agModal').classList.remove('open');
+}
+function agShow(step){
+  document.querySelectorAll('.ag-step').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelector('.ag-step[data-ag="' + step + '"]').classList.add('active');
+  var modal = document.getElementById('agModal');
+  if(modal) modal.scrollTop = 0;
+}
+window.openArtifactGuide = openArtifactGuide;
+window.closeArtifactGuide = closeArtifactGuide;
+window.agShow = agShow;
+
 function openProductModal(id){
   var card = document.querySelector('.product-card[data-id="'+id+'"]');
   if(!card) return;
@@ -1868,7 +1999,7 @@ var _modalViewId = null;
 window.openProductModal = openProductModal;
 window.closeProductModal = closeProductModal;
 document.addEventListener('keydown', function(e){
-  if(e.key === 'Escape'){ closeProductModal(); closeSearch(); }
+  if(e.key === 'Escape'){ closeProductModal(); closeSearch(); closeArtifactGuide(); }
 });
 document.addEventListener('contextmenu', function(e){
   if(e.target.tagName === 'IMG') e.preventDefault();

@@ -80,6 +80,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .oracle-wrap{display:flex;justify-content:center;padding:20px 0 10px}
 .oracle-label{text-align:center;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);animation:blink 1.2s infinite}
 
+/* sphere/instrument option cards (grid of 2-4 choices) */
+.calc-opt-rune{font-size:18px;margin-right:10px;vertical-align:middle}
+
+/* chain history slots (up to 3 energies revealed in one "trust the universe" pass) */
+.chain-slots{display:none;flex-direction:column;align-items:center;gap:8px;margin-bottom:18px}
+.chain-slots-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim)}
+.chain-slots-row{display:flex;gap:10px}
+.chain-slot{width:38px;height:38px;border:1px solid rgba(0,255,65,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent);background:rgba(0,255,65,0.05);cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+.chain-slot:hover{background:rgba(0,255,65,0.14);border-color:var(--accent);transform:translateY(-2px)}
+
 /* THEME TOGGLE */
 #theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
 .pill-trigger{width:54px;height:28px;border-radius:14px;background:linear-gradient(90deg,#00ff41 50%,#ff2020 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
@@ -126,8 +136,33 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
   <div class="glass calc-card">
 
+    <!-- Chain history: up to 3 energies revealed in one "trust the universe" pass -->
+    <div class="chain-slots" id="chainSlots">
+      <div class="chain-slots-label">твои энергии сейчас</div>
+      <div class="chain-slots-row" id="chainSlotsRow"></div>
+    </div>
+
+    <!-- Step: choose the instrument -->
+    <div class="calc-step active" data-step="instrument">
+      <div class="calc-q-text">Каким инструментом узнать свою энергию?</div>
+      <div class="calc-options" data-group="instrument">
+        <button class="calc-opt" data-value="rune">&#5792; Руны</button>
+        <button class="calc-opt" data-value="tarot">&#127183; Таро</button>
+      </div>
+    </div>
+
+    <!-- Step: tarot placeholder (deck not connected yet) -->
+    <div class="calc-step" data-step="tarotSoon">
+      <div class="calc-result">
+        <div class="calc-result-rune">&#127183;</div>
+        <div class="calc-result-title">Таро — скоро</div>
+        <div class="calc-result-text">Расклад на Старших Арканах появится здесь совсем скоро. Пока можно узнать свою энергию через руны.</div>
+        <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; К выбору инструмента</button>
+      </div>
+    </div>
+
     <!-- Step: trust the universe? -->
-    <div class="calc-step active" data-step="universe">
+    <div class="calc-step" data-step="universe">
       <div class="calc-q-text">Хочешь довериться вселенной?<br><span style="color:rgba(0,255,65,0.5);font-size:12px">— открой тайны вселенной для себя</span></div>
       <div class="calc-options" data-group="trustUniverse">
         <button class="calc-opt" data-value="yes">Да, доверюсь</button>
@@ -156,6 +191,12 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
         <button class="calc-opt" data-value="endurance">Выносливость</button>
         <button class="calc-opt" data-value="happiness">Счастье</button>
       </div>
+    </div>
+
+    <!-- Step: pick one of the 3-4 candidate energies for the chosen sphere -->
+    <div class="calc-step" data-step="sphereOptions">
+      <div class="calc-q-text">Вот несколько энергий для этой сферы — выбери, что откликается</div>
+      <div class="calc-options" data-group="sphereOption" id="sphereOptionsList"></div>
     </div>
 
     <!-- Step: playful dead-end for people who decline everything -->
@@ -314,22 +355,14 @@ window.addEventListener('scroll', function(){
 });
 
 /* ══ CALCULATOR DATA ══
-   Two separate pools:
-   - SPHERE_POOL: manual "choose a sphere" path (7 life areas)
-   - RUNE_POOL: "trust the universe" path (all 24 Elder Futhark runes)
+   Single source of truth: RUNE_POOL (all 24 Elder Futhark runes).
+   - "Trust the universe" path: random draw straight from RUNE_POOL.
+   - "Choose a sphere" path: SPHERE_RUNES maps each of the 7 life
+     spheres to 3-4 candidate keys from RUNE_POOL; the person then
+     picks whichever of those resonates.
    Titles/texts below are draft copy in house style - swap for final
    wording whenever ready, keys and structure can stay the same. */
-var calcHistory = ['universe'];
-
-var SPHERE_POOL = {
-  money:         {rune:'ᚠ', title:'Феху — Ресурс', text:'Символ денежного потока и стабильности. Помогает удерживать и приумножать заработанное.'},
-  beauty:        {rune:'ᛒ', title:'Беркана — Расцвет', text:'Символ роста и обновления. Работает с внешней и внутренней красотой, лёгкостью в теле.'},
-  health:        {rune:'ᚢ', title:'Уруз — Жизненная сила', text:'Символ здоровья и выносливости тела. Помогает восстановлению и укреплению.'},
-  opportunities: {rune:'ᚨ', title:'Ансуз — Знак пути', text:'Символ новых дверей и верных решений. Помогает вовремя увидеть и не упустить возможность.'},
-  luck:          {rune:'ᛃ', title:'Йера — Урожай', text:'Символ своевременной удачи и вознаграждения за усилия. Работает с ощущением лёгкости.'},
-  endurance:     {rune:'ᛉ', title:'Альгиз — Опора', text:'Символ стойкости и защиты ресурса. Помогает выдерживать нагрузку без надлома.'},
-  happiness:     {rune:'ᚷ', title:'Гебо — Гармония', text:'Символ баланса и внутреннего согласия. Работает с ощущением полноты жизни.'}
-};
+var calcHistory = ['instrument'];
 
 var RUNE_POOL = {
   fehu:     {rune:'ᚠ', title:'Феху — Достаток',      text:'Руна текущего богатства и обменных потоков. Указывает на прирост там, где ты уже вложила силы.'},
@@ -358,12 +391,27 @@ var RUNE_POOL = {
   dagaz:    {rune:'ᛞ', title:'Дагаз — Рассвет',       text:'Руна прорыва к свету. Обозначает точку необратимого позитивного перелома в ситуации.'}
 };
 
+var SPHERE_RUNES = {
+  money:         ['fehu', 'jera', 'othala', 'ansuz'],
+  beauty:        ['berkana', 'wunjo', 'sowilo', 'laguz'],
+  health:        ['uruz', 'algiz', 'isa', 'berkana'],
+  opportunities: ['ansuz', 'raidho', 'perthro', 'dagaz'],
+  luck:          ['jera', 'sowilo', 'wunjo', 'fehu'],
+  endurance:     ['algiz', 'thurisaz', 'nauthiz', 'uruz'],
+  happiness:     ['gebo', 'wunjo', 'ehwaz', 'mannaz']
+};
+
 function calcShowStep(step){
   document.querySelectorAll('.calc-step').forEach(function(el){ el.classList.remove('active'); });
   document.querySelector('.calc-step[data-step="' + step + '"]').classList.add('active');
-  var hideNav = (step === 'result' || step === 'deadend' || step === 'oracle');
+  var hideNav = (step === 'result' || step === 'deadend' || step === 'oracle' || step === 'tarotSoon');
   document.getElementById('calcNav').style.display = hideNav ? 'none' : 'flex';
   document.getElementById('calcBackBtn').style.visibility = calcHistory.length > 1 ? 'visible' : 'hidden';
+  // the energy-chain squares only make sense while looking at the oracle
+  // animation or a result that came out of it - hide them everywhere else,
+  // without throwing away the accumulated chain itself
+  var chainVisible = (step === 'oracle' || step === 'result') && universeChain.length > 1;
+  document.getElementById('chainSlots').style.display = chainVisible ? 'flex' : 'none';
 }
 function calcGoTo(step){
   calcHistory.push(step);
@@ -377,12 +425,17 @@ function calcBack(){
   }
 }
 function calcRestart(){
-  calcHistory = ['universe'];
+  calcHistory = ['instrument'];
   document.querySelectorAll('.calc-opt').forEach(function(b){ b.classList.remove('selected'); });
-  calcShowStep('universe');
+  resetUniverseChain();
+  calcShowStep('instrument');
 }
 
 document.querySelectorAll('.calc-options').forEach(function(group){
+  bindOptionGroup(group);
+});
+
+function bindOptionGroup(group){
   var groupKey = group.getAttribute('data-group');
   group.querySelectorAll('.calc-opt').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -392,28 +445,66 @@ document.querySelectorAll('.calc-options').forEach(function(group){
       setTimeout(function(){ handleAnswer(groupKey, val); }, 160);
     });
   });
-});
+}
 
 function handleAnswer(groupKey, val){
-  if(groupKey === 'trustUniverse'){
+  if(groupKey === 'instrument'){
+    resetUniverseChain();
+    if(val === 'rune') calcGoTo('universe');
+    else calcGoTo('tarotSoon');
+  } else if(groupKey === 'trustUniverse'){
     if(val === 'yes'){
       runUniversePick();
     } else {
+      resetUniverseChain();
       calcGoTo('sphereAsk');
     }
   } else if(groupKey === 'wantSphere'){
     if(val === 'yes') calcGoTo('sphere');
     else calcGoTo('deadend');
   } else if(groupKey === 'sphere'){
-    showResult(SPHERE_POOL[val], false);
+    showSphereOptions(val);
+  } else if(groupKey === 'sphereOption'){
+    showResult(RUNE_POOL[val], false);
   }
+}
+
+function showSphereOptions(sphereKey){
+  var keys = SPHERE_RUNES[sphereKey] || [];
+  var list = document.getElementById('sphereOptionsList');
+  list.innerHTML = '';
+  keys.forEach(function(k){
+    var item = RUNE_POOL[k];
+    var btn = document.createElement('button');
+    btn.className = 'calc-opt';
+    btn.setAttribute('data-value', k);
+    btn.innerHTML = '<span class="calc-opt-rune">' + item.rune + '</span>' + item.title;
+    list.appendChild(btn);
+  });
+  bindOptionGroup(list);
+  calcGoTo('sphereOptions');
+}
+
+/* ══ "TRUST THE UNIVERSE": random draw, up to 3 energies per pass ══ */
+var universeChain = []; // amulet objects revealed in the current pass (max 3)
+
+function resetUniverseChain(){
+  universeChain = [];
+  renderChainSlots();
 }
 
 function runUniversePick(){
   calcGoTo('oracle');
   var pick = randomRuneKey();
   var amulet = RUNE_POOL[pick];
-  var begin = function(){ runOracleAnimation(amulet.rune, function(){ showResult(RUNE_POOL[pick], true); }); };
+  var begin = function(){
+    runOracleAnimation(amulet.rune, function(){
+      if(universeChain.length >= 3){ universeChain = []; } // 4th draw clears the row and starts over
+      universeChain.push(amulet);
+      renderChainSlots();
+      showResult(amulet, true);
+    });
+  };
   if(document.fonts && document.fonts.load){
     Promise.all([
       document.fonts.load("20px 'VT323'"),
@@ -437,11 +528,32 @@ function randomRuneKey(){
   return pick;
 }
 
-function showResult(amulet, fromUniverse){
+// small squares above the reveal window: every energy already drawn in
+// this pass except the one currently shown big - click one to reopen it
+function renderChainSlots(){
+  var row = document.getElementById('chainSlotsRow');
+  row.innerHTML = '';
+  var shown = universeChain.slice(0, -1);
+  shown.forEach(function(item){
+    var sq = document.createElement('div');
+    sq.className = 'chain-slot';
+    sq.textContent = item.rune;
+    sq.title = item.title;
+    sq.addEventListener('click', function(){ renderResultCard(item, true); calcShowStep('result'); });
+    row.appendChild(sq);
+  });
+  document.getElementById('chainSlots').style.display = (shown.length > 0) ? 'flex' : 'none';
+}
+
+function renderResultCard(amulet, fromUniverse){
   document.getElementById('resultRune').textContent = amulet.rune;
   document.getElementById('resultTitle').textContent = amulet.title;
   document.getElementById('resultText').textContent = amulet.text;
   document.getElementById('rerollBtn').style.display = fromUniverse ? 'inline-flex' : 'none';
+}
+
+function showResult(amulet, fromUniverse){
+  renderResultCard(amulet, fromUniverse);
   calcGoTo('result');
 }
 
@@ -533,7 +645,7 @@ function runOracleAnimation(targetRune, cb){
   requestAnimationFrame(frame);
 }
 
-calcShowStep('universe');
+calcShowStep('instrument');
 </script>
 
 </body>

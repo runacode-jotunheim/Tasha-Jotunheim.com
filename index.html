@@ -278,6 +278,8 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .hero-sub{font-size:12px;line-height:1.95;color:#c8ffda;max-width:400px;margin-bottom:28px}
 .hero-runes{font-family:'VT323',monospace;font-size:18px;letter-spacing:7px;color:rgba(0,255,65,0.3);margin-bottom:28px}
 .hero-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 34px;border:1px solid var(--accent);border-radius:6px;font-family:'VT323','Share Tech Mono',monospace;font-size:19px;letter-spacing:5px;color:var(--accent);text-decoration:none;text-transform:uppercase;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);position:relative;overflow:hidden;transition:color .25s}
+.hero-cta-compact{padding:11px 16px;font-size:12px;letter-spacing:1.5px;white-space:nowrap;flex:0 0 auto}
+@media(max-width:420px){.hero-cta-compact{font-size:10.5px;padding:10px 12px;letter-spacing:1px}}
 .hero-cta::before{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;z-index:-1}
 .hero-cta:hover::before{transform:scaleX(1)}
 .hero-cta:hover{color:#000}
@@ -521,6 +523,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <a class="nav-link" href="#season">Сезон</a>
     <a class="nav-link" href="#about">О мастере</a>
     <a class="nav-link" href="#contacts">Контакты</a>
+    <span class="nav-link" style="opacity:.45;cursor:default">Создать свой артефакт (скоро)</span>
   </div>
   <div id="top-right-controls">
     <button id="search-toggle" onclick="toggleSearch()" aria-label="Поиск">
@@ -624,7 +627,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="ag-title">Браслет</div>
     <div class="ag-detail-text">
       <p>Браслет работает <b>по кругу</b> — это плавный, постепенный подъём, как спиральная лестница. Он не про резкий скачок, а про то, чтобы зафиксировать состояние и удерживать его на постоянной основе.</p>
-      <p>Особенно хорошо работает на здоровье, защиту и благосостояние — там, где важно, чтобы эффект циркулировал в тебе постоянно, а не время от времени. Также отлично подходит для финального отрезка пути — когда основной рывок уже сделан и остаётся плавно докрутить последние шаги.</p>
+      <p>Особенно хорошо работает на здоровье, защиту, удачу и благосостояние — там, где важно, чтобы эффект циркулировал в тебе постоянно, а не время от времени. Также отлично подходит для финального отрезка пути — когда основной рывок уже сделан и остаётся плавно докрутить последние шаги.</p>
       <p><b>Браслет + кулон</b> часто дополняют друг друга: с одним браслетом к цели тоже можно прийти, но постепенно, шаг за шагом. Если нужен быстрый скачок — впереди должен идти кулон, а браслет закрепляет достигнутое.</p>
     </div>
     <div class="ag-secret-note">Сама формула не раскрывается до покупки — она подбирается индивидуально под тебя и твой запрос. Даже одна и та же цель у разных людей даёт разную формулу.</div>
@@ -638,7 +641,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="ag-choice" onclick="agShow('pendant')" style="cursor:none">
         <svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="2.5" d="M 78,12 Q 100,42 100,66"/><path class="ag-stroke" stroke-width="2.5" d="M 122,12 Q 100,42 100,66"/><rect class="ag-stroke" stroke-width="5" x="88" y="66" width="24" height="122" rx="6"/></svg>
         <div class="ag-choice-label">Кулон</div>
-        <div style="font-size:11px;color:rgba(0,255,65,0.55);line-height:1.5">Вертикаль. Быстрый, заметный сдвиг.</div>
+        <div style="font-size:11px;color:rgba(0,255,65,0.55);line-height:1.5">Вертикальный, быстрый, заметный сдвиг.</div>
       </div>
       <div class="ag-choice" onclick="agShow('bracelet')" style="cursor:none">
         <svg viewBox="0 0 200 200"><path class="ag-stroke" stroke-width="7" d="M 70.4,163.4 A 70,70 0 1 1 129.6,163.4"/></svg>
@@ -682,9 +685,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <h1 class="hero-title" id="heroTitle"><span class="scramble-line">Артефакты</span><br><span class="scramble-line">Йотунхейм</span></h1>
     <p class="hero-sub">Рунические браслеты, кулоны и амулеты с авторской формулой. Каждый артефакт создаётся под твою энергию и запрос.</p>
     <div class="hero-runes">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ</div>
-    <div class="hero-cta-row" style="display:flex;gap:14px;flex-wrap:wrap">
-      <a href="#new-collection" class="hero-cta">&#9654; смотреть коллекцию</a>
-      <button class="hero-cta" onclick="openArtifactGuide()" style="cursor:none">&#9654; выбрать артефакт</button>
+    <div class="hero-cta-row" style="display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto">
+      <a href="#new-collection" class="hero-cta hero-cta-compact">&#9654; смотреть все коллекции</a>
+      <button class="hero-cta hero-cta-compact" onclick="openArtifactGuide()" style="cursor:none">&#9654; выбрать артефакт</button>
     </div>
     <div class="scroll-arrow" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">
       <span class="scroll-arrow-label">листать вниз</span>

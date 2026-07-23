@@ -277,8 +277,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .hero-sub{font-size:12px;line-height:1.95;color:#c8ffda;max-width:400px;margin-bottom:28px}
 .hero-runes{font-family:'VT323',monospace;font-size:18px;letter-spacing:7px;color:rgba(0,255,65,0.3);margin-bottom:28px}
 .hero-cta{display:inline-flex;align-items:center;gap:10px;padding:13px 34px;border:1px solid var(--accent);border-radius:6px;font-family:'VT323','Share Tech Mono',monospace;font-size:19px;letter-spacing:5px;color:var(--accent);text-decoration:none;text-transform:uppercase;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);position:relative;overflow:hidden;transition:color .25s}
-.hero-cta-compact{padding:11px 16px;font-size:12px;letter-spacing:1.5px;white-space:nowrap;flex:0 0 auto}
-@media(max-width:420px){.hero-cta-compact{font-size:10.5px;padding:10px 12px;letter-spacing:1px}}
+.hero-cta-compact{padding:14px 20px;font-size:15px;letter-spacing:2px;white-space:normal;text-align:center;justify-content:center;width:100%;max-width:340px}
 .hero-cta::before{content:'';position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;z-index:-1}
 .hero-cta:hover::before{transform:scaleX(1)}
 .hero-cta:hover{color:#000}
@@ -688,7 +687,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <h1 class="hero-title" id="heroTitle"><span class="scramble-line">Артефакты</span><br><span class="scramble-line">Йотунхейм</span></h1>
     <p class="hero-sub">Рунические браслеты, кулоны и амулеты с авторской формулой. Каждый артефакт создаётся под твою энергию и запрос.</p>
     <div class="hero-runes">ᚠ ᚢ ᚦ ᚨ ᚱ ᚲ ᚷ ᚹ</div>
-    <div class="hero-cta-row" style="display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto">
+    <div class="hero-cta-row" style="display:flex;flex-direction:column;gap:14px;align-items:center">
       <a href="#new-collection" class="hero-cta hero-cta-compact">&#9654; смотреть все коллекции</a>
       <button class="hero-cta hero-cta-compact" onclick="openArtifactGuide()" style="cursor:none">&#9654; выбрать артефакт</button>
     </div>

@@ -206,8 +206,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .ag-step.active{display:block}
 .ag-title{font-family:'Cinzel',serif;font-size:19px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:8px;color:var(--accent)}
 .ag-sub{text-align:center;font-size:11px;letter-spacing:1px;color:rgba(0,255,65,0.5);margin-bottom:26px}
-.ag-choices{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:6px}
-@media(max-width:520px){.ag-choices{grid-template-columns:1fr}}
+.ag-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
 .ag-choice{padding:20px 10px;border:1px solid rgba(0,255,65,0.18);border-radius:12px;cursor:none;transition:border-color .2s,background .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
 .ag-choice:hover{border-color:var(--accent);background:rgba(0,255,65,0.04)}
 .ag-choice svg{width:56px;height:56px}
@@ -604,6 +603,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="ag-choice" onclick="agShow('both')">
         <svg viewBox="0 0 200 200"><text x="100" y="140" font-size="100" text-anchor="middle" font-family="Cinzel, serif" font-weight="900" fill="var(--accent)" style="filter:drop-shadow(0 0 6px var(--accent))">?</text></svg>
         <div class="ag-choice-label">Какие бывают</div>
+      </div>
+      <div class="ag-choice" style="opacity:.45;cursor:default">
+        <svg viewBox="0 0 200 200"><text x="100" y="140" font-size="100" text-anchor="middle" font-family="Cinzel, serif" font-weight="900" fill="var(--accent)" style="filter:drop-shadow(0 0 6px var(--accent))">+</text></svg>
+        <div class="ag-choice-label">Создать свой (скоро)</div>
       </div>
     </div>
   </div>

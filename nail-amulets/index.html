@@ -142,7 +142,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 <div class="hero-nail">
   <div class="hero-nail-eyebrow">&#9658; новый раздел</div>
   <div class="hero-nail-title">Nail Amulets</div>
-  <p class="hero-nail-sub">Рунические и таро-амулеты для ногтей — миниатюрная магия на кончиках пальцев. Пройди подбор ниже и узнай, какая энергия нужна тебе прямо сейчас.</p>
+  <p class="hero-nail-sub">Рунические и таро-амулеты для ногтей — миниатюрная магия на кончиках пальцев. Пройди ниже и узнай, какая энергия нужна тебе прямо сейчас.</p>
   <div class="hero-nail-badge">Скоро в коллекции</div>
 </div>
 
@@ -507,7 +507,7 @@ function clearOptSelections(){
 function calcShowStep(step){
   document.querySelectorAll('.calc-step').forEach(function(el){ el.classList.remove('active'); });
   document.querySelector('.calc-step[data-step="' + step + '"]').classList.add('active');
-  var hideNav = (step === 'result' || step === 'oracle' || step === 'activation');
+  var hideNav = (step === 'oracle' || step === 'activation');
   document.getElementById('calcNav').style.display = hideNav ? 'none' : 'flex';
   document.getElementById('calcBackBtn').style.visibility = calcHistory.length > 1 ? 'visible' : 'hidden';
   // the energy-chain squares: during the oracle/result flow they exclude
@@ -673,7 +673,8 @@ function randomPoolKey(pool){
 }
 
 function runUniversePick(){
-  calcGoTo('oracle');
+  if(calcHistory[calcHistory.length - 1] === 'result'){ calcHistory.pop(); } // "Ещё раз" replaces, not stacks
+  calcShowStep('oracle');
   var pool = currentPool();
   var pick = randomPoolKey(pool);
   var amulet = pool[pick];

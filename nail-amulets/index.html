@@ -150,7 +150,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <!-- Chain history: up to 3 energies revealed in one "trust the universe" pass -->
     <div class="chain-slots" id="chainSlots">
-      <div class="chain-slots-label">твои энергии сейчас</div>
+      <div class="chain-slots-label" id="chainSlotsLabel">твои энергии сейчас</div>
       <div class="chain-slots-row" id="chainSlotsRow"></div>
     </div>
 
@@ -222,7 +222,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
         <div class="calc-result-text">
           <p>При создании маникюра с нейл-амулетами важно учесть особую силу мысли и намерения, связанные с выбранной сферой жизни или желанием привлечь определённую энергию с помощью рун или таро.</p>
           <p>Помни, нейл-амулет — это мощный энергетический инструмент, который может стать твоим верным помощником в достижении желаемого. Однако без твоих действий и стремления он не сможет привести тебя к цели! Действуй, а мои амулеты тебе помогут!</p>
-          <p>Создавай волшебство на своих ногтях и отмечай меня в Instagram и Telegram — @TashaJotunheim #нейламулеты</p>
+          <p>Создавай волшебство на своих ногтях и отмечай меня в <a href="https://www.instagram.com/tasha.jotunheim?igsh=ZGhicHlnbzRncDhj" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">Instagram</a> и <a href="https://t.me/JotunSpirit" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">Telegram</a> — @tasha.jotunheim #нейламулеты</p>
         </div>
         <button class="calc-btn calc-btn-ghost" onclick="calcRestart()">&#8635; Пройти заново</button>
       </div>
@@ -504,11 +504,17 @@ function calcShowStep(step){
   var hideNav = (step === 'result' || step === 'oracle' || step === 'activation');
   document.getElementById('calcNav').style.display = hideNav ? 'none' : 'flex';
   document.getElementById('calcBackBtn').style.visibility = calcHistory.length > 1 ? 'visible' : 'hidden';
-  // the energy-chain squares only make sense while looking at the oracle
-  // animation or a result that came out of it - hide them everywhere else,
-  // without throwing away the accumulated chain itself
-  var chainVisible = (step === 'oracle' || step === 'result') && universeChain.length > 1;
-  document.getElementById('chainSlots').style.display = chainVisible ? 'flex' : 'none';
+  // the energy-chain squares: during the oracle/result flow they exclude
+  // the item already shown big on that screen; on continueAsk/activation
+  // there's no separate "big" display, so show the full set as a preview
+  // of everything picked this session before the person commits
+  if(step === 'oracle' || step === 'result'){
+    renderChainSlots(false);
+  } else if(step === 'continueAsk' || step === 'activation'){
+    renderChainSlots(true);
+  } else {
+    document.getElementById('chainSlots').style.display = 'none';
+  }
 }
 function calcGoTo(step){
   calcHistory.push(step);
@@ -641,13 +647,11 @@ function loadImg(src){
 
 function resetUniverseChain(){
   universeChain = [];
-  renderChainSlots();
 }
 
 function pushToChain(amulet, canReroll){
   if(universeChain.length >= 3){ universeChain = []; } // 4th reveal clears the row and starts over
   universeChain.push({item: amulet, canReroll: !!canReroll});
-  renderChainSlots();
 }
 
 function randomPoolKey(pool){
@@ -689,13 +693,19 @@ function runUniversePick(){
   }
 }
 
-// small squares above the reveal window: every energy already drawn in
-// this session except the one currently shown big - click one to reopen it
-function renderChainSlots(){
+// includeLast=false: small squares above the reveal window, everything
+// already drawn this session except the one currently shown big.
+// includeLast=true: full-set preview (continueAsk / activation), nothing
+// else on screen duplicates the last item so it's shown too.
+function renderChainSlots(includeLast){
   var row = document.getElementById('chainSlotsRow');
+  var wrap = document.getElementById('chainSlots');
+  var label = document.getElementById('chainSlotsLabel');
   row.innerHTML = '';
-  var shown = universeChain.slice(0, -1);
-  shown.forEach(function(entry){
+  var list = includeLast ? universeChain : universeChain.slice(0, -1);
+  if(list.length === 0){ wrap.style.display = 'none'; return; }
+  label.textContent = includeLast ? 'твой набор в этот раз' : 'твои энергии сейчас';
+  list.forEach(function(entry){
     var item = entry.item;
     var sq = document.createElement('div');
     sq.className = 'chain-slot';
@@ -710,7 +720,7 @@ function renderChainSlots(){
     sq.addEventListener('click', function(){ renderResultCard(item, entry.canReroll); calcShowStep('result'); });
     row.appendChild(sq);
   });
-  document.getElementById('chainSlots').style.display = (shown.length > 0) ? 'flex' : 'none';
+  wrap.style.display = 'flex';
 }
 
 function renderResultCard(amulet, canReroll){

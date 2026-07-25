@@ -714,18 +714,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </section>
 
-<div class="divider reveal"><span>подбор</span></div>
-
-<!-- ARTIFACT GUIDE TRIGGER -->
-<div class="section-wrap" style="padding-top:20px;padding-bottom:20px">
-  <div class="glass artifact-guide-card reveal" onclick="openArtifactGuide()">
-    <span class="section-eye" style="margin-bottom:14px">&#9658; не знаешь, с чего начать?</span>
-    <h2 class="section-title" style="margin-bottom:14px">Кулон или браслет?</h2>
-    <p style="font-size:13px;color:rgba(0,255,65,0.65);max-width:480px;margin:0 auto 20px;line-height:1.7">У них разная механика действия — а сама формула всегда авторская.</p>
-    <button class="hero-cta" style="font-size:14px;padding:11px 26px">Узнать разницу</button>
-  </div>
-</div>
-
 <div class="divider reveal"><span>новинка</span></div>
 
 <!-- NEW COLLECTION -->
@@ -763,42 +751,22 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
+<div class="divider reveal"><span>подбор</span></div>
+
+<!-- ARTIFACT GUIDE TRIGGER -->
+<div class="section-wrap" style="padding-top:20px;padding-bottom:20px">
+  <div class="glass artifact-guide-card reveal" onclick="openArtifactGuide()">
+    <span class="section-eye" style="margin-bottom:14px">&#9658; не знаешь, с чего начать?</span>
+    <h2 class="section-title" style="margin-bottom:14px">Кулон или браслет?</h2>
+    <p style="font-size:13px;color:rgba(0,255,65,0.65);max-width:480px;margin:0 auto 20px;line-height:1.7">У них разная механика действия — а сама формула всегда авторская.</p>
+    <button class="hero-cta" style="font-size:14px;padding:11px 26px">Узнать разницу</button>
+  </div>
+</div>
+
 <div class="divider reveal"><span>обзор</span></div>
 
 <!-- BENTO HUB: SEASON+COUNTDOWN, TOP SALES, CATEGORIES -->
 <div class="section-wrap" id="bento-hub">
-
-  <div class="season-countdown-row">
-    <div class="bento-season" id="season">
-      <span class="section-eye reveal">&#9658; колесо года</span>
-      <h2 class="section-title reveal" id="seasonTitle" style="margin-bottom:16px">...</h2>
-      <div class="season-card glass reveal" id="seasonCard">
-        <div class="season-symbol" id="seasonSymbol">ᛟ</div>
-        <div class="season-name" id="seasonName">...</div>
-        <div class="season-dates" id="seasonDates">...</div>
-        <div class="season-text" id="seasonText">Коллекция обновляется по Колесу года автоматически.</div>
-      </div>
-    </div>
-
-    <div class="bento-countdown" id="countdown-section">
-      <span class="section-eye reveal">&#9658; скоро</span>
-      <h2 class="section-title reveal" style="margin-bottom:16px">Следующий праздник</h2>
-      <div class="countdown-card glass reveal">
-        <div class="hourglass-wrap" id="hourglassWrap">
-          <canvas id="hourglassCanvas" width="138" height="138"></canvas>
-        </div>
-        <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
-        <div class="countdown-clock">
-          <div class="cd-unit"><span id="cdDays">00</span><small>дней</small></div>
-          <div class="cd-sep">:</div>
-          <div class="cd-unit"><span id="cdHours">00</span><small>часов</small></div>
-        </div>
-        <div class="countdown-sub" id="cdDate">...</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="divider reveal"><span>хиты</span></div>
 
   <div class="bento-topsales" id="top-sales">
     <span class="section-eye reveal">&#9658; хиты</span>
@@ -846,7 +814,39 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     </div>
   </div>
 
-  <div class="divider reveal"><span>категории</span></div>
+<div class="divider reveal"><span>праздник</span></div>
+
+  <div class="season-countdown-row">
+    <div class="bento-season" id="season">
+      <span class="section-eye reveal">&#9658; колесо года</span>
+      <h2 class="section-title reveal" id="seasonTitle" style="margin-bottom:16px">...</h2>
+      <div class="season-card glass reveal" id="seasonCard">
+        <div class="season-symbol" id="seasonSymbol">ᛟ</div>
+        <div class="season-name" id="seasonName">...</div>
+        <div class="season-dates" id="seasonDates">...</div>
+        <div class="season-text" id="seasonText">Коллекция обновляется по Колесу года автоматически.</div>
+      </div>
+    </div>
+
+    <div class="bento-countdown" id="countdown-section">
+      <span class="section-eye reveal">&#9658; скоро</span>
+      <h2 class="section-title reveal" style="margin-bottom:16px">Следующий праздник</h2>
+      <div class="countdown-card glass reveal">
+        <div class="hourglass-wrap" id="hourglassWrap">
+          <canvas id="hourglassCanvas" width="138" height="138"></canvas>
+        </div>
+        <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
+        <div class="countdown-clock">
+          <div class="cd-unit"><span id="cdDays">00</span><small>дней</small></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><span id="cdHours">00</span><small>часов</small></div>
+        </div>
+        <div class="countdown-sub" id="cdDate">...</div>
+      </div>
+    </div>
+  </div>
+
+<div class="divider reveal"><span>категории</span></div>
 
   <div class="bento-categories" id="categories">
     <div class="cat-grid">
@@ -901,6 +901,32 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <h2 class="section-title reveal" style="margin-bottom:8px">Ваши последние интересы</h2>
   <span class="rv-clear" onclick="clearRecentlyViewed()">Очистить ✕</span>
   <div class="rv-scroll" id="rvScroll"></div>
+</div>
+
+<div class="divider reveal"><span>создатели</span></div>
+
+<!-- ABOUT -->
+<div class="section-wrap" id="about">
+  <span class="section-eye reveal">&#9658; Создатели</span>
+  <h2 class="section-title reveal">Семья Йотунхейм</h2>
+  <div class="about-layout glass reveal">
+    <div class="about-photos">
+      <div class="about-photo-slot"><span>Дима</span></div>
+      <div class="about-photo-slot"><span>Таша</span></div>
+    </div>
+    <div class="about-text">
+      Мы — Семья Йотунхейм. Мы создаём уникальные артефакты — как последователи инистых великанов и проводники первородной Силы на Земле.<br><br>
+      <b style="color:var(--accent)">Таша Йотунхейм</b> — вёльва с силой Йотуна. Родовая ведьма, рунолог, северная провидица, хранительница древнего знания вёльв и силы стихий, первозданной природы и хаоса. Участница «Битвы экстрасенсов», 22 и 23 сезон на ТНТ.<br><br>
+      <b style="color:var(--accent)">Дмитрий Йотунхейм</b> — природный маг, инициированный Бергельмиром, рунолог, владеет мастерством изменения тканей пространства, ритуальный практик.<br><br>
+      Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
+      <span style="color:var(--accent)">ᚠ Каждый артефакт — это уникальный неповторимый ритуал, способный решить любую задачу в корне, запечатанный в стальную форму.</span><br>
+      <blockquote class="quote-callout" style="text-align:center">
+        <div class="quote-label">Артефакты Йотунхейм</div>
+        <div>Твоя жизнь — твои правила!</div>
+      </blockquote>
+      <p style="margin-top:16px;color:var(--accent);font-weight:700;font-size:13px;line-height:1.7">Наши артефакты изменят сценарий твоей жизни в лучшую сторону, а не просто дадут временные улучшения.</p>
+    </div>
+  </div>
 </div>
 
 <div class="divider reveal"><span>Коллекции</span></div>
@@ -1509,31 +1535,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   </div>
 </div>
 
-<div class="divider reveal"><span>создатели</span></div>
-
-<!-- ABOUT -->
-<div class="section-wrap" id="about">
-  <span class="section-eye reveal">&#9658; Создатели</span>
-  <h2 class="section-title reveal">Семья Йотунхейм</h2>
-  <div class="about-layout glass reveal">
-    <div class="about-photos">
-      <div class="about-photo-slot"><span>Дима</span></div>
-      <div class="about-photo-slot"><span>Таша</span></div>
-    </div>
-    <div class="about-text">
-      Мы — Семья Йотунхейм. Мы создаём уникальные артефакты — как последователи инистых великанов и проводники первородной Силы на Земле.<br><br>
-      <b style="color:var(--accent)">Таша Йотунхейм</b> — вёльва с силой Йотуна. Родовая ведьма, рунолог, северная провидица, хранительница древнего знания вёльв и силы стихий, первозданной природы и хаоса. Участница «Битвы экстрасенсов», 22 и 23 сезон на ТНТ.<br><br>
-      <b style="color:var(--accent)">Дмитрий Йотунхейм</b> — природный маг, инициированный Бергельмиром, рунолог, владеет мастерством изменения тканей пространства, ритуальный практик.<br><br>
-      Материал: нержавеющая сталь — лучший проводник магии, превосходящий серебро и золото по энергопроводимости.<br><br>
-      <span style="color:var(--accent)">ᚠ Каждый артефакт — это уникальный неповторимый ритуал, способный решить любую задачу в корне, запечатанный в стальную форму.</span><br>
-      <blockquote class="quote-callout" style="text-align:center">
-        <div class="quote-label">Артефакты Йотунхейм</div>
-        <div>Твоя жизнь — твои правила!</div>
-      </blockquote>
-      <p style="margin-top:16px;color:var(--accent);font-weight:700;font-size:13px;line-height:1.7">Наши артефакты изменят сценарий твоей жизни в лучшую сторону, а не просто дадут временные улучшения.</p>
-    </div>
-  </div>
-</div>
 
 <div class="section-wrap" id="contacts">
   <span class="section-eye reveal">&#9658; связаться</span>

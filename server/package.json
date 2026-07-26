@@ -1,0 +1,15 @@
+{
+  "name": "tasha-jotunheim-payments",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Минимальный backend для приёма заказов и оплаты через Робокассу (tasha-jotunheim.com). Разворачивается на Timeweb Cloud.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -269,6 +269,32 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:590;display:none}
 .cart-overlay.show{display:block}
 
+/* ══ CHECKOUT MODAL ══ */
+#checkout-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:480px;max-height:88vh;max-height:88dvh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:711;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow-y:auto}
+#checkout-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+@media(max-width:700px){
+  #checkout-modal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:92vh;max-height:92dvh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none}
+  #checkout-modal.open{transform:translateY(0)}
+}
+.checkout-body{padding:30px 28px 34px}
+.checkout-title{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:4px}
+.checkout-sub{font-size:11px;color:rgba(0,255,65,0.45);letter-spacing:1px;margin-bottom:22px}
+.checkout-field{margin-bottom:16px}
+.checkout-field label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(0,255,65,0.5);margin-bottom:7px}
+.checkout-field input,.checkout-field textarea{width:100%;background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.2);border-radius:8px;padding:11px 13px;color:#fff;font-family:'Share Tech Mono',monospace;font-size:13px;outline:none;transition:border-color .2s}
+.checkout-field input:focus,.checkout-field textarea:focus{border-color:var(--accent)}
+.checkout-field textarea{resize:vertical;min-height:56px}
+.checkout-field.invalid input,.checkout-field.invalid textarea{border-color:#ff4444}
+.checkout-summary{margin:20px 0;padding:14px 16px;border:1px solid rgba(0,255,65,0.12);border-radius:10px;background:rgba(0,255,65,0.03)}
+.checkout-summary-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(230,255,238,0.7);padding:3px 0}
+.checkout-summary-total{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,255,65,0.12);font-size:14px}
+.checkout-summary-total b{font-family:'VT323',monospace;font-size:20px;color:var(--accent)}
+.checkout-submit{width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:none;transition:opacity .2s}
+.checkout-submit:hover{opacity:.88}
+.checkout-submit:disabled{opacity:.4;cursor:not-allowed}
+.checkout-status{margin-top:14px;font-size:11px;line-height:1.7;text-align:center;color:rgba(0,255,65,0.6)}
+.checkout-status.error{color:#ff6b6b}
+
 /* ══ HERO ══ */
 .hero{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
 @media(max-width:700px){.hero{grid-template-columns:1fr;grid-template-rows:auto auto}}
@@ -594,7 +620,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     </div>
     <label class="cart-consent">
       <input type="checkbox" id="consentCheckbox" onchange="document.getElementById('checkoutBtn').disabled = !this.checked">
-      <span>Согласен(-на) на <a href="/privacy-policy.html" target="_blank">обработку персональных данных</a></span>
+      <span>Соглашаюсь с <a href="legal/oferta.html" target="_blank">офертой</a> и даю <a href="legal/consent.html" target="_blank">согласие на обработку персональных данных</a></span>
     </label>
     <button class="cart-checkout" id="checkoutBtn" onclick="checkout()" disabled>&#9654; Оформить заказ</button>
   </div>
@@ -671,6 +697,41 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       </div>
     </div>
     <div class="ag-secret-note">Формула авторская — создана под конкретную задачу, на основе многолетней рунической практики.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="checkoutOverlay" onclick="closeCheckout()"></div>
+<div id="checkout-modal">
+  <button class="modal-close" onclick="closeCheckout()">✕</button>
+  <div class="checkout-body">
+    <div class="checkout-title">Оформление заказа</div>
+    <div class="checkout-sub">Заполните данные для доставки — дальше переход к оплате</div>
+
+    <div class="checkout-field" id="fName">
+      <label>Имя *</label>
+      <input type="text" id="ckName" autocomplete="name" placeholder="Как к вам обращаться">
+    </div>
+    <div class="checkout-field" id="fPhone">
+      <label>Телефон *</label>
+      <input type="tel" id="ckPhone" autocomplete="tel" placeholder="+7 900 000-00-00">
+    </div>
+    <div class="checkout-field" id="fEmail">
+      <label>Email (для чека)</label>
+      <input type="email" id="ckEmail" autocomplete="email" placeholder="mail@example.com">
+    </div>
+    <div class="checkout-field" id="fAddress">
+      <label>Адрес доставки *</label>
+      <textarea id="ckAddress" placeholder="Город, улица, дом, ПВЗ СДЭК/Ozon — как удобнее"></textarea>
+    </div>
+    <div class="checkout-field">
+      <label>Комментарий к заказу</label>
+      <textarea id="ckComment" placeholder="Необязательно"></textarea>
+    </div>
+
+    <div class="checkout-summary" id="checkoutSummary"></div>
+
+    <button class="checkout-submit" id="checkoutSubmitBtn" onclick="submitOrder()">&#9654; Перейти к оплате</button>
+    <div class="checkout-status" id="checkoutStatus"></div>
   </div>
 </div>
 
@@ -2032,10 +2093,97 @@ function removeFromCart(i){
   cart.splice(i,1);
   renderCart();
 }
+// ⚠ Заменить на реальный домен backend-сервера, когда он поднят на Timeweb Cloud
+// (см. /server в репозитории). Пока значение-заглушка — форма покажет
+// понятную ошибку и предложит написать в Telegram вместо оплаты.
+var PAYMENT_API_BASE = 'https://api.tasha-jotunheim.com';
+
 function checkout(){
   if(!cart.length) return;
-  alert('Переход к оплате через Робокассу — будет подключено. Напишите нам в Telegram: @JotunSpirit');
+  openCheckout();
 }
+
+function openCheckout(){
+  renderCheckoutSummary();
+  document.getElementById('checkout-modal').classList.add('open');
+  document.getElementById('checkoutOverlay').classList.add('open');
+  document.getElementById('checkoutStatus').textContent = '';
+  document.getElementById('checkoutStatus').className = 'checkout-status';
+  lockBodyScroll();
+  closeCart();
+}
+function closeCheckout(){
+  var modal = document.getElementById('checkout-modal');
+  if(!modal.classList.contains('open')) return;
+  modal.classList.remove('open');
+  document.getElementById('checkoutOverlay').classList.remove('open');
+  unlockBodyScroll();
+}
+window.openCheckout = openCheckout;
+window.closeCheckout = closeCheckout;
+
+function renderCheckoutSummary(){
+  var sum = cart.reduce(function(s, it){ return s + it.price; }, 0);
+  var rows = cart.map(function(it){
+    return '<div class="checkout-summary-row"><span>'+it.name+'</span><span>'+it.price.toLocaleString('ru-RU')+' ₽</span></div>';
+  }).join('');
+  document.getElementById('checkoutSummary').innerHTML = rows +
+    '<div class="checkout-summary-total"><span>Итого</span><b>'+sum.toLocaleString('ru-RU')+' ₽</b></div>';
+}
+
+function setFieldInvalid(id, invalid){
+  document.getElementById(id).classList.toggle('invalid', !!invalid);
+}
+
+function submitOrder(){
+  var name = document.getElementById('ckName').value.trim();
+  var phone = document.getElementById('ckPhone').value.trim();
+  var email = document.getElementById('ckEmail').value.trim();
+  var address = document.getElementById('ckAddress').value.trim();
+  var comment = document.getElementById('ckComment').value.trim();
+
+  var valid = true;
+  setFieldInvalid('fName', !name); if(!name) valid = false;
+  setFieldInvalid('fPhone', !phone); if(!phone) valid = false;
+  setFieldInvalid('fAddress', !address); if(!address) valid = false;
+  if(!valid){
+    var st = document.getElementById('checkoutStatus');
+    st.textContent = 'Заполните обязательные поля (имя, телефон, адрес)';
+    st.className = 'checkout-status error';
+    return;
+  }
+
+  var btn = document.getElementById('checkoutSubmitBtn');
+  var status = document.getElementById('checkoutStatus');
+  btn.disabled = true;
+  status.className = 'checkout-status';
+  status.textContent = 'Формируем счёт…';
+
+  var payload = {
+    items: cart.map(function(it){ return {name: it.name, price: it.price, qty: 1}; }),
+    customer: {name: name, phone: phone, email: email, address: address},
+    comment: comment
+  };
+
+  fetch(PAYMENT_API_BASE + '/api/create-payment', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(r){
+    if(!r.ok) throw new Error('bad response');
+    return r.json();
+  }).then(function(data){
+    if(!data.paymentUrl) throw new Error('no url');
+    status.textContent = 'Переходим к оплате…';
+    window.location.href = data.paymentUrl;
+  }).catch(function(err){
+    btn.disabled = false;
+    status.className = 'checkout-status error';
+    status.textContent = 'Не получилось создать счёт автоматически. Напишите нам в Telegram: @JotunSpirit — оформим заказ вручную.';
+  });
+}
+window.submitOrder = submitOrder;
+
 window.addToCart = addToCart; window.removeFromCart = removeFromCart;
 window.checkout = checkout;
 

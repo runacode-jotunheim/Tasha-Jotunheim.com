@@ -14,6 +14,8 @@ const {
   ROBOKASSA_LOGIN,
   ROBOKASSA_PASSWORD_1,
   ROBOKASSA_PASSWORD_2,
+  ROBOKASSA_TEST_PASSWORD_1,
+  ROBOKASSA_TEST_PASSWORD_2,
   ROBOKASSA_TEST_MODE,
   ROBOKASSA_TAX_SYSTEM,
   PORT,
@@ -29,12 +31,24 @@ for (const [key, val] of Object.entries({ ROBOKASSA_LOGIN, ROBOKASSA_PASSWORD_1,
   }
 }
 
+const isTest = ROBOKASSA_TEST_MODE === '1';
+
+// ⚠ У Робокассы отдельная пара паролей для тестового режима (IsTest=1) —
+// использование боевых паролей вместе с IsTest=1 даёт ошибку 29 "Оплата счетов недоступна".
+// Тестовые пароли смотреть в ЛК Робокассы → карточка магазина → Технические настройки
+// (там же, где боевые Password1/Password2, обычно отдельным блоком/вкладкой "Тестовый режим").
+if (isTest && (!ROBOKASSA_TEST_PASSWORD_1 || !ROBOKASSA_TEST_PASSWORD_2)) {
+  console.error('[FATAL] ROBOKASSA_TEST_MODE=1, но не заданы ROBOKASSA_TEST_PASSWORD_1 / ROBOKASSA_TEST_PASSWORD_2 — тестовые платежи будут падать с ошибкой 29');
+  process.exit(1);
+}
+
+const activePassword1 = isTest ? ROBOKASSA_TEST_PASSWORD_1 : ROBOKASSA_PASSWORD_1;
+const activePassword2 = isTest ? ROBOKASSA_TEST_PASSWORD_2 : ROBOKASSA_PASSWORD_2;
+
 const app = express();
 app.use(cors({ origin: ALLOWED_ORIGIN || '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Робокасса шлёт ResultURL как form-urlencoded
-
-const isTest = ROBOKASSA_TEST_MODE === '1';
 
 function md5(str) {
   return crypto.createHash('md5').update(str, 'utf8').digest('hex');
@@ -96,7 +110,8 @@ app.post('/api/create-payment', async (req, res) => {
     const receiptEncoded = encodeURIComponent(receiptJson);
 
     // Формула подписи с чеком: MerchantLogin:OutSum:InvId:Receipt:Password1
-    const signatureBase = `${ROBOKASSA_LOGIN}:${outSum}:${invId}:${receiptJson}:${ROBOKASSA_PASSWORD_1}`;
+    // (Password1 — активный, тестовый или боевой, в зависимости от ROBOKASSA_TEST_MODE)
+    const signatureBase = `${ROBOKASSA_LOGIN}:${outSum}:${invId}:${receiptJson}:${activePassword1}`;
     const signature = md5(signatureBase);
 
     const params = new URLSearchParams({
@@ -143,7 +158,7 @@ app.post('/api/robokassa/result', async (req, res) => {
     return res.status(400).send('bad request');
   }
 
-  const expected = md5(`${OutSum}:${InvId}:${ROBOKASSA_PASSWORD_2}`).toLowerCase();
+  const expected = md5(`${OutSum}:${InvId}:${activePassword2}`).toLowerCase();
   const received = String(SignatureValue).toLowerCase();
 
   if (expected !== received) {

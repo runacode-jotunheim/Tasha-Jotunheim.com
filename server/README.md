@@ -38,10 +38,14 @@ tasha-jotunheim.com, указывающую на IP сервера Timeweb).
 4. `cd server && npm install`
 5. `cp .env.example .env` и заполнить реальными значениями:
    - `ROBOKASSA_LOGIN` — MerchantLogin из ЛК
-   - `ROBOKASSA_PASSWORD_1`, `ROBOKASSA_PASSWORD_2` — из Технических настроек ЛК
-     (**никогда** не отправлять эти два пароля в чат/почту/куда угодно, кроме
+   - `ROBOKASSA_PASSWORD_1`, `ROBOKASSA_PASSWORD_2` — боевые пароли из Технических настроек ЛК
+     (**никогда** не отправлять эти пароли в чат/почту/куда угодно, кроме
      самого `.env` на сервере)
-   - `ROBOKASSA_TEST_MODE=1` пока магазин не в боевом режиме
+   - `ROBOKASSA_TEST_PASSWORD_1`, `ROBOKASSA_TEST_PASSWORD_2` — **отдельная пара** для
+     тестовых платежей, тоже из Технических настроек ЛК (обычно отдельным блоком/вкладкой
+     рядом с боевыми паролями). Обязательны, если `ROBOKASSA_TEST_MODE=1` — без них
+     Робокасса вернёт ошибку 29 "Оплата счетов недоступна"
+   - `ROBOKASSA_TEST_MODE=1` пока магазин не в боевом режиме, `0` — когда реально принимаем деньги
    - `ALLOWED_ORIGIN=https://tasha-jotunheim.com`
    - при желании — `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` для уведомлений о заказах
      (бот создаётся за 1 минуту через @BotFather в Telegram)

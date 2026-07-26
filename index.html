@@ -619,7 +619,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <span class="cart-total-price" id="cartTotal">0 ₽</span>
     </div>
     <label class="cart-consent">
-      <input type="checkbox" id="consentCheckbox" onchange="document.getElementById('checkoutBtn').disabled = !this.checked">
+      <input type="checkbox" id="consentCheckbox">
       <span>Соглашаюсь с <a href="legal/oferta.html" target="_blank">офертой</a> и даю <a href="legal/consent.html" target="_blank">согласие на обработку персональных данных</a></span>
     </label>
     <button class="cart-checkout" id="checkoutBtn" onclick="checkout()" disabled>&#9654; Оформить заказ</button>
@@ -1948,7 +1948,30 @@ var savedTheme = localStorage.getItem('jv_theme');
 if(savedTheme) setTheme(savedTheme);
 
 /* ══ CART ══ */
-var cart = [];
+/* ══ CART PERSISTENCE — хранится в localStorage, протухает через 1 час бездействия ══ */
+var CART_STORAGE_KEY = 'jv_cart_v1';
+var CART_TTL_MS = 60 * 60 * 1000; // 1 час
+
+function loadCartFromStorage(){
+  try{
+    var raw = localStorage.getItem(CART_STORAGE_KEY);
+    if(!raw) return [];
+    var data = JSON.parse(raw);
+    if(!data || !Array.isArray(data.items)) return [];
+    if(Date.now() - (data.ts || 0) > CART_TTL_MS){
+      localStorage.removeItem(CART_STORAGE_KEY);
+      return [];
+    }
+    return data.items;
+  }catch(e){ return []; }
+}
+function saveCartToStorage(){
+  try{
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({items: cart, ts: Date.now()}));
+  }catch(e){}
+}
+
+var cart = loadCartFromStorage();
 
 /* ══ shared body-scroll lock (counter-based, safe for overlapping modals) ══ */
 var _scrollLockCount = 0;
@@ -1969,6 +1992,7 @@ function openCart(){
   document.getElementById('cart-drawer').classList.add('open');
   document.getElementById('cartOverlay').classList.add('show');
   lockBodyScroll();
+  syncConsentState(); // на случай если браузер восстановил чекбокс визуально, но не прислал onchange
 }
 function closeCart(){
   var drawer = document.getElementById('cart-drawer');
@@ -2085,14 +2109,46 @@ function renderCart(){
 
 function addToCart(id, name, price, rune){
   cart.push({id:id, name:name, price:price, rune:rune});
+  saveCartToStorage();
   renderCart();
   openCart();
   trackInterest(id);
 }
 function removeFromCart(i){
   cart.splice(i,1);
+  saveCartToStorage();
   renderCart();
 }
+renderCart(); // отрисовать корзину сразу, если что-то восстановилось из хранилища
+
+/* ══ CONSENT CHECKBOX — помним согласие в рамках вкладки (sessionStorage),
+   и всегда явно синхронизируем чекбокс с кнопкой, а не полагаемся на onchange,
+   который браузер не присылает при автовосстановлении формы после reload/ошибки ══ */
+var CONSENT_STORAGE_KEY = 'jv_consent_v1';
+
+function syncConsentState(){
+  var checkbox = document.getElementById('consentCheckbox');
+  var btn = document.getElementById('checkoutBtn');
+  if(!checkbox || !btn) return;
+  if(sessionStorage.getItem(CONSENT_STORAGE_KEY) === '1'){
+    checkbox.checked = true;
+  }
+  btn.disabled = !checkbox.checked;
+}
+
+(function initConsentCheckbox(){
+  var checkbox = document.getElementById('consentCheckbox');
+  if(!checkbox) return;
+  checkbox.addEventListener('change', function(){
+    if(this.checked){
+      sessionStorage.setItem(CONSENT_STORAGE_KEY, '1');
+    } else {
+      sessionStorage.removeItem(CONSENT_STORAGE_KEY);
+    }
+    syncConsentState();
+  });
+  syncConsentState(); // применить сразу при загрузке страницы
+})();
 // Backend поднят на Timeweb Cloud, домен привязан и рабочий (проверено /api/health).
 var PAYMENT_API_BASE = 'https://api.tasha-jotunheim.com';
 
@@ -2173,6 +2229,8 @@ function submitOrder(){
   }).then(function(data){
     if(!data.paymentUrl) throw new Error('no url');
     status.textContent = 'Переходим к оплате…';
+    cart = [];
+    saveCartToStorage();
     window.location.href = data.paymentUrl;
   }).catch(function(err){
     btn.disabled = false;

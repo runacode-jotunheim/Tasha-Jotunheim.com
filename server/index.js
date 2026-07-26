@@ -112,44 +112,47 @@ app.post('/api/create-payment', async (req, res) => {
       items: receiptItems,
     };
     const receiptJson = JSON.stringify(receipt);
-    // Робокасса требует: в подпись Receipt идёт в URL-кодированном (однократно) виде,
-    // а в самой GET-ссылке (query string) — закодирован ДВАЖДЫ. Раньше в подпись по
-    // ошибке уходил сырой JSON без кодирования вообще — это и было причиной ошибки 29.
+    // Робокасса требует однократно URL-кодировать Receipt перед добавлением в строку
+    // подписи. Раньше в подпись по ошибке уходил сырой JSON вообще без кодирования —
+    // это давало ошибку 29. Двойное кодирование, которое пробовали раньше, было нужно
+    // только для GET-редиректа; теперь переходим на POST (это отдельная рекомендация
+    // из документации Робокассы по Receipt: "из-за объёма номенклатуры используйте
+    // метод POST"), так что здесь достаточно одинарного кодирования.
     const receiptEncodedOnce = encodeURIComponent(receiptJson);
-    const receiptEncodedTwice = encodeURIComponent(receiptEncodedOnce);
 
     // Формула подписи с чеком: MerchantLogin:OutSum:InvId:Receipt(однократно закодирован):Password1
     // (Password1 — активный, тестовый или боевой, в зависимости от ROBOKASSA_TEST_MODE)
     const signatureBase = `${ROBOKASSA_LOGIN}:${outSumStr}:${invId}:${receiptEncodedOnce}:${activePassword1}`;
     const signature = md5(signatureBase);
 
-    const params = new URLSearchParams({
+    // Раньше формировали GET-ссылку с параметрами в query string. Документация Робокассы
+    // по фискализации прямо требует метод POST при наличии Receipt ("из-за объёма
+    // номенклатуры используйте метод POST") — отдаём фронтенду набор полей для
+    // автосабмита формы, а не готовую ссылку.
+    const robokassaFields = {
       MerchantLogin: ROBOKASSA_LOGIN,
       OutSum: outSumStr,
       InvId: String(invId),
       Description: description,
       SignatureValue: signature,
+      Receipt: receiptEncodedOnce,
       Culture: 'ru',
       Email: customer.email || '',
-    });
-    if (isTest) params.set('IsTest', '1');
-
-    // Receipt добавляем вручную последним, уже готовым дважды закодированным значением —
-    // не через URLSearchParams.set, чтобы не зависеть от того, закодирует ли он строку повторно.
-    const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params.toString()}&Receipt=${receiptEncodedTwice}`;
+    };
+    if (isTest) robokassaFields.IsTest = '1';
 
     // Диагностический лог — без пароля, только то, что реально ушло в запрос.
     // Смотреть во вкладке "Логи приложения" в Timeweb после неудачной попытки оплаты.
     console.log('[create-payment] DEBUG', JSON.stringify({
       MerchantLogin: ROBOKASSA_LOGIN,
-      OutSum: outSum,
+      OutSum: outSumStr,
       InvId: invId,
       IsTest: isTest ? 1 : 0,
       hashAlgo: 'md5',
       receiptSno: receipt.sno,
       receiptItemsCount: receiptItems.length,
-      signatureBaseLength: signatureBase.length,
-      paymentUrl,
+      signatureBase,
+      signature,
     }));
 
     // Пока нет БД заказов — сразу шлём заявку в телеграм, чтобы Таша видела
@@ -162,7 +165,12 @@ app.post('/api/create-payment', async (req, res) => {
       `Товары:\n` + items.map(it => `— ${it.name} × ${it.qty || 1} = ${it.price * (it.qty || 1)} ₽`).join('\n')
     );
 
-    res.json({ paymentUrl, invId, sum: outSum });
+    res.json({
+      action: 'https://auth.robokassa.ru/Merchant/Index.aspx',
+      fields: robokassaFields,
+      invId,
+      sum: outSum,
+    });
   } catch (err) {
     console.error('[create-payment] error:', err.message);
     res.status(500).json({ error: 'Не удалось создать платёж' });

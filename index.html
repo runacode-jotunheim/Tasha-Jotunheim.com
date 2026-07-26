@@ -2209,11 +2209,11 @@ function submitOrder(){
     if(!r.ok) throw new Error('bad response');
     return r.json();
   }).then(function(data){
-    if(!data.paymentUrl) throw new Error('no url');
+    if(!data.action || !data.fields) throw new Error('bad payload');
     status.textContent = 'Переходим к оплате…';
     cart = [];
     saveCartToStorage();
-    window.location.href = data.paymentUrl;
+    submitToRobokassa(data.action, data.fields);
   }).catch(function(err){
     btn.disabled = false;
     status.className = 'checkout-status error';
@@ -2221,6 +2221,24 @@ function submitOrder(){
   });
 }
 window.submitOrder = submitOrder;
+
+// Робокасса требует POST при передаче Receipt (номенклатуры чека) — вместо обычного
+// редиректа по ссылке (GET) собираем скрытую форму и автоматически её отправляем.
+function submitToRobokassa(action, fields){
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = action;
+  form.style.display = 'none';
+  Object.keys(fields).forEach(function(key){
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = fields[key];
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+}
 
 window.addToCart = addToCart; window.removeFromCart = removeFromCart;
 window.checkout = checkout;

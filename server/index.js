@@ -107,11 +107,15 @@ app.post('/api/create-payment', async (req, res) => {
       items: receiptItems,
     };
     const receiptJson = JSON.stringify(receipt);
-    const receiptEncoded = encodeURIComponent(receiptJson);
+    // Робокасса требует: в подпись Receipt идёт в URL-кодированном (однократно) виде,
+    // а в самой GET-ссылке (query string) — закодирован ДВАЖДЫ. Раньше в подпись по
+    // ошибке уходил сырой JSON без кодирования вообще — это и было причиной ошибки 29.
+    const receiptEncodedOnce = encodeURIComponent(receiptJson);
+    const receiptEncodedTwice = encodeURIComponent(receiptEncodedOnce);
 
-    // Формула подписи с чеком: MerchantLogin:OutSum:InvId:Receipt:Password1
+    // Формула подписи с чеком: MerchantLogin:OutSum:InvId:Receipt(однократно закодирован):Password1
     // (Password1 — активный, тестовый или боевой, в зависимости от ROBOKASSA_TEST_MODE)
-    const signatureBase = `${ROBOKASSA_LOGIN}:${outSum}:${invId}:${receiptJson}:${activePassword1}`;
+    const signatureBase = `${ROBOKASSA_LOGIN}:${outSum}:${invId}:${receiptEncodedOnce}:${activePassword1}`;
     const signature = md5(signatureBase);
 
     const params = new URLSearchParams({
@@ -120,13 +124,14 @@ app.post('/api/create-payment', async (req, res) => {
       InvId: String(invId),
       Description: description,
       SignatureValue: signature,
-      Receipt: receiptEncoded,
       Culture: 'ru',
       Email: customer.email || '',
     });
     if (isTest) params.set('IsTest', '1');
 
-    const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params.toString()}`;
+    // Receipt добавляем вручную последним, уже готовым дважды закодированным значением —
+    // не через URLSearchParams.set, чтобы не зависеть от того, закодирует ли он строку повторно.
+    const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params.toString()}&Receipt=${receiptEncodedTwice}`;
 
     // Диагностический лог — без пароля, только то, что реально ушло в запрос.
     // Смотреть во вкладке "Логи приложения" в Timeweb после неудачной попытки оплаты.

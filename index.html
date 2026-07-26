@@ -2076,21 +2076,23 @@ function renderCart(){
   el.innerHTML = '';
   var sum = 0;
   cart.forEach(function(item, i){
-    sum += item.price;
+    var qty = item.qty || 1;
+    var lineTotal = item.price * qty;
+    sum += lineTotal;
     var div = document.createElement('div');
     div.className = 'cart-item';
     div.innerHTML = '<div class="cart-item-rune">'+item.rune+'</div>'
-      +'<div><div class="cart-item-name">'+item.name+'</div>'
+      +'<div><div class="cart-item-name">'+item.name+(qty>1?' × '+qty:'')+'</div>'
       +'<button class="cart-item-del" onclick="removeFromCart('+i+')">✕ убрать</button></div>'
-      +'<div class="cart-item-price">'+item.price.toLocaleString('ru-RU')+' ₽</div>';
+      +'<div class="cart-item-price">'+lineTotal.toLocaleString('ru-RU')+' ₽</div>';
     el.appendChild(div);
   });
   count.textContent = cart.length;
   total.textContent = sum.toLocaleString('ru-RU') + ' ₽';
 }
 
-function addToCart(id, name, price, rune){
-  cart.push({id:id, name:name, price:price, rune:rune});
+function addToCart(id, name, price, rune, qty){
+  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1});
   saveCartToStorage();
   renderCart();
   openCart();
@@ -2159,9 +2161,10 @@ window.openCheckout = openCheckout;
 window.closeCheckout = closeCheckout;
 
 function renderCheckoutSummary(){
-  var sum = cart.reduce(function(s, it){ return s + it.price; }, 0);
+  var sum = cart.reduce(function(s, it){ return s + it.price * (it.qty || 1); }, 0);
   var rows = cart.map(function(it){
-    return '<div class="checkout-summary-row"><span>'+it.name+'</span><span>'+it.price.toLocaleString('ru-RU')+' ₽</span></div>';
+    var qty = it.qty || 1;
+    return '<div class="checkout-summary-row"><span>'+it.name+(qty>1?' × '+qty:'')+'</span><span>'+(it.price*qty).toLocaleString('ru-RU')+' ₽</span></div>';
   }).join('');
   document.getElementById('checkoutSummary').innerHTML = rows +
     '<div class="checkout-summary-total"><span>Итого</span><b>'+sum.toLocaleString('ru-RU')+' ₽</b></div>';
@@ -2196,7 +2199,7 @@ function submitOrder(){
   status.textContent = 'Формируем счёт…';
 
   var payload = {
-    items: cart.map(function(it){ return {name: it.name, price: it.price, qty: 1}; }),
+    items: cart.map(function(it){ return {name: it.name, price: it.price, qty: it.qty || 1}; }),
     customer: {name: name, phone: phone, email: email, address: address},
     comment: comment
   };

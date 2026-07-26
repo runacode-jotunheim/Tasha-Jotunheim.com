@@ -2900,6 +2900,21 @@ function initMatrix(canvas){
 }
 
 /* ══ LOADER ══ */
+var SKIP_WINDOW_MS = 12 * 60 * 60 * 1000; // 12 hours
+var lastVisit = parseInt(localStorage.getItem('jotunheim_last_visit') || '0', 10);
+var skipLoader = (Date.now() - lastVisit) < SKIP_WINDOW_MS;
+localStorage.setItem('jotunheim_last_visit', Date.now());
+
+if(skipLoader){
+  var loader0=document.getElementById("loader");
+  loader0.style.display="none";
+  var canvas0=document.getElementById("matrix-canvas");
+  canvas0.style.display="block"; initMatrix(canvas0);
+  document.getElementById("main").classList.add("visible");
+  scrambleHeroTitle();
+  if(window.setCursorMode) setCursorMode('main');
+} else {
+
 var LINES=[
   {t:200,  text:"> инициализация хранилища рун"},
   {t:1000, text:"> загружаю Колесо года"},
@@ -2955,6 +2970,8 @@ setTimeout(function(){
     },650);
   },400);
 },REVEAL_AT);
+
+}
 
 /* ══ mini matrix rain behind small icon cards (reusable) ══ */
 function initMiniMatrixBg(canvasId){

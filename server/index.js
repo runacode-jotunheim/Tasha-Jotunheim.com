@@ -128,6 +128,20 @@ app.post('/api/create-payment', async (req, res) => {
 
     const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params.toString()}`;
 
+    // Диагностический лог — без пароля, только то, что реально ушло в запрос.
+    // Смотреть во вкладке "Логи приложения" в Timeweb после неудачной попытки оплаты.
+    console.log('[create-payment] DEBUG', JSON.stringify({
+      MerchantLogin: ROBOKASSA_LOGIN,
+      OutSum: outSum,
+      InvId: invId,
+      IsTest: isTest ? 1 : 0,
+      hashAlgo: 'md5',
+      receiptSno: receipt.sno,
+      receiptItemsCount: receiptItems.length,
+      signatureBaseLength: signatureBase.length,
+      paymentUrl,
+    }));
+
     // Пока нет БД заказов — сразу шлём заявку в телеграм, чтобы Таша видела
     // намерение купить ДО фактической оплаты (сумма подтверждается отдельно в ResultURL).
     await notifyTelegram(

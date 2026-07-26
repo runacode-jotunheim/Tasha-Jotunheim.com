@@ -42,8 +42,10 @@ if (isTest && (!ROBOKASSA_TEST_PASSWORD_1 || !ROBOKASSA_TEST_PASSWORD_2)) {
   process.exit(1);
 }
 
-const activePassword1 = isTest ? ROBOKASSA_TEST_PASSWORD_1 : ROBOKASSA_PASSWORD_1;
-const activePassword2 = isTest ? ROBOKASSA_TEST_PASSWORD_2 : ROBOKASSA_PASSWORD_2;
+// .trim() на случай, если в переменную окружения случайно попал пробел
+// или перенос строки при копировании пароля в панель Timeweb.
+const activePassword1 = (isTest ? ROBOKASSA_TEST_PASSWORD_1 : ROBOKASSA_PASSWORD_1).trim();
+const activePassword2 = (isTest ? ROBOKASSA_TEST_PASSWORD_2 : ROBOKASSA_PASSWORD_2).trim();
 
 const app = express();
 app.use(cors({ origin: ALLOWED_ORIGIN || '*' }));
@@ -143,6 +145,8 @@ app.post('/api/create-payment', async (req, res) => {
 
     // Диагностический лог — без пароля, только то, что реально ушло в запрос.
     // Смотреть во вкладке "Логи приложения" в Timeweb после неудачной попытки оплаты.
+    // ⚠ signatureBase содержит пароль в открытом виде — маскируем перед логированием.
+    const signatureBaseRedacted = signatureBase.replace(activePassword1, '***');
     console.log('[create-payment] DEBUG', JSON.stringify({
       MerchantLogin: ROBOKASSA_LOGIN,
       OutSum: outSumStr,
@@ -151,8 +155,12 @@ app.post('/api/create-payment', async (req, res) => {
       hashAlgo: 'md5',
       receiptSno: receipt.sno,
       receiptItemsCount: receiptItems.length,
-      signatureBase,
+      signatureBaseRedacted,
       signature,
+      // Длина активного пароля — НЕ сам пароль. Сверьте с количеством символов
+      // при выделении поля пароля в ЛК Робокассы (Ctrl+A внутри поля), чтобы
+      // исключить обрезанный/задвоенный пароль или случайный пробел при копировании.
+      activePassword1Length: activePassword1.length,
     }));
 
     // Пока нет БД заказов — сразу шлём заявку в телеграм, чтобы Таша видела

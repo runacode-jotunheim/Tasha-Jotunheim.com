@@ -2093,9 +2093,7 @@ function removeFromCart(i){
   cart.splice(i,1);
   renderCart();
 }
-// ⚠ Заменить на реальный домен backend-сервера, когда он поднят на Timeweb Cloud
-// (см. /server в репозитории). Пока значение-заглушка — форма покажет
-// понятную ошибку и предложит написать в Telegram вместо оплаты.
+// Backend поднят на Timeweb Cloud, домен привязан и рабочий (проверено /api/health).
 var PAYMENT_API_BASE = 'https://api.tasha-jotunheim.com';
 
 function checkout(){

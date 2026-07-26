@@ -98,6 +98,11 @@ app.post('/api/create-payment', async (req, res) => {
       };
     });
     outSum = Number(outSum.toFixed(2));
+    // Робокасса в своей документации показывает OutSum как строку с двумя знаками
+    // после точки (например "990.00"), а не как обычное число без дробной части.
+    // Используем именно эту строку — и в подписи, и в URL — чтобы не зависеть от того,
+    // как их сервер сам форматирует сумму при пересчёте подписи на своей стороне.
+    const outSumStr = outSum.toFixed(2);
 
     const invId = generateInvId();
     const description = `Заказ №${invId} — Артефакты Йотунхейм`;
@@ -115,12 +120,12 @@ app.post('/api/create-payment', async (req, res) => {
 
     // Формула подписи с чеком: MerchantLogin:OutSum:InvId:Receipt(однократно закодирован):Password1
     // (Password1 — активный, тестовый или боевой, в зависимости от ROBOKASSA_TEST_MODE)
-    const signatureBase = `${ROBOKASSA_LOGIN}:${outSum}:${invId}:${receiptEncodedOnce}:${activePassword1}`;
+    const signatureBase = `${ROBOKASSA_LOGIN}:${outSumStr}:${invId}:${receiptEncodedOnce}:${activePassword1}`;
     const signature = md5(signatureBase);
 
     const params = new URLSearchParams({
       MerchantLogin: ROBOKASSA_LOGIN,
-      OutSum: String(outSum),
+      OutSum: outSumStr,
       InvId: String(invId),
       Description: description,
       SignatureValue: signature,

@@ -190,9 +190,12 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 .checkout-status{margin-top:14px;font-size:11px;line-height:1.7;text-align:center;color:rgba(0,255,65,0.6)}
 .checkout-status.error{color:#ff6b6b}
 
-/* CTA покупки набора амулетов на финальном экране оракула */
+/* CTA покупки набора амулетов на финальном экране оракула — теперь просто кнопка,
+   открывающая отдельную модалку с барабанами количества */
 .buy-amulet-set{margin-top:26px;padding-top:24px;border-top:1px solid rgba(0,255,65,0.12)}
-.buy-amulet-set-hint{font-family:'VT323',monospace;font-size:14px;color:var(--accent-dim);margin-bottom:16px}
+.buy-amulet-set-btn{font-family:'VT323',monospace;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#000;background:var(--accent);border:none;border-radius:8px;padding:14px 40px;cursor:pointer;transition:opacity .2s}
+.buy-amulet-set-btn:hover{opacity:.88}
+
 .qty-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 0}
 .qty-row-label{font-size:13px;color:#c8ffda;text-align:left}
 .qty-row-label small{display:block;font-size:10px;color:rgba(0,255,65,0.4);letter-spacing:1px;margin-top:2px}
@@ -207,9 +210,14 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 .qty-drum-frame::after{bottom:32px}
 .buy-amulet-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px;padding-top:14px;border-top:1px solid rgba(0,255,65,0.1);font-size:12px;color:rgba(0,255,65,0.5)}
 .buy-amulet-total b{font-family:'VT323',monospace;font-size:22px;color:var(--accent)}
-.buy-amulet-set-btn{width:100%;margin-top:16px;font-family:'VT323',monospace;font-size:20px;letter-spacing:4px;text-transform:uppercase;color:#000;background:var(--accent);border:none;border-radius:8px;padding:14px 28px;cursor:pointer;transition:opacity .2s}
-.buy-amulet-set-btn:hover{opacity:.88}
-.buy-amulet-set-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* отдельная модалка выбора набора — тот же паттерн анимации, что у #checkout-modal */
+#amulet-set-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);width:92%;max-width:440px;max-height:88vh;max-height:88dvh;background:rgba(0,5,2,0.97);border:1px solid rgba(0,255,65,0.2);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 40px rgba(0,255,65,0.08);z-index:711;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;overflow-y:auto}
+#amulet-set-modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+@media(max-width:700px){
+  #amulet-set-modal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:92vh;max-height:92dvh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none}
+  #amulet-set-modal.open{transform:translateY(0)}
+}
 </style>
 </head>
 <body>
@@ -318,46 +326,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
           <p>Создавай волшебство на своих ногтях и отмечай меня в <a href="https://www.instagram.com/tasha.jotunheim/" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">Нельзяграм*</a> и <a href="https://t.me/JotunSpirit" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">Telegram</a> — @tasha.jotunheim #нейламулеты</p>
         </div>
         <div class="buy-amulet-set">
-          <div class="buy-amulet-set-hint">Хочу набор нейл-амулетов — 1000 ₽/шт:</div>
-
-          <div class="qty-row">
-            <div class="qty-row-label">Руны<small>рунический набор</small></div>
-            <div class="qty-drum-frame">
-              <div class="qty-drum" id="qtyDrumRune">
-                <div class="qty-drum-pad"></div>
-                <div class="qty-drum-item" data-val="0">0</div>
-                <div class="qty-drum-item" data-val="1">1</div>
-                <div class="qty-drum-item" data-val="2">2</div>
-                <div class="qty-drum-item" data-val="3">3</div>
-                <div class="qty-drum-item" data-val="4">4</div>
-                <div class="qty-drum-item" data-val="5">5</div>
-                <div class="qty-drum-pad"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="qty-row">
-            <div class="qty-row-label">Таро<small>таро-набор</small></div>
-            <div class="qty-drum-frame">
-              <div class="qty-drum" id="qtyDrumTarot">
-                <div class="qty-drum-pad"></div>
-                <div class="qty-drum-item" data-val="0">0</div>
-                <div class="qty-drum-item" data-val="1">1</div>
-                <div class="qty-drum-item" data-val="2">2</div>
-                <div class="qty-drum-item" data-val="3">3</div>
-                <div class="qty-drum-item" data-val="4">4</div>
-                <div class="qty-drum-item" data-val="5">5</div>
-                <div class="qty-drum-pad"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="buy-amulet-total">
-            <span>Итого</span>
-            <b id="buyAmuletTotal">0 ₽</b>
-          </div>
-
-          <button class="buy-amulet-set-btn" id="buyAmuletBtn" onclick="addAmuletSetToCart()" disabled>ХОЧУ</button>
+          <button class="buy-amulet-set-btn" onclick="openAmuletSetModal()">ХОЧУ</button>
         </div>
         <button class="calc-btn calc-btn-ghost" style="margin-top:18px" onclick="calcRestart()">&#8635; Пройти заново</button>
       </div>
@@ -445,6 +414,55 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <button class="checkout-submit" id="checkoutSubmitBtn" onclick="submitOrder()">&#9654; Перейти к оплате</button>
     <div class="checkout-status" id="checkoutStatus"></div>
+  </div>
+</div>
+
+<!-- AMULET SET MODAL -->
+<div class="modal-overlay" id="amuletSetOverlay" onclick="closeAmuletSetModal()"></div>
+<div id="amulet-set-modal">
+  <button class="modal-close" onclick="closeAmuletSetModal()">✕</button>
+  <div class="checkout-body">
+    <div class="checkout-title">Хочу набор амулетов</div>
+    <div class="checkout-sub">Выбери количество — 1000 ₽ за набор</div>
+
+    <div class="qty-row">
+      <div class="qty-row-label">Старший Футарк<small>руны</small></div>
+      <div class="qty-drum-frame">
+        <div class="qty-drum" id="qtyDrumRune">
+          <div class="qty-drum-pad"></div>
+          <div class="qty-drum-item" data-val="0">0</div>
+          <div class="qty-drum-item" data-val="1">1</div>
+          <div class="qty-drum-item" data-val="2">2</div>
+          <div class="qty-drum-item" data-val="3">3</div>
+          <div class="qty-drum-item" data-val="4">4</div>
+          <div class="qty-drum-item" data-val="5">5</div>
+          <div class="qty-drum-pad"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qty-row">
+      <div class="qty-row-label">Старшие Арканы<small>таро</small></div>
+      <div class="qty-drum-frame">
+        <div class="qty-drum" id="qtyDrumTarot">
+          <div class="qty-drum-pad"></div>
+          <div class="qty-drum-item" data-val="0">0</div>
+          <div class="qty-drum-item" data-val="1">1</div>
+          <div class="qty-drum-item" data-val="2">2</div>
+          <div class="qty-drum-item" data-val="3">3</div>
+          <div class="qty-drum-item" data-val="4">4</div>
+          <div class="qty-drum-item" data-val="5">5</div>
+          <div class="qty-drum-pad"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="buy-amulet-total">
+      <span>Итого</span>
+      <b id="buyAmuletTotal">0 ₽</b>
+    </div>
+
+    <button class="checkout-submit" id="buyAmuletBtn" onclick="addAmuletSetToCart()" disabled>Забрать</button>
   </div>
 </div>
 
@@ -1186,8 +1204,30 @@ function addAmuletSetToCart(){
   if(rd) rd.scrollTop = 0;
   if(td) td.scrollTop = 0;
   updateAmuletTotal();
+  closeAmuletSetModal(); // addToCart уже сам откроет корзину поверх
 }
 window.addAmuletSetToCart = addAmuletSetToCart;
+
+function openAmuletSetModal(){
+  // сбрасываем барабаны на 0 при каждом открытии — чистый выбор без сюрпризов
+  amuletQty = {rune:0, tarot:0};
+  var rd = document.getElementById('qtyDrumRune'), td = document.getElementById('qtyDrumTarot');
+  if(rd) rd.scrollTop = 0;
+  if(td) td.scrollTop = 0;
+  updateAmuletTotal();
+  document.getElementById('amulet-set-modal').classList.add('open');
+  document.getElementById('amuletSetOverlay').classList.add('open');
+  lockBodyScroll();
+}
+function closeAmuletSetModal(){
+  var modal = document.getElementById('amulet-set-modal');
+  if(!modal.classList.contains('open')) return;
+  modal.classList.remove('open');
+  document.getElementById('amuletSetOverlay').classList.remove('open');
+  unlockBodyScroll();
+}
+window.openAmuletSetModal = openAmuletSetModal;
+window.closeAmuletSetModal = closeAmuletSetModal;
 
 var CONSENT_STORAGE_KEY = 'jv_consent_v1';
 function syncConsentState(){

@@ -1930,9 +1930,11 @@ function unlockBodyScroll(){
 }
 
 function openCart(){
-  document.getElementById('cart-drawer').classList.add('open');
+  var drawer = document.getElementById('cart-drawer');
+  var alreadyOpen = drawer.classList.contains('open');
+  drawer.classList.add('open');
   document.getElementById('cartOverlay').classList.add('show');
-  lockBodyScroll();
+  if(!alreadyOpen) lockBodyScroll();
   syncConsentState(); // на случай если браузер восстановил чекбокс визуально, но не прислал onchange
 }
 function closeCart(){

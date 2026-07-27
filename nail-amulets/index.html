@@ -1141,9 +1141,11 @@ function unlockBodyScroll(){
 }
 
 function openCart(){
-  document.getElementById('cart-drawer').classList.add('open');
+  var drawer = document.getElementById('cart-drawer');
+  var alreadyOpen = drawer.classList.contains('open');
+  drawer.classList.add('open');
   document.getElementById('cartOverlay').classList.add('show');
-  lockBodyScroll();
+  if(!alreadyOpen) lockBodyScroll();
   syncConsentState();
 }
 function closeCart(){
@@ -1240,7 +1242,8 @@ function addAmuletSetToCart(){
   if(rd) rd.scrollTop = 0;
   if(td) td.scrollTop = 0;
   updateAmuletTotal();
-  closeAmuletSetModal(); // addToCart уже сам откроет корзину поверх
+  closeAmuletSetModal();
+  closeOracleModal(); // иначе корзина откроется под полноэкранным оракулом и будет недоступна
 }
 window.addAmuletSetToCart = addAmuletSetToCart;
 

@@ -64,7 +64,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 #portalFlashCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:660;pointer-events:none;opacity:0}
 .oracle-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:649;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .oracle-modal-overlay.open{opacity:1;pointer-events:auto}
-#oracle-modal{position:fixed;inset:0;z-index:650;background:rgba(0,3,1,0.98);opacity:0;transform:scale(0.92);pointer-events:none;transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);overflow-y:auto;-webkit-overflow-scrolling:touch}
+#pageCompressWrap{transition:transform .57s cubic-bezier(.7,0,.84,0),filter .57s ease;transform-origin:50% 50%}
+#pageCompressWrap.compressing{transform:scale(0.04);filter:brightness(0.25) blur(1.5px)}
+
+#oracle-modal{position:fixed;inset:0;z-index:650;background:rgba(0,3,1,0.98);opacity:0;transform:scale(0.06);pointer-events:none;transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .78s cubic-bezier(.16,1,.3,1);overflow-y:auto;-webkit-overflow-scrolling:touch}
 #oracle-modal.open{opacity:1;transform:scale(1);pointer-events:auto}
 #oracle-modal .modal-close{position:fixed;top:16px;right:16px;z-index:5}
 .oracle-modal-scroll{min-height:100%;padding:70px 0 60px}
@@ -279,6 +282,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 </div>
 
 
+<div id="pageCompressWrap">
 <canvas id="matrix-canvas"></canvas>
 
 <nav>
@@ -306,6 +310,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
     </div>
   </div>
   <button class="hero-nail-start-btn" onclick="openOracleModal()">&#9658; Подобрать амулет</button>
+</div>
 </div>
 
 <canvas id="portalFlashCanvas"></canvas>
@@ -1462,6 +1467,8 @@ function playPortalFlash(cb){
 }
 
 function openOracleModal(){
+  var wrap = document.getElementById('pageCompressWrap');
+  if(wrap) wrap.classList.add('compressing');
   playPortalFlash(function(){
     document.getElementById('oracle-modal').classList.add('open');
     document.getElementById('oracleModalOverlay').classList.add('open');
@@ -1473,6 +1480,8 @@ function closeOracleModal(){
   if(!modal.classList.contains('open')) return;
   modal.classList.remove('open');
   document.getElementById('oracleModalOverlay').classList.remove('open');
+  var wrap = document.getElementById('pageCompressWrap');
+  if(wrap) wrap.classList.remove('compressing');
   unlockBodyScroll();
 }
 window.openOracleModal = openOracleModal;

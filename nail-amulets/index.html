@@ -1049,7 +1049,8 @@ function runOracleAnimation(target, cb){
 /* ══ CART + CHECKOUT (та же логика, что на index.html; localStorage общий,
    так что корзина синхронна между главной и этой страницей) ══ */
 var CART_STORAGE_KEY = 'jv_cart_v1';
-var CART_TTL_MS = 60 * 60 * 1000; // 1 час
+var CART_LEFT_KEY = 'jv_cart_left_at';
+var CART_LEAVE_TTL_MS = 30 * 60 * 1000; // 30 минут после ухода
 
 function loadCartFromStorage(){
   try{
@@ -1057,8 +1058,10 @@ function loadCartFromStorage(){
     if(!raw) return [];
     var data = JSON.parse(raw);
     if(!data || !Array.isArray(data.items)) return [];
-    if(Date.now() - (data.ts || 0) > CART_TTL_MS){
+    var leftAt = parseInt(localStorage.getItem(CART_LEFT_KEY) || '0', 10);
+    if(leftAt && (Date.now() - leftAt) > CART_LEAVE_TTL_MS){
       localStorage.removeItem(CART_STORAGE_KEY);
+      localStorage.removeItem(CART_LEFT_KEY);
       return [];
     }
     return data.items;
@@ -1066,9 +1069,20 @@ function loadCartFromStorage(){
 }
 function saveCartToStorage(){
   try{
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({items: cart, ts: Date.now()}));
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({items: cart}));
+    localStorage.removeItem(CART_LEFT_KEY);
   }catch(e){}
 }
+function markCartLeftNow(){
+  try{
+    if(cart && cart.length > 0) localStorage.setItem(CART_LEFT_KEY, Date.now());
+  }catch(e){}
+}
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden') markCartLeftNow();
+  else localStorage.removeItem(CART_LEFT_KEY);
+});
+window.addEventListener('pagehide', markCartLeftNow);
 
 var cart = loadCartFromStorage();
 

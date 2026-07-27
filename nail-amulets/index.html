@@ -76,8 +76,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 /* крупные плейсхолдеры под фото наборов (Руны/Таро) — ряд на пк, столбик на моб */
 .hero-nail-photos{display:flex;gap:20px;justify-content:center;margin-top:34px;width:100%;max-width:640px;margin-left:auto;margin-right:auto}
 .hero-nail-photo-item{flex:1;max-width:280px;display:flex;flex-direction:column;align-items:center}
-.hero-nail-photo-slot{position:relative;width:100%;aspect-ratio:3/4;border-radius:12px;border:1px solid rgba(0,255,65,0.25);box-shadow:0 0 18px rgba(0,255,65,0.12);overflow:hidden}
-.hero-nail-photo-slot img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.89) saturate(1.05)}
+.hero-nail-photo-slot{position:relative;width:100%;aspect-ratio:1284/2282;border-radius:12px;border:1px solid rgba(0,255,65,0.25);box-shadow:0 0 18px rgba(0,255,65,0.12);overflow:hidden}
+.hero-nail-photo-slot img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.89) saturate(1.05);-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none;pointer-events:none}
 .hero-nail-photo-slot::after{content:'';position:absolute;inset:0;background:var(--accent);opacity:0.14;mix-blend-mode:multiply;pointer-events:none}
 .hero-nail-photo-caption{margin-top:10px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#00cc35;text-transform:uppercase;text-align:center}
 @media(max-width:640px){
@@ -301,11 +301,11 @@ body:active .cursor-sprite{transform:scale(0.88)}
 
   <div class="hero-nail-photos">
     <div class="hero-nail-photo-item">
-      <div class="hero-nail-photo-slot"><img src="../assets/img/nail-amulets/runes-set.jpg" alt="Набор нейл-амулетов — Старший Футарк, руны" loading="lazy"></div>
+      <div class="hero-nail-photo-slot"><img src="../assets/img/nail-amulets/runes-set.jpg" alt="Набор нейл-амулетов — Старший Футарк, руны" loading="lazy" draggable="false" oncontextmenu="return false"></div>
       <div class="hero-nail-photo-caption">Старший Футарк · Руны</div>
     </div>
     <div class="hero-nail-photo-item">
-      <div class="hero-nail-photo-slot"><img src="../assets/img/nail-amulets/tarot-set.jpg" alt="Набор нейл-амулетов — Старшие Арканы, таро" loading="lazy"></div>
+      <div class="hero-nail-photo-slot"><img src="../assets/img/nail-amulets/tarot-set.jpg" alt="Набор нейл-амулетов — Старшие Арканы, таро" loading="lazy" draggable="false" oncontextmenu="return false"></div>
       <div class="hero-nail-photo-caption">Старшие Арканы · Таро</div>
     </div>
   </div>

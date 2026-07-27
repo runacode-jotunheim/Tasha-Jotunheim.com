@@ -59,6 +59,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .hero-nail-sub{margin-top:20px;max-width:520px;color:rgba(0,255,65,0.7);font-size:14px;line-height:1.7}
 .hero-nail-badge{margin-top:26px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);border:1px solid rgba(0,255,65,0.25);border-radius:20px;padding:6px 18px}
 .hero-nail-home-btn{display:inline-block;margin-top:22px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:8px;padding:11px 28px;text-decoration:none;transition:background .2s,color .2s}
+.hero-nail-start-btn{display:inline-block;margin-top:36px;font-family:'VT323',monospace;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#000;background:var(--accent);border:none;border-radius:10px;padding:16px 34px;cursor:pointer;box-shadow:0 0 24px rgba(0,255,65,0.25);transition:opacity .2s,transform .2s}
+.hero-nail-start-btn:hover{opacity:.9;transform:translateY(-1px)}
+
+/* полноэкранная модалка оракула — сохраняет фон полностью затемнённым, пока открыта */
+.oracle-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:649;opacity:0;pointer-events:none;transition:opacity .3s ease}
+.oracle-modal-overlay.open{opacity:1;pointer-events:auto}
+#oracle-modal{position:fixed;inset:0;z-index:650;background:rgba(0,3,1,0.98);opacity:0;pointer-events:none;transition:opacity .3s ease;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#oracle-modal.open{opacity:1;pointer-events:auto}
+#oracle-modal .modal-close{position:fixed;top:16px;right:16px;z-index:5}
+.oracle-modal-scroll{min-height:100%;padding:70px 0 60px}
 .hero-nail-home-btn:hover{background:var(--accent);color:#000}
 
 /* крупные плейсхолдеры под фото наборов (Руны/Таро) — ряд на пк, столбик на моб */
@@ -247,7 +257,6 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 </nav>
 
 <div class="hero-nail">
-  <div class="hero-nail-eyebrow">&#9658; новый раздел</div>
   <div class="hero-nail-title">Nail Amulets</div>
   <p class="hero-nail-sub">Рунические и таро-амулеты для ногтей — миниатюрная магия на кончиках пальцев. Пройди ниже и узнай, какая энергия нужна тебе прямо сейчас.</p>
 
@@ -259,23 +268,26 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
       <span>Таро</span>
     </div>
   </div>
+  <button class="hero-nail-start-btn" onclick="openOracleModal()">&#9658; Начать подбор амулета</button>
 </div>
 
-<div class="divider"><span>подбор амулета</span></div>
+<div class="oracle-modal-overlay" id="oracleModalOverlay" onclick="closeOracleModal()"></div>
+<div id="oracle-modal">
+  <button class="modal-close" onclick="closeOracleModal()">✕</button>
+  <div class="oracle-modal-scroll">
 
-<div class="section-wrap" id="calculator">
-  <span class="section-eye">&#9658; инструмент расчёта</span>
-  <h2 class="section-title">Подбери свой Nail Amulet</h2>
+    <div class="section-wrap" id="calculator">
+      <span class="section-eye">&#9658; инструмент расчёта</span>
+      <h2 class="section-title">Подбери свой Nail Amulet</h2>
 
-  <div class="glass calc-card">
+      <div class="glass calc-card">
 
-    <!-- Chain history: up to 3 energies revealed in one "trust the universe" pass -->
-    <div class="chain-slots" id="chainSlots">
-      <div class="chain-slots-label" id="chainSlotsLabel">твои энергии сейчас</div>
-      <div class="chain-slots-row" id="chainSlotsRow"></div>
-    </div>
+        <!-- Chain history: up to 3 energies revealed in one "trust the universe" pass -->
+        <div class="chain-slots" id="chainSlots">
+          <div class="chain-slots-label" id="chainSlotsLabel">твои энергии сейчас</div>
+          <div class="chain-slots-row" id="chainSlotsRow"></div>
+        </div>
 
-    <!-- Step: choose the instrument -->
     <div class="calc-step active" data-step="instrument">
       <div class="calc-intro-text" id="calcIntroText">Привет! Я — Таша Йотунхейм, создательница уникальных нейл-амулетов. Мои особенные таро и рунические амулеты придадут твоим ногтям волшебства и привлекут нужные энергии в твою жизнь.</div>
       <div class="calc-q-text" id="instrumentQText">Приготовься погрузиться в удивительный мир нейл-амулетов! Для начала выбери, энергии каких сил мы будем привлекать в твою жизнь.</div>
@@ -354,6 +366,9 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 
     <div class="calc-nav" id="calcNav">
       <button class="calc-btn" id="calcBackBtn" onclick="calcBack()">&#9664; назад</button>
+    </div>
+
+      </div>
     </div>
 
   </div>
@@ -1228,6 +1243,21 @@ function addAmuletSetToCart(){
   closeAmuletSetModal(); // addToCart уже сам откроет корзину поверх
 }
 window.addAmuletSetToCart = addAmuletSetToCart;
+
+function openOracleModal(){
+  document.getElementById('oracle-modal').classList.add('open');
+  document.getElementById('oracleModalOverlay').classList.add('open');
+  lockBodyScroll();
+}
+function closeOracleModal(){
+  var modal = document.getElementById('oracle-modal');
+  if(!modal.classList.contains('open')) return;
+  modal.classList.remove('open');
+  document.getElementById('oracleModalOverlay').classList.remove('open');
+  unlockBodyScroll();
+}
+window.openOracleModal = openOracleModal;
+window.closeOracleModal = closeOracleModal;
 
 function openAmuletSetModal(){
   // сбрасываем барабаны на 0 при каждом открытии — чистый выбор без сюрпризов

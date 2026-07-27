@@ -1414,13 +1414,18 @@ function playPortalFlash(cb){
       // Акт 3 — взрыв: ударная волна + руны разлетаются наружу.
       var et = (t - CORE_PEAK) / (1 - CORE_PEAK);
       var eo = easeOut(et);
-      // ударное кольцо
-      ctx.globalAlpha = Math.max(0, 1 - et) * 0.8;
+      // ударная волна — мягкое неоновое свечение кольцом, без чёткого контура:
+      // толстая полупрозрачная обводка + размытие тени
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, 1 - et) * 0.55;
+      ctx.shadowBlur = 60;
+      ctx.shadowColor = accentColor;
       ctx.strokeStyle = accentColor;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 34;
       ctx.beginPath();
       ctx.arc(cx, cy, maxR * eo, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.restore();
       // затухающая вспышка по всему экрану
       var flash = Math.max(0, 1 - et * 2.2);
       if(flash > 0){

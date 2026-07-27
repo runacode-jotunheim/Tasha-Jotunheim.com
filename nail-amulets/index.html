@@ -64,7 +64,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 #portalFlashCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:660;pointer-events:none;opacity:0}
 .oracle-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:649;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .oracle-modal-overlay.open{opacity:1;pointer-events:auto}
-#pageCompressWrap{transition:transform .57s cubic-bezier(.7,0,.84,0),filter .57s ease;transform-origin:50% 50%}
+#pageCompressWrap{transition:transform .91s cubic-bezier(.7,0,.84,0),filter .91s ease;transform-origin:50% 50%}
 #pageCompressWrap.compressing{transform:scale(0.04);filter:brightness(0.25) blur(1.5px)}
 
 #oracle-modal{position:fixed;inset:0;z-index:650;background:rgba(0,3,1,0.98);opacity:0;transform:scale(0.06);pointer-events:none;transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .78s cubic-bezier(.16,1,.3,1);overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -1368,9 +1368,9 @@ function playPortalFlash(cb){
   function easeIn(x){ return x * x; }
   function easeOut(x){ return 1 - Math.pow(1 - x, 3); }
 
-  var DURATION = 1900;
-  var COLLAPSE_END = 0.30;  // доля времени на стягивание в точку
-  var CORE_PEAK = 0.42;     // пик слепящей вспышки ядра — тут же открывается модалка
+  var DURATION = 2400;
+  var COLLAPSE_END = 0.38;  // доля времени на стягивание в точку — заметно медленнее
+  var CORE_PEAK = 0.48;     // пик слепящей вспышки ядра — тут же открывается модалка
 
   var modalTriggered = false;
   var start = performance.now();
@@ -1415,10 +1415,6 @@ function playPortalFlash(cb){
       ctx.beginPath();
       ctx.arc(cx, cy, coreR * 3, 0, Math.PI * 2);
       ctx.fill();
-      if(!modalTriggered){
-        modalTriggered = true;
-        revealModal();
-      }
     } else {
       // Акт 3 — взрыв: ударная волна + руны разлетаются наружу.
       var et = (t - CORE_PEAK) / (1 - CORE_PEAK);
@@ -1456,6 +1452,10 @@ function playPortalFlash(cb){
     } else {
       canvas.style.opacity = '0';
       ctx.clearRect(0, 0, w, h);
+      if(!modalTriggered){
+        modalTriggered = true;
+        revealModal();
+      }
     }
   }
 

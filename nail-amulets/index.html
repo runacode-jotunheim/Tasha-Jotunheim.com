@@ -21,7 +21,6 @@
 html,body{overflow-x:hidden;max-width:100%;-webkit-overflow-scrolling:touch;background:#000;scroll-behavior:smooth}
 body{color:var(--accent);font-family:'Share Tech Mono',monospace;transition:color .4s}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-* { cursor:auto }
 
 #matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 
@@ -240,9 +239,43 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
   #amulet-set-modal{top:auto;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:92vh;max-height:92dvh;transform:translateY(100%);border-radius:20px 20px 0 0;border-left:none;border-right:none;border-bottom:none}
   #amulet-set-modal.open{transform:translateY(0)}
 }
+
+/* ══ CUSTOM CURSOR — Space Rangers style, same as index.html ══ */
+* { cursor: none !important; }
+img { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; pointer-events: auto; }
+@media (hover: none), (pointer: coarse) {
+  * { cursor: auto !important; }
+  #custom-cursor { display: none !important; }
+}
+#custom-cursor{
+  position:fixed;pointer-events:none;z-index:9999;
+  width:32px;height:32px;
+  transform:translate(-2px,-2px);
+  transition:opacity .15s;
+  image-rendering:crisp-edges;
+  will-change:left,top;
+}
+.cursor-sprite{
+  width:32px;height:32px;
+  background-repeat:no-repeat;
+  background-image:url('../assets/cursors/main-sprite.png');
+  background-size:512px 32px;
+  animation:cursorAnimMain 1.1s steps(16) infinite;
+  transition:transform .12s,filter .2s;
+}
+body:active .cursor-sprite{transform:scale(0.88)}
+.cursor-sprite.red{filter:hue-rotate(-120deg) saturate(1.3)}
+.cursor-sprite.mode-busy{background-image:url('../assets/cursors/busy-sprite.png');background-size:1600px 32px;animation:cursorAnimBusy 3.3s steps(50) infinite}
+@keyframes cursorAnimMain{from{background-position:0 0}to{background-position:-512px 0}}
+@keyframes cursorAnimBusy{from{background-position:0 0}to{background-position:-1600px 0}}
 </style>
 </head>
 <body>
+<!-- CURSOR — Space Rangers style, same as index.html -->
+<div id="custom-cursor">
+  <div class="cursor-sprite" id="cursorSprite"></div>
+</div>
+
 
 <canvas id="matrix-canvas"></canvas>
 
@@ -511,12 +544,38 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 </div>
 
 <script>
+/* ══ CURSOR — Space Rangers style, same as index.html ══ */
+var cur = document.getElementById('custom-cursor');
+var _curSprite = document.getElementById('cursorSprite');
+var _mouseX = 0, _mouseY = 0, _curRAF = null;
+
+function _cursorTick(){
+  cur.style.left = _mouseX + 'px';
+  cur.style.top  = _mouseY + 'px';
+  _curRAF = null;
+}
+document.addEventListener('mousemove', function(e){
+  _mouseX = e.clientX; _mouseY = e.clientY;
+  if(!_curRAF) _curRAF = requestAnimationFrame(_cursorTick);
+});
+document.addEventListener('mouseleave', function(){ cur.style.opacity='0'; });
+document.addEventListener('mouseenter', function(){ cur.style.opacity='1'; });
+window._updateCursorColor = function(t){
+  _curSprite.classList.toggle('red', t === 'red');
+};
+function setCursorMode(mode){
+  _curSprite.classList.remove('mode-busy');
+  if(mode === 'busy') _curSprite.classList.add('mode-busy');
+}
+window.setCursorMode = setCursorMode;
+
 /* ══ MATRIX RAIN (same as main site) ══ */
 var _matrixMode = localStorage.getItem('jv_theme') || 'green';
 if(_matrixMode === 'red'){
   document.documentElement.style.setProperty('--accent','var(--red)');
   document.documentElement.style.setProperty('--accent-dim','var(--red-dim)');
   document.documentElement.classList.add('theme-red');
+  window._updateCursorColor('red');
 }
 
 function initMatrix(canvas){
@@ -602,6 +661,7 @@ function setTheme(t){
   }
   localStorage.setItem('jv_theme', t);
   document.getElementById('pillChoices').classList.remove('open');
+  if(window._updateCursorColor) window._updateCursorColor(t);
 }
 
 /* ══ SCROLL TOP BUTTON ══ */

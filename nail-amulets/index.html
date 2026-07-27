@@ -58,6 +58,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .hero-nail-title{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(34px,7vw,64px);letter-spacing:4px;text-transform:uppercase;color:var(--accent);text-shadow:0 0 24px rgba(0,255,65,0.4);line-height:1.15}
 .hero-nail-sub{margin-top:20px;max-width:520px;color:rgba(0,255,65,0.7);font-size:14px;line-height:1.7}
 .hero-nail-badge{margin-top:26px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent-dim);border:1px solid rgba(0,255,65,0.25);border-radius:20px;padding:6px 18px}
+.hero-nail-home-btn{display:inline-block;margin-top:22px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:8px;padding:11px 28px;text-decoration:none;transition:background .2s,color .2s}
+.hero-nail-home-btn:hover{background:var(--accent);color:#000}
 
 /* крупные плейсхолдеры под фото наборов (Руны/Таро) — ряд на пк, столбик на моб */
 .hero-nail-photos{display:flex;gap:20px;justify-content:center;margin-top:34px;width:100%;max-width:640px;margin-left:auto;margin-right:auto}
@@ -248,6 +250,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
   <div class="hero-nail-eyebrow">&#9658; новый раздел</div>
   <div class="hero-nail-title">Nail Amulets</div>
   <p class="hero-nail-sub">Рунические и таро-амулеты для ногтей — миниатюрная магия на кончиках пальцев. Пройди ниже и узнай, какая энергия нужна тебе прямо сейчас.</p>
+  <a href="../index.html" class="hero-nail-home-btn">&#9664; На главную</a>
 
   <div class="hero-nail-photos">
     <div class="hero-nail-photo-slot">
@@ -347,6 +350,7 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
           <button class="buy-amulet-set-btn" onclick="openAmuletSetModal()">ХОЧУ</button>
         </div>
         <button class="calc-btn calc-btn-ghost" style="margin-top:18px" onclick="calcRestart()">&#8635; Пройти заново</button>
+        <a href="../index.html" class="hero-nail-home-btn" style="margin-top:14px">&#9664; На главную</a>
       </div>
     </div>
 

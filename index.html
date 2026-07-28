@@ -125,8 +125,8 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .top-sales-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,0.25);border-radius:4px}
 .top-sale-card{position:relative;cursor:none;flex:0 0 auto;width:220px;scroll-snap-align:start;overflow:hidden}
 @media(max-width:480px){.top-sale-card{width:100%;flex:0 0 100%}}
-.top-sale-img{width:220px;height:220px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
-@media(max-width:480px){.top-sale-img{width:100%;height:auto;aspect-ratio:1/1}}
+.top-sale-img{width:220px;height:330px;border-radius:12px 12px 0 0;overflow:hidden;background:rgba(0,20,8,0.6)}
+@media(max-width:480px){.top-sale-img{width:100%;height:auto;aspect-ratio:2/3}}
 .top-sale-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
 .top-sale-info{padding:14px 16px 16px}
 .top-sale-name{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--accent);text-transform:uppercase;line-height:1.3;margin-bottom:8px}
@@ -148,7 +148,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 @media(max-width:700px){.new-collection-grid{grid-template-columns:1fr;max-width:340px}}
 .new-card{position:relative;cursor:none;overflow:hidden}
 .new-card-badge{position:absolute;top:10px;left:10px;z-index:6;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#000;background:var(--accent);padding:4px 10px;border-radius:5px;box-shadow:0 0 10px rgba(0,255,65,0.4)}
-.new-card-img{width:100%;aspect-ratio:1;overflow:hidden;background:rgba(0,20,8,0.6)}
+.new-card-img{width:100%;aspect-ratio:2/3;overflow:hidden;background:rgba(0,20,8,0.6)}
 .new-card-img img{width:100%;height:100%;object-fit:cover;object-position:center 15%;transition:transform .4s}
 .new-card:hover .new-card-img img{transform:scale(1.05)}
 .new-card-info{padding:16px 18px 20px}
@@ -252,6 +252,8 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .cart-empty{text-align:center;color:rgba(0,255,65,0.3);font-size:12px;letter-spacing:2px;padding:60px 20px;line-height:2}
 .cart-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(0,255,65,0.08)}
 .cart-item-rune{font-family:'VT323',monospace;font-size:28px;color:var(--accent-dim);width:36px;text-align:center}
+.cart-item-thumb{width:36px;height:54px;border-radius:5px;overflow:hidden;flex-shrink:0;background:rgba(0,20,8,0.6)}
+.cart-item-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .cart-item-name{font-size:12px;color:#c8ffda;line-height:1.5}
 .cart-item-price{font-family:'VT323',monospace;font-size:16px;color:var(--accent)}
 .cart-item-del{background:none;border:none;color:rgba(0,255,65,0.25);cursor:none;font-size:16px;margin-top:4px;display:block}
@@ -436,7 +438,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 @keyframes holoShift{0%{background-position:0% 50%}100%{background-position:250% 50%}}
 .product-card.show{display:block;animation:fadeIn .4s ease}
 .product-card:hover{transform:translateY(-5px);box-shadow:0 10px 32px rgba(0,255,65,0.14)}
-.product-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:rgba(0,20,8,0.6)}
+.product-img-wrap{position:relative;aspect-ratio:2/3;overflow:hidden;background:rgba(0,20,8,0.6)}
 .osiris-matrix-bg{position:absolute;inset:0;width:100%;height:100%}
 .osiris-scale-icon{position:absolute;inset:0;width:70%;height:70%;margin:auto;overflow:visible}
 .osiris-scale-icon-modal{width:60%;max-width:280px;height:auto;overflow:visible}
@@ -949,7 +951,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="special-offer-body">
       <div class="modal-collection">Самайн · Египет</div>
       <div class="special-offer-name">Весы Осириса</div>
-      <p class="special-offer-text">Амулет суда и правды, заряженный в египетском некрополе. Замораживает чужое, отсекает паразитов, возвращает равновесие — последний экземпляр этого сезона.</p>
+      <p class="special-offer-text">Кулон-арбитр честного баланса — ось, на которой взвешивается душа и правда. Превращает суд в очищение, а карму — в равновесие — последний экземпляр этого сезона.</p>
       <div class="special-offer-footer">
         <span class="modal-price">29 900 ₽</span>
         <button class="product-btn" onclick="openProductModal(17)">Смотреть</button>
@@ -2040,7 +2042,10 @@ function renderCart(){
     sum += lineTotal;
     var div = document.createElement('div');
     div.className = 'cart-item';
-    div.innerHTML = '<div class="cart-item-rune">'+item.rune+'</div>'
+    var thumbHtml = item.img
+      ? '<div class="cart-item-thumb"><img src="'+item.img+'" alt="" loading="lazy"></div>'
+      : '<div class="cart-item-rune">'+item.rune+'</div>';
+    div.innerHTML = thumbHtml
       +'<div><div class="cart-item-name">'+item.name+(qty>1?' × '+qty:'')+'</div>'
       +'<button class="cart-item-del" onclick="removeFromCart('+i+')">✕ убрать</button></div>'
       +'<div class="cart-item-price">'+lineTotal.toLocaleString('ru-RU')+' ₽</div>';
@@ -2051,7 +2056,12 @@ function renderCart(){
 }
 
 function addToCart(id, name, price, rune, qty){
-  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1});
+  var img = null;
+  try{
+    var card = document.querySelector('.product-card[data-id="'+id+'"] .product-img');
+    if(card) img = card.getAttribute('src');
+  }catch(e){}
+  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1, img: img});
   saveCartToStorage();
   renderCart();
   openCart();

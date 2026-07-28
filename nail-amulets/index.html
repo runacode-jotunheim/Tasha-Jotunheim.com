@@ -173,6 +173,8 @@ footer{position:relative;z-index:1;text-align:center;padding:50px 24px 40px}
 .cart-empty{text-align:center;color:rgba(0,255,65,0.3);font-size:12px;letter-spacing:2px;padding:60px 20px;line-height:2}
 .cart-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(0,255,65,0.08)}
 .cart-item-rune{font-family:'VT323',monospace;font-size:28px;color:var(--accent-dim);width:36px;text-align:center}
+.cart-item-thumb{width:36px;height:54px;border-radius:5px;overflow:hidden;flex-shrink:0;background:rgba(0,20,8,0.6)}
+.cart-item-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .cart-item-name{font-size:12px;color:#c8ffda;line-height:1.5}
 .cart-item-price{font-family:'VT323',monospace;font-size:16px;color:var(--accent)}
 .cart-item-del{background:none;border:none;color:rgba(0,255,65,0.25);cursor:pointer;font-size:16px;margin-top:4px;display:block}
@@ -1260,7 +1262,10 @@ function renderCart(){
     sum += lineTotal;
     var div = document.createElement('div');
     div.className = 'cart-item';
-    div.innerHTML = '<div class="cart-item-rune">'+item.rune+'</div>'
+    var thumbHtml = item.img
+      ? '<div class="cart-item-thumb"><img src="'+item.img+'" alt="" loading="lazy"></div>'
+      : '<div class="cart-item-rune">'+item.rune+'</div>';
+    div.innerHTML = thumbHtml
       +'<div><div class="cart-item-name">'+item.name+(qty>1?' × '+qty:'')+'</div>'
       +'<button class="cart-item-del" onclick="removeFromCart('+i+')">✕ убрать</button></div>'
       +'<div class="cart-item-price">'+lineTotal.toLocaleString('ru-RU')+' ₽</div>';

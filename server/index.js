@@ -217,14 +217,39 @@ app.post('/api/robokassa/result', async (req, res) => {
 
 async function notifyTelegram(text) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
-  try {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
-    });
-  } catch (err) {
-    console.error('[telegram] Не удалось отправить уведомление:', err.message);
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const MAX_ATTEMPTS = 3;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        throw new Error(`Telegram API вернул ${res.status}: ${body.slice(0, 200)}`);
+      }
+      if (attempt > 1) {
+        console.log(`[telegram] Отправлено со ${attempt}-й попытки`);
+      }
+      return; // успех
+    } catch (err) {
+      // err.cause обычно содержит реальную сетевую причину (ECONNRESET, ENOTFOUND, ETIMEDOUT и т.п.),
+      // а err.message от fetch часто просто "fetch failed" без подробностей.
+      const detail = err.cause ? `${err.message} — cause: ${err.cause.code || err.cause.message || err.cause}` : err.message;
+      console.error(`[telegram] Попытка ${attempt}/${MAX_ATTEMPTS} не удалась:`, detail);
+      if (attempt < MAX_ATTEMPTS) {
+        await new Promise((r) => setTimeout(r, attempt * 800)); // 800мс, потом 1600мс
+      } else {
+        console.error('[telegram] Все попытки исчерпаны, уведомление не доставлено:', text.slice(0, 80));
+      }
+    }
   }
 }
 

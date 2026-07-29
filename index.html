@@ -12,16 +12,6 @@
 @font-face{font-family:'Cinzel';src:url('assets/fonts/cinzel-latin-900-normal.woff2') format('woff2');font-weight:900;font-style:normal;font-display:swap}
 @font-face{font-family:'Permanent Marker';src:url('assets/fonts/permanent-marker-latin-400-normal.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
 @font-face{font-family:'Spectral';src:url('assets/fonts/spectral-cyrillic-200-normal.woff2') format('woff2');font-weight:200;font-style:normal;font-display:swap}
-
-@media(max-width:520px){
-  .product-body{padding:10px 11px 13px}
-  .product-name{font-size:11px}
-  .product-tagline{font-size:9px;margin-bottom:8px}
-  .product-price{font-size:16px}
-  .product-btn{font-size:10px;padding:5px 8px;letter-spacing:1px}
-  .product-collection{font-size:7px;letter-spacing:2px}
-  .product-badge{font-size:7px;padding:2px 6px}
-}
 </style>
 <style>
 :root{
@@ -408,7 +398,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 @media(min-width:1440px){.product-grid{grid-template-columns:repeat(4,1fr);gap:24px}}
 @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.product-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
+@media(max-width:520px){.product-grid{grid-template-columns:1fr}}
 .product-card{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:none;display:none}
 .product-card.newly-shown{animation:cardGlitchIn .75s steps(1,end) both}
 .product-card.newly-shown::after{

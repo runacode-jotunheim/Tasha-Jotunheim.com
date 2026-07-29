@@ -1968,8 +1968,12 @@ function closeSearch(){
 window.toggleSearch = toggleSearch;
 window.closeSearch = closeSearch;
 
+function normalizeSearchText(s){
+  return s.replace(/ё/g, 'е').replace(/й/g, 'и');
+}
+
 function handleSearchInput(){
-  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  var q = normalizeSearchText(document.getElementById('searchInput').value.trim().toLowerCase());
   var resultsEl = document.getElementById('searchResults');
   if(q.length < 2){
     resultsEl.innerHTML = q.length === 0 ? '' : '<div class="search-empty">Введите минимум 2 буквы</div>';
@@ -1977,12 +1981,12 @@ function handleSearchInput(){
   }
   var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
   var matches = cards.filter(function(c){
-    var name = (c.getAttribute('data-name') || '').toLowerCase();
-    var collection = (c.querySelector('.product-collection') ? c.querySelector('.product-collection').textContent : '').toLowerCase();
-    var tagline = (c.querySelector('.product-tagline') ? c.querySelector('.product-tagline').textContent : '').toLowerCase();
-    var tags = (c.getAttribute('data-tags') || '').toLowerCase();
+    var name = normalizeSearchText((c.getAttribute('data-name') || '').toLowerCase());
+    var collection = normalizeSearchText((c.querySelector('.product-collection') ? c.querySelector('.product-collection').textContent : '').toLowerCase());
+    var tagline = normalizeSearchText((c.querySelector('.product-tagline') ? c.querySelector('.product-tagline').textContent : '').toLowerCase());
+    var tags = normalizeSearchText((c.getAttribute('data-tags') || '').toLowerCase());
     var descEl = document.querySelector('#fullDescriptions [data-desc-id="' + c.getAttribute('data-id') + '"]');
-    var description = (descEl ? descEl.textContent : '').toLowerCase();
+    var description = normalizeSearchText((descEl ? descEl.textContent : '').toLowerCase());
     return name.indexOf(q) !== -1 || collection.indexOf(q) !== -1 || tagline.indexOf(q) !== -1 || tags.indexOf(q) !== -1 || description.indexOf(q) !== -1;
   }).slice(0, 10);
 

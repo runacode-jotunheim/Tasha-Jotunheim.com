@@ -1564,14 +1564,16 @@ function closeCheckout(){
 window.openCheckout = openCheckout;
 window.closeCheckout = closeCheckout;
 
+var DELIVERY_FEE = 500; // фикс — пока нет расчёта СДЭК по факту
 function renderCheckoutSummary(){
   var sum = cart.reduce(function(s, it){ return s + it.price * (it.qty || 1); }, 0);
   var rows = cart.map(function(it){
     var qty = it.qty || 1;
     return '<div class="checkout-summary-row"><span>'+it.name+(qty>1?' × '+qty:'')+'</span><span>'+(it.price*qty).toLocaleString('ru-RU')+' ₽</span></div>';
   }).join('');
+  rows += '<div class="checkout-summary-row"><span>Доставка (СДЭК)</span><span>'+DELIVERY_FEE.toLocaleString('ru-RU')+' ₽</span></div>';
   document.getElementById('checkoutSummary').innerHTML = rows +
-    '<div class="checkout-summary-total"><span>Итого</span><b>'+sum.toLocaleString('ru-RU')+' ₽</b></div>';
+    '<div class="checkout-summary-total"><span>Итого</span><b>'+(sum+DELIVERY_FEE).toLocaleString('ru-RU')+' ₽</b></div>';
 }
 
 function setFieldInvalid(id, invalid){
@@ -1603,7 +1605,8 @@ function submitOrder(){
   status.textContent = 'Формируем счёт…';
 
   var payload = {
-    items: cart.map(function(it){ return {name: it.name, price: it.price, qty: it.qty || 1}; }),
+    items: cart.map(function(it){ return {name: it.name, price: it.price, qty: it.qty || 1}; })
+      .concat([{name: 'Доставка (СДЭК)', price: DELIVERY_FEE, qty: 1}]),
     customer: {name: name, phone: phone, email: email, address: address},
     comment: comment
   };

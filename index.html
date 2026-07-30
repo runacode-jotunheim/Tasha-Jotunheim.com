@@ -398,7 +398,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 @media(min-width:1440px){.product-grid{grid-template-columns:repeat(4,1fr);gap:24px}}
 @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.product-grid{grid-template-columns:1fr}}
+@media(max-width:520px){
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .product-body{padding:8px 10px 10px}
+  .product-collection{font-size:7px;margin-bottom:2px}
+  .product-name{font-size:11px;margin-bottom:3px;min-height:0;line-height:1.2}
+  .product-tagline{display:none}
+  .product-price-row{flex-direction:row;align-items:center;justify-content:space-between;gap:6px;margin-top:2px}
+  .product-price{font-size:16px}
+  .product-btn{padding:5px 10px;font-size:9px}
+}
 .product-card{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:none;display:none}
 .product-card.newly-shown{animation:cardGlitchIn .75s steps(1,end) both}
 .product-card.newly-shown::after{
@@ -439,6 +448,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .product-card.show{display:block;animation:fadeIn .4s ease}
 .product-card:hover{transform:translateY(-5px);box-shadow:0 10px 32px rgba(0,255,65,0.14)}
 .product-img-wrap{position:relative;aspect-ratio:2/3;overflow:hidden;background:rgba(0,20,8,0.6)}
+@media(max-width:520px){.product-img-wrap{aspect-ratio:3/4}}
 .osiris-matrix-bg{position:absolute;inset:0;width:100%;height:100%}
 .osiris-scale-icon{position:absolute;inset:0;width:70%;height:70%;margin:auto;overflow:visible}
 .osiris-scale-icon-modal{width:60%;max-width:280px;height:auto;overflow:visible}
@@ -530,6 +540,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .footer-legal-note{font-size:9px;letter-spacing:.5px;color:rgba(0,255,65,0.25);text-transform:none;line-height:1.6;max-width:480px;margin:10px auto 0;text-align:center;padding:0 20px}
 .footer-irklink{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:2px;color:rgba(0,255,65,0.35);text-decoration:none;border:1px solid rgba(0,255,65,0.15);border-radius:20px;padding:5px 14px;transition:all .2s;cursor:none}
 .footer-irklink:hover{color:var(--accent);border-color:var(--accent)}
+
+#stickyToCatalogBtn{display:none}
+@media(max-width:520px){
+  #stickyToCatalogBtn{
+    display:block;position:fixed;left:16px;right:16px;bottom:16px;z-index:450;
+    background:var(--accent);color:#000;text-align:center;
+    font-family:'VT323',monospace;font-size:18px;letter-spacing:2px;text-transform:uppercase;
+    padding:13px 0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.5),0 0 24px rgba(0,255,65,0.3);
+    text-decoration:none;transition:transform .25s ease,opacity .25s ease;
+  }
+  #stickyToCatalogBtn.hide{transform:translateY(140%);opacity:0;pointer-events:none}
+}
 </style>
 </head>
 <body>
@@ -597,6 +619,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Наверх">&#9650;</button>
 
 <!-- THEME TOGGLE -->
+<a href="#catalog" id="stickyToCatalogBtn">&#9658; Смотреть все артефакты</a>
+
 <div id="theme-toggle">
   <div class="pill-choices" id="pillChoices">
     <div class="pill-btn" onclick="setTheme('red')" title="Красная матрица"><div class="pill-icon red"></div></div>
@@ -1238,25 +1262,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
     <div class="product-card glass" data-tags="самайн кулон" data-id="17" data-price="29900" data-name="Весы Осириса" onclick="openProductModal(17)">
       <div class="product-img-wrap">
-        <canvas class="osiris-matrix-bg" id="osirisMatrixBg"></canvas>
-        <svg class="osiris-scale-icon" viewBox="0 0 300 340">
-          <line class="os-s" stroke-width="3" x1="105" y1="320" x2="195" y2="320"/>
-          <line class="os-s" stroke-width="3" x1="150" y1="320" x2="150" y2="90"/>
-          <circle class="os-sf" cx="150" cy="90" r="5"/>
-          <line class="os-s" stroke-width="3" x1="56.4" y1="73.5" x2="243.6" y2="106.5"/>
-          <line class="os-s" stroke-width="2" x1="150" y1="90" x2="56.4" y2="73.5"/>
-          <line class="os-s" stroke-width="2" x1="150" y1="90" x2="243.6" y2="106.5"/>
-          <line class="os-s" stroke-width="1.5" x1="56.4" y1="73.5" x2="30" y2="150"/>
-          <line class="os-s" stroke-width="1.5" x1="56.4" y1="73.5" x2="84" y2="150"/>
-          <path class="os-s" stroke-width="2.5" d="M 14,150 Q 57,190 100,150"/>
-          <ellipse class="os-s" stroke-width="2.2" cx="57" cy="132" rx="6" ry="7"/>
-          <line class="os-s" stroke-width="2.2" x1="57" y1="139" x2="57" y2="160"/>
-          <line class="os-s" stroke-width="2.2" x1="47" y1="141" x2="67" y2="141"/>
-          <line class="os-s" stroke-width="1.5" x1="243.6" y1="106.5" x2="217" y2="182"/>
-          <line class="os-s" stroke-width="1.5" x1="243.6" y1="106.5" x2="271" y2="182"/>
-          <path class="os-s" stroke-width="2.5" d="M 201,182 Q 244,222 287,182"/>
-          <path class="os-s" stroke-width="2.2" d="M 244,194 C 244,174 217,171 217,150 C 217,135 232,130 244,146 C 256,130 271,135 271,150 C 271,171 244,174 244,194 Z"/>
-        </svg>
+        <img class="product-img" src="assets/img/products/vesy-osirisa.jpg" alt="Весы Осириса" loading="lazy">
         <div class="product-badge-wrap"><span class="product-badge badge-season">Сезонная</span></div>
         <div class="stock-badge low">Остался 1!</div>
       </div>
@@ -1873,6 +1879,19 @@ function triggerGlitch(){
 }
 var savedTheme = localStorage.getItem('jv_theme');
 if(savedTheme) setTheme(savedTheme);
+
+/* ══ Мобильная липкая кнопка «Смотреть все артефакты» — прячется, когда каталог уже виден ══ */
+(function initStickyToCatalogBtn(){
+  var btn = document.getElementById('stickyToCatalogBtn');
+  var catalog = document.getElementById('catalog');
+  if(!btn || !catalog || !window.IntersectionObserver) return;
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      btn.classList.toggle('hide', entry.isIntersecting);
+    });
+  }, {threshold: 0.05});
+  observer.observe(catalog);
+})();
 
 /* ══ CART ══ */
 /* ══ CART PERSISTENCE — живёт весь визит, протухает через 30 мин ПОСЛЕ ухода с сайта ══ */

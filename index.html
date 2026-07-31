@@ -139,8 +139,6 @@ body:active .cursor-sprite{transform:scale(0.88)}
 @media(max-width:700px){
   .scroll-nav-arrow{display:none}
   .scroll-nav-wrap::after{display:none}
-  .collections-scroll{flex-wrap:wrap;overflow-x:visible;gap:8px;padding-bottom:8px}
-  .collection-chip{font-size:10px;padding:7px 14px;letter-spacing:1px}
 }
 .about-layout{max-width:640px;margin:0 auto;padding:32px}
 @media(max-width:640px){.about-layout{padding:28px 24px}}
@@ -551,10 +549,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 @media(max-width:520px){
   #stickyToCatalogBtn{
     display:block;position:fixed;left:16px;right:16px;bottom:16px;z-index:450;
-    background:var(--accent);color:#000;text-align:center;
+    background:rgba(0,5,2,0.92);color:var(--accent);text-align:center;
     font-family:'VT323',monospace;font-size:18px;letter-spacing:2px;text-transform:uppercase;
-    padding:13px 0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.5),0 0 24px rgba(0,255,65,0.3);
+    padding:13px 0;border-radius:10px;border:1px solid var(--accent);
+    box-shadow:0 4px 20px rgba(0,0,0,0.7),0 0 16px rgba(0,255,65,0.15);
     text-decoration:none;transition:transform .25s ease,opacity .25s ease;
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   }
   #stickyToCatalogBtn.hide{transform:translateY(140%);opacity:0;pointer-events:none}
 }

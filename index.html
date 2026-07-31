@@ -410,7 +410,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   .product-tagline{display:none}
   .product-price-row{flex-direction:row;align-items:center;justify-content:space-between;gap:4px;margin-top:4px;flex-wrap:nowrap}
   .product-price{font-size:17px;white-space:nowrap}
-  .product-btn{padding:6px 8px;font-size:9px;white-space:nowrap;flex-shrink:0}
+  .product-btn{padding:7px 10px;font-size:16px;white-space:nowrap;flex-shrink:0;line-height:1}
 }
 .product-card{position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:none;display:none}
 .product-card.newly-shown{animation:cardGlitchIn .75s steps(1,end) both}
@@ -779,7 +779,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="modal-desc" id="modalDesc"></div>
       <div class="modal-footer">
         <span class="modal-price" id="modalPrice"></span>
-        <button class="product-btn" id="modalAddBtn">В корзину</button>
+        <button class="product-btn" id="modalAddBtn">🛒</button>
       </div>
     </div>
   </div>
@@ -1070,7 +1070,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Северная устойчивость · Внутренний стержень · Защита от откатов</div>
         <div class="product-price-row">
           <span class="product-price">7&nbsp;900&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(1,'Браслет Йотун Вайб',7900,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(1,'Браслет Йотун Вайб',7900,'ᚨ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1086,7 +1086,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ясность направления · Курс не теряется · Лучшая версия себя</div>
         <div class="product-price-row">
           <span class="product-price">12&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(2,'Кулон Твой Вечный Прайм',12000,'ᛏ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(2,'Кулон Твой Вечный Прайм',12000,'ᛏ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1102,7 +1102,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Энергия движения · Поток возможностей · Действие без остановки</div>
         <div class="product-price-row">
           <span class="product-price">9&nbsp;500&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(3,'Браслет Твой Вечный Прайм',9500,'ᚱ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(3,'Браслет Твой Вечный Прайм',9500,'ᚱ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1117,7 +1117,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Пробуждает тело от оцепенения · Очищает от застойных энергий · Возвращает вкус — к себе, к моменту, к миру</div>
         <div class="product-price-row">
           <span class="product-price">8&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(7,'Возвращение к жизни',8800,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(7,'Возвращение к жизни',8800,'ᛉ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1133,7 +1133,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">В центре формулы — эльфийская семиконечная звезда. Невидимый барьер от зависти, сглаза и чужого негатива — лёгкая и незаметная защита на каждый день</div>
         <div class="product-price-row">
           <span class="product-price">7&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(8,'Эльфийская защита',7800,'ᚢ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(8,'Эльфийская защита',7800,'ᚢ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1148,8 +1148,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-name">Осознанная удача</div>
         <div class="product-tagline">Магнит твоего везения · Помогает вовремя оказаться в нужном месте и удержать шанс, а не просто дождаться его. «Не туда где легко, а туда где победа»</div>
         <div class="product-price-row">
-          <span class="product-price">13&nbsp;000&nbsp;₽</span><div style="font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px;font-weight:600">2 шт за 20 000 ₽</div>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(9,'Осознанная удача',13000,'ᚨ')">В корзину</button>
+          <span class="product-price">13&nbsp;000&nbsp;₽</span>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(9,'Осознанная удача',13000,'ᚨ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1162,10 +1162,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-collection"></div>
         <div class="product-name">Лёгкий путь</div>
         <div class="product-tagline">Навигатор наименьшего сопротивления · Препятствия сглаживаются, бюрократия рассасывается</div>
-        <div style="font-size:10px;line-height:1.6;color:var(--accent-dim);font-style:italic;margin-bottom:10px;border-left:2px solid rgba(0,255,65,0.25);padding-left:8px">«Сразу почувствовала лёгкость и ясность ума — решения принимаются быстро, но взвешенно» — из отзыва клиентки</div>
         <div class="product-price-row">
           <span class="product-price">5&nbsp;499&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(10,'Лёгкий путь',5499,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(10,'Лёгкий путь',5499,'ᛉ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1181,7 +1180,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ключ к первородной огненной силе. Будит сексуальность, зажигает харизму — ты становишься магнитом для желаний, людей и возможностей. «Не зови силу. Стань ею»</div>
         <div class="product-price-row">
           <span class="product-price">8&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(11,'Алая ведьма',8800,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(11,'Алая ведьма',8800,'ᚨ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1197,7 +1196,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Открывает внутренний «второй глаз» · Усиливает интуицию и связь с мудростью рода. Соединяет с Высшим «Я» и защищает от самообмана</div>
         <div class="product-price-row">
           <span class="product-price">15&nbsp;900&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(12,'Глаз Одина',15900,'ᚨ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(12,'Глаз Одина',15900,'ᚨ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1213,7 +1212,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Закрепляет удачу без застоя — превращает случайные шансы в прочные результаты. Идеален в паре с «Осознанной удачей»</div>
         <div class="product-price-row">
           <span class="product-price">15&nbsp;900&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(13,'Печать Короля',15900,'ᚠ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(13,'Печать Короля',15900,'ᚠ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1229,7 +1228,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Снимает напряжение и улаживает конфликты в семье и коллективе · Мягко защищает от чужой агрессии, удерживает мир и равновесие</div>
         <div class="product-price-row">
           <span class="product-price">15&nbsp;900&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(14,'Яблочный Пентакль',15900,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(14,'Яблочный Пентакль',15900,'ᛉ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1245,7 +1244,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Для тех, кто работает с тёмной энергией — ведьм, жрецов, практиков. Держит союз тёмных богинь (Хель, Геката, Морриган и др.), защищает от хаоса чужих энергий</div>
         <div class="product-price-row">
           <span class="product-price">13&nbsp;900&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(15,'Мать Теней (браслет)',13900,'ᚦ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(15,'Мать Теней (браслет)',13900,'ᚦ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1261,7 +1260,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Проводник в ту часть тебя, которую давно ощущаешь, но не решаешься раскрыть. Тьма не убивает свет — она рождает его</div>
         <div class="product-price-row">
           <span class="product-price">13&nbsp;900&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(16,'Мать Теней (кулон)',13900,'ᚦ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(16,'Мать Теней (кулон)',13900,'ᚦ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1278,7 +1277,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Честный баланс · Очищение через суд истины · Внутренняя справедливость и ясность</div>
         <div class="product-price-row">
           <span class="product-price">29&nbsp;900&nbsp;₽</span><div style="font-size:10px;letter-spacing:1px;color:var(--accent-dim);margin-top:4px;font-weight:600">заряжен в некрополе (Египет) · последний экземпляр</div>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(17,'Весы Осириса',29900,'ᛁ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(17,'Весы Осириса',29900,'ᛁ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1294,7 +1293,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Рунический браслет-антидепрессант · Выводит из клинической депрессии любой тяжести, без побочных эффектов таблеток. «Тьма уходит. Свет возвращается. Я оживаю»</div>
         <div class="product-price-row">
           <span class="product-price">20&nbsp;333&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(19,'Аттаракс',20333,'ᚾ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(19,'Аттаракс',20333,'ᚾ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1310,7 +1309,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Кулон-невидимка · Ставит тебя и твои доходы вне радара налоговой, банков, силовиков. «Я и всё моё — вне радара»</div>
         <div class="product-price-row">
           <span class="product-price">19&nbsp;666&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(20,'РСБ — Руническая Служба Безопасности',19666,'ᛃ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(20,'РСБ — Руническая Служба Безопасности',19666,'ᛃ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1326,7 +1325,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Перековка в денежного человека · Строит внутреннюю структуру, через которую доход растёт кратно — ×5–×50 за год</div>
         <div class="product-price-row">
           <span class="product-price">12&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(21,'Золотая Пирамида',12000,'ᚠ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(21,'Золотая Пирамида',12000,'ᚠ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1342,7 +1341,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Разрыв любого тупика · Как запуск ракеты — резкий выход на новую орбиту дохода и возможностей: ×3–×10 за 3–6 месяцев</div>
         <div class="product-price-row">
           <span class="product-price">10&nbsp;333&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(22,'Прорыв',10333,'ᛗ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(22,'Прорыв',10333,'ᛗ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1358,7 +1357,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Щит от мошенников и токсиков · Видит ложь насквозь ещё до того, как она сказана · Оставляет рядом только чистое окружение</div>
         <div class="product-price-row">
           <span class="product-price">9&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(23,'Анти-Лариса',9800,'ᛉ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(23,'Анти-Лариса',9800,'ᛉ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1374,7 +1373,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Заземляет всё, над чем ты работал(а), чтобы результат стал ощутимым — в деньгах, здоровье, доме. Для фазы жатвы, когда устал(а), но нужно дожать</div>
         <div class="product-price-row">
           <span class="product-price">7&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(25,'Плод земли',7800,'ᛟ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(25,'Плод земли',7800,'ᛟ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1390,7 +1389,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Не просто про удачу, а про благородство потока — раскрывает щедрость и делает магнитом для изобилия. Хорош в моменты запусков, сделок, подписаний</div>
         <div class="product-price-row">
           <span class="product-price">11&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(26,'Золотое зерно',11800,'ᛃ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(26,'Золотое зерно',11800,'ᛃ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1406,7 +1405,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Защищает твой труд и плоды от утечек, зависти и краж энергии. Не пускает разрушение в твой урожайный цикл — амулет уверенного «я заслужил»</div>
         <div class="product-price-row">
           <span class="product-price">8&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(27,'Хранитель урожая',8800,'ᛞ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(27,'Хранитель урожая',8800,'ᛞ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1422,7 +1421,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Возвращает внутреннее достоинство · Пробуждает уверенность · Делает видимым без крика — просто своим присутствием</div>
         <div class="product-price-row">
           <span class="product-price">10&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(28,'Лев среди людей',10000,'ᛋ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(28,'Лев среди людей',10000,'ᛋ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1438,7 +1437,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Оберегает внутренний мир от вторжений · Закрывает энергетические дыры · Возвращает личные границы</div>
         <div class="product-price-row">
           <span class="product-price">15&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(29,'Страж сердца',15000,'ᛖ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(29,'Страж сердца',15000,'ᛖ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1454,7 +1453,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Мягкое пробуждение изнутри · Усиливает интуицию · Даёт устойчивую уверенность в своём пути</div>
         <div class="product-price-row">
           <span class="product-price">8&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(30,'Путь Солнца',8800,'ᛞ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(30,'Путь Солнца',8800,'ᛞ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1470,7 +1469,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Первая ступень. Мягко запускает пробуждение · Возвращает вкус к жизни · Даёт силу для первых шагов</div>
         <div class="product-price-row">
           <span class="product-price">7&nbsp;800&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(31,'Огненная Жатва I — Огонь пробуждения',7800,'ᚠ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(31,'Огненная Жатва I — Огонь пробуждения',7800,'ᚠ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1486,7 +1485,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Вторая ступень. Закрепляет на пути перемен · Возвращает ощущение ценности · Питает энергией</div>
         <div class="product-price-row">
           <span class="product-price">10&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(32,'Огненная Жатва II — Путь силы',10000,'ᚢ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(32,'Огненная Жатва II — Путь силы',10000,'ᚢ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1502,7 +1501,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Третья ступень. Архетип перерождения · Раскрывает обновлённое «я» · Рывок в самореализации</div>
         <div class="product-price-row">
           <span class="product-price">13&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(33,'Огненная Жатва III — Огненный феникс',13000,'ᚱ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(33,'Огненная Жатва III — Огненный феникс',13000,'ᚱ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1518,7 +1517,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Финальная ступень. Усиливает внутренний стержень · Притягивает внимание и возможности · Для тех, кто уже знает, кто он</div>
         <div class="product-price-row">
           <span class="product-price">15&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(34,'Огненная Жатва IV — Время сиять',15000,'ᛊ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(34,'Огненная Жатва IV — Время сиять',15000,'ᛊ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1533,7 +1532,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Ясность в решениях · Спокойствие ума · Точность действий</div>
         <div class="product-price-row">
           <span class="product-price">8&nbsp;500&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(4,'Путь ясной мысли',8500,'ᚺ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(4,'Путь ясной мысли',8500,'ᚺ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1548,7 +1547,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Мягкая, глубокая трансформация · Помогает лучше слышать себя и обрести внутреннюю гармонию</div>
         <div class="product-price-row">
           <span class="product-price">11&nbsp;000&nbsp;₽</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(5,'Лотос души',11000,'ᛖ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(5,'Лотос души',11000,'ᛖ')">🛒</button>
         </div>
       </div>
     </div>
@@ -1564,7 +1563,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="product-tagline">Фиксирует состояние застоя, ломает внутреннюю инерцию и переводит в цикл осознанных действий</div>
         <div class="product-price-row">
           <span class="product-price" style="font-size:14px">Цена уточняется</span>
-          <button class="product-btn" onclick="event.stopPropagation(); addToCart(35,'Код свободы / Выход из матрицы',0,'ᛗ')">В корзину</button>
+          <button class="product-btn" onclick="event.stopPropagation(); addToCart(35,'Код свободы / Выход из матрицы',0,'ᛗ')">🛒</button>
         </div>
       </div>
     </div>

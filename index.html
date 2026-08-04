@@ -1953,6 +1953,27 @@ function applyPromo(){
 }
 window.applyPromo = applyPromo;
 
+function mabonCopyPromo(){
+  var code = 'MABON2026';
+  var btn = document.getElementById('mabon-copy-btn');
+  var done = function(){
+    if(btn){
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"><polyline points="3,8 6,12 13,4"/></svg>';
+      setTimeout(function(){
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><rect x="5" y="1" width="9" height="11"/><rect x="1" y="4" width="9" height="11" fill="rgba(0,4,1,0.97)"/><rect x="1" y="4" width="9" height="11"/></svg>';
+      }, 1600);
+    }
+  };
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(done).catch(function(){
+      var t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);done();
+    });
+  } else {
+    var t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);done();
+  }
+}
+window.mabonCopyPromo = mabonCopyPromo;
+
 function getPromoDiscount(sum){
   if(!PROMO_DISCOUNT) return 0;
   if(sum >= 15000) return Math.round(sum * 0.15);
@@ -2886,25 +2907,38 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   /* ── 8-bit предметы: пиксельные матрицы 7×7 ── */
   var ITEMS = [
-    { id:'apple', prob:0.28, pixels:[
-      [0,0,1,1,0,0,0],[0,0,0,1,0,0,0],[0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],[0,0,1,1,1,0,0]
+    { id:'apple', prob:0.27, pixels:[
+      [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],
+      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
+      [0,0,1,1,1,0,0],[0,0,0,1,0,0,0]
     ]},
-    { id:'acorn', prob:0.28, pixels:[
-      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],[1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
-      [0,0,1,1,1,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]
+    { id:'strawberry', prob:0.25, pixels:[
+      [0,0,1,0,1,0,0],[0,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1],[1,1,0,1,0,1,1],
+      [1,1,1,1,1,1,1],[0,1,0,1,0,1,0],
+      [0,1,1,1,1,1,0],[0,0,1,1,1,0,0],
+      [0,0,0,1,0,0,0]
     ]},
-    { id:'pine', prob:0.22, pixels:[
-      [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],[0,1,1,1,1,1,0],[1,1,0,1,0,1,1],
-      [0,0,1,1,1,0,0],[0,1,0,1,0,1,0],[0,0,0,1,0,0,0]
+    { id:'heart', prob:0.25, pixels:[
+      [0,1,1,0,0,0,1,1,0],[1,1,1,1,0,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1],[0,1,1,1,1,1,1,1,0],
+      [0,0,1,1,1,1,1,0,0],[0,0,0,1,1,1,0,0,0],
+      [0,0,0,0,1,0,0,0,0]
     ]},
-    { id:'cherry', prob:0.12, pixels:[
-      [0,1,0,0,0,1,0],[0,1,0,0,0,1,0],[0,0,1,0,1,0,0],[0,0,0,1,0,0,0],
-      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],[0,1,1,1,1,1,0]
+    { id:'ring', prob:0.13, pixels:[
+      [0,0,1,1,1,0,0],[0,1,1,0,1,1,0],
+      [1,1,0,0,0,1,1],[1,1,0,0,0,1,1],
+      [1,1,0,0,0,1,1],[0,1,1,0,1,1,0],
+      [0,0,1,1,1,0,0]
     ]},
     { id:'coin', prob:0.10, pixels:[
-      [0,1,1,1,1,1,0],[1,1,0,1,0,1,1],[1,0,0,1,0,0,1],[1,1,0,1,0,1,1],
-      [1,0,0,0,0,0,1],[1,1,0,0,0,1,1],[0,1,1,1,1,1,0]
+      [0,0,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,0],
+      [1,1,0,1,1,1,0,1,1],[1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,0,1,1,1,1],[1,1,1,1,1,1,1,1,1],
+      [1,1,0,1,1,1,0,1,1],[0,1,1,0,0,0,1,1,0],
+      [0,0,1,1,1,1,1,0,0]
     ], isCoin:true }
   ];
 
@@ -3018,8 +3052,8 @@ window.loadMoreCatalog = loadMoreCatalog;
       // код + кнопка копирования рядом
       +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">'
       +'<div id="mabon-promo-code" style="font-family:\'VT323\',monospace;font-size:28px;letter-spacing:4px;color:'+acc+';border:1px dashed '+acc+';padding:10px 16px;border-radius:8px;min-width:160px">MABON2026</div>'
-      +'<button onclick="(function(){var code=\'MABON2026\';if(navigator.clipboard){navigator.clipboard.writeText(code).then(function(){var b=document.getElementById(\'mabon-copy-btn\');if(b){b.textContent=\'✓\';setTimeout(function(){b.textContent=\'⎘\';},1500);}});}else{var t=document.createElement(\'textarea\');t.value=code;document.body.appendChild(t);t.select();document.execCommand(\'copy\');document.body.removeChild(t);var b=document.getElementById(\'mabon-copy-btn\');if(b){b.textContent=\'✓\';setTimeout(function(){b.textContent=\'⎘\';},1500);}}})()" '
-      +'id="mabon-copy-btn" style="background:transparent;border:1px solid '+acc+';color:'+acc+';font-size:20px;width:38px;height:38px;border-radius:8px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1" title="Скопировать промокод">⎘</button>'
+      +'<button onclick="mabonCopyPromo()" '
+      +'id="mabon-copy-btn" style="background:transparent;border:1px solid '+acc+';color:'+acc+';width:38px;height:38px;border-radius:8px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center" title="Скопировать промокод"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"><rect x="5" y="1" width="9" height="11"/><rect x="1" y="4" width="9" height="11" fill="rgba(0,4,1,0.97)"/><rect x="1" y="4" width="9" height="11"/></svg></button>'
       +'</div>'
       +'<div style="font-size:10px;color:rgba(200,255,218,0.5);margin-bottom:8px">−10% на артефакты 5 000–15 000 ₽ · −15% от 15 000 ₽</div>'
       +'<div style="font-size:10px;color:rgba(200,255,218,0.35);margin-bottom:20px">Действителен до '+expStr+'</div>'
@@ -3036,28 +3070,47 @@ window.loadMoreCatalog = loadMoreCatalog;
   function drawHorn(accent){
     ctx.save();
     ctx.strokeStyle = accent;
-    ctx.lineWidth = 1.5;
-    ctx.shadowColor = accent;
-    ctx.shadowBlur = 4;
-    // тело рога (левый верхний угол канваса)
-    var px = ITEM_PX;
-    // пиксельный рог: трапеция сужающаяся вправо
-    var hornPixels = [
-      [0,0,0,1,1,1,1,1,1],
-      [0,0,1,1,1,1,1,1,1],
-      [0,1,1,1,1,1,1,1,0],
-      [1,1,1,1,1,1,1,0,0],
-      [1,1,1,1,1,1,0,0,0],
-      [0,1,1,1,1,0,0,0,0],
-      [0,0,1,1,0,0,0,0,0],
-    ];
-    var ox = 4, oy = 8;
     ctx.fillStyle = accent;
-    hornPixels.forEach(function(row, ry){
-      row.forEach(function(on, rx){
-        if(on) ctx.fillRect(ox+rx*px, oy+ry*px, px-0.5, px-0.5);
-      });
-    });
+    ctx.shadowColor = accent;
+    ctx.shadowBlur = 5;
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    // Рог изобилия: широкое горло слева, сужается к закрученному кончику справа-вверху.
+    // Координаты в canvas 138×138. Рог занимает левую треть.
+    ctx.beginPath();
+    // Верхняя дуга горла → кончик
+    ctx.moveTo(8, 22);   // верх горла (левый край)
+    ctx.bezierCurveTo(40, 10, 68, 8, 84, 18); // верхняя линия тела
+    // кончик — закрученная спираль (два маленьких сегмента)
+    ctx.bezierCurveTo(94, 24, 96, 34, 88, 38);
+    ctx.bezierCurveTo(82, 42, 74, 38, 78, 30);
+    // Нижняя дуга кончика → горло
+    ctx.bezierCurveTo(80, 26, 90, 28, 86, 36); // внутрь спирали
+    ctx.moveTo(88, 38);  // продолжаем от кончика вниз
+    ctx.bezierCurveTo(80, 48, 60, 46, 30, 50); // нижняя линия тела
+    ctx.bezierCurveTo(20, 52, 10, 54, 8, 52);  // низ горла
+    ctx.stroke();
+
+    // Заливка тела рога (полупрозрачная)
+    ctx.beginPath();
+    ctx.moveTo(8, 22);
+    ctx.bezierCurveTo(40, 10, 68, 8, 84, 18);
+    ctx.bezierCurveTo(94, 24, 96, 34, 88, 38);
+    ctx.bezierCurveTo(80, 48, 60, 46, 30, 50);
+    ctx.bezierCurveTo(20, 52, 10, 54, 8, 52);
+    ctx.closePath();
+    ctx.globalAlpha = 0.18;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Украшение горла — две вертикальные линии
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath(); ctx.moveTo(14, 25); ctx.lineTo(14, 49); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(20, 24); ctx.lineTo(20, 50); ctx.stroke();
+    ctx.globalAlpha = 1;
+
     ctx.restore();
   }
 
@@ -3133,8 +3186,8 @@ window.loadMoreCatalog = loadMoreCatalog;
     if(!fallingItem && now - lastDrop > DROP_INTERVAL){
       lastDrop = now;
       var item = pickItem();
-      var hornMouthX = 4 + 9*ITEM_PX; // примерно выход рога (правый край)
-      var hornMouthY = 8 + 1*ITEM_PX;
+      var hornMouthX = 12; // горло рога — левый край, предметы вываливаются вниз-вперёд
+      var hornMouthY = 52;
       fallingItem = {
         item: item,
         x: hornMouthX,

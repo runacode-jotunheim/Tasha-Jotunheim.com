@@ -3090,7 +3090,8 @@ window.loadMoreCatalog = loadMoreCatalog;
   var TROPHY_MOUTH_X = TROPHY_OX + (TROPHY_W * TROPHY_PX) * 0.5 + 14;
   var TROPHY_MOUTH_Y = TROPHY_OY + TROPHY_H * TROPHY_PX * 0.75 + 8;
 
-  function drawHorn(accent){
+  function drawHorn(accent, angle){
+    angle = angle || 0;
     var trophy = [
       [1,1,1,1,1,1,1,1,1,1,1],
       [1,1,0,0,0,0,0,0,0,1,1],
@@ -3106,16 +3107,15 @@ window.loadMoreCatalog = loadMoreCatalog;
       [0,1,1,1,1,1,1,1,1,1,0],
     ];
     var px = TROPHY_PX;
-    // рисуем с наклоном через ctx.transform
+    // pivot — центр основания (низ подставки) — кубок наклоняется как маятник
+    var pivotX = TROPHY_OX + TROPHY_W*px/2;
+    var pivotY = TROPHY_OY + TROPHY_H*px;
     ctx.save();
     ctx.fillStyle = accent;
     ctx.shadowColor = accent;
     ctx.shadowBlur = 6;
-    // pivot — центр кубка
-    var pivotX = TROPHY_OX + TROPHY_W*px/2;
-    var pivotY = TROPHY_OY + TROPHY_H*px/2;
     ctx.translate(pivotX, pivotY);
-    ctx.rotate(-TROPHY_ANGLE);
+    ctx.rotate(angle);
     ctx.translate(-pivotX, -pivotY);
     trophy.forEach(function(row, ry){
       row.forEach(function(on, rx){
@@ -3181,58 +3181,113 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   var lastTime = 0;
 
+  // Фазы анимации кубка
+  var TILT_MAX = Math.PI / 4;   // 45° (3 часа)
+  var TILT_DUR = 600;           // мс наклона туда
+  var HOLD_DUR = 150;           // мс удержания в наклоне (момент вылета)
+  var RETURN_DUR = 500;         // мс возврата
+  var REST_DUR = 2200;          // мс покоя между бросками
+  var trophyPhase = 'rest';     // 'rest' | 'tilt' | 'hold' | 'return'
+  var trophyPhaseStart = 0;
+  var trophyAngle = 0;
+  var itemLaunched = false;     // вылетел ли предмет в этом цикле
+
+  function updateTrophy(now){
+    var elapsed = now - trophyPhaseStart;
+    if(trophyPhase === 'rest'){
+      trophyAngle = 0;
+      if(elapsed >= REST_DUR){
+        trophyPhase = 'tilt';
+        trophyPhaseStart = now;
+        itemLaunched = false;
+      }
+    } else if(trophyPhase === 'tilt'){
+      var t = Math.min(1, elapsed / TILT_DUR);
+      // easeInOut
+      t = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      trophyAngle = TILT_MAX * t;
+      if(elapsed >= TILT_DUR){
+        trophyAngle = TILT_MAX;
+        trophyPhase = 'hold';
+        trophyPhaseStart = now;
+      }
+    } else if(trophyPhase === 'hold'){
+      trophyAngle = TILT_MAX;
+      // запускаем предмет в момент максимального наклона
+      if(!itemLaunched && !fallingItem){
+        itemLaunched = true;
+        launchItem(now);
+      }
+      if(elapsed >= HOLD_DUR){
+        trophyPhase = 'return';
+        trophyPhaseStart = now;
+      }
+    } else if(trophyPhase === 'return'){
+      var t2 = Math.min(1, elapsed / RETURN_DUR);
+      t2 = t2 < 0.5 ? 2*t2*t2 : -1+(4-2*t2)*t2;
+      trophyAngle = TILT_MAX * (1 - t2);
+      if(elapsed >= RETURN_DUR){
+        trophyAngle = 0;
+        trophyPhase = 'rest';
+        trophyPhaseStart = now;
+      }
+    }
+  }
+
+  function launchItem(now){
+    var item = pickItem();
+    // точка вылета: правый нижний угол кубка при наклоне вправо
+    var mouthX = TROPHY_OX + TROPHY_W * TROPHY_PX * 0.85;
+    var mouthY = TROPHY_OY + TROPHY_H * TROPHY_PX * 0.65;
+    fallingItem = {
+      item: item,
+      x: mouthX,
+      y: mouthY,
+      vx: 35 + Math.random()*15,
+      vy: -20,
+      collected: false,
+      landed: false,
+      pulse: 0, pulseDir: 1
+    };
+    if(item.isCoin) coinHitbox = null;
+  }
+
   function frame(now){
     var dt = lastTime ? Math.min(now - lastTime, 100) : 16;
     lastTime = now;
     ctx.clearRect(0, 0, S, S);
     var accent = getAccent();
 
-    // рог
-    drawHorn(accent);
+    // обновляем фазу кубка
+    updateTrophy(now);
+
+    // рисуем кубок с текущим углом наклона
+    drawHorn(accent, trophyAngle);
 
     // листья
     drawLeaves(dt);
 
-    // запуск нового предмета
-    if(!fallingItem && now - lastDrop > DROP_INTERVAL){
-      lastDrop = now;
-      var item = pickItem();
-      fallingItem = {
-        item: item,
-        x: TROPHY_MOUTH_X,
-        y: TROPHY_MOUTH_Y,
-        vx: 30 + Math.random()*20,  // небольшой разлёт вправо
-        vy: 0,
-        collected: false,
-        landed: false,
-        pulse: 0, pulseDir: 1
-      };
-      if(item.isCoin) coinHitbox = null;
-    }
-
     // физика падения предмета
     if(fallingItem && !fallingItem.collected){
-      fallingItem.vy += 180 * dt/1000;
+      fallingItem.vy += 200 * dt/1000;
       fallingItem.x += (fallingItem.vx||0) * dt/1000;
       fallingItem.y += fallingItem.vy * dt/1000;
 
-      // горизонталь замедляется
-      if(fallingItem.vx > 0) fallingItem.vx = Math.max(0, fallingItem.vx - 60*dt/1000);
+      if(fallingItem.vx > 0) fallingItem.vx = Math.max(0, fallingItem.vx - 50*dt/1000);
 
-      // пульс монеты
       if(fallingItem.item.isCoin){
         fallingItem.pulse += fallingItem.pulseDir * 3 * dt/1000;
         if(fallingItem.pulse > 1){ fallingItem.pulse=1; fallingItem.pulseDir=-1; }
         if(fallingItem.pulse < 0){ fallingItem.pulse=0; fallingItem.pulseDir=1; }
       }
 
-      var landY = S - 24; // дно (над листьями)
+      var landY = S - 24;
       if(fallingItem.y >= landY){
         fallingItem.y = landY;
         if(!fallingItem.landed){
           fallingItem.landed = true;
           disturbLeaves(fallingItem.x);
-          if(fallingItem.item.isCoin) coinHitbox = null; // монета приземлилась — не кликабельна
+          if(fallingItem.item.isCoin) coinHitbox = null;
           setTimeout(function(){ fallingItem = null; }, 900);
         }
       }
@@ -3242,6 +3297,7 @@ window.loadMoreCatalog = loadMoreCatalog;
 
     requestAnimationFrame(frame);
   }
+  trophyPhaseStart = performance.now();
   requestAnimationFrame(frame);
 })();
 (function(){

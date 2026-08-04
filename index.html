@@ -268,6 +268,17 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .cart-checkout{width:100%;padding:14px;background:var(--accent);border:none;color:#000;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:none;transition:opacity .2s}
 .cart-checkout:hover{opacity:.88}
 .cart-checkout:disabled{opacity:.35;cursor:not-allowed}
+.cart-promo{margin-bottom:12px}
+.cart-promo-row{display:flex;gap:8px}
+.cart-promo-input{flex:1;background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.2);border-radius:6px;padding:7px 10px;color:#fff;font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;letter-spacing:1px;text-transform:uppercase}
+.cart-promo-input::placeholder{color:rgba(0,255,65,0.3);text-transform:none}
+.cart-promo-input:focus{border-color:var(--accent)}
+.cart-promo-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'VT323',monospace;font-size:13px;letter-spacing:1px;padding:7px 12px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:background .2s}
+.cart-promo-btn:hover{background:rgba(0,255,65,0.1)}
+.cart-promo-msg{font-size:10px;margin-top:5px;letter-spacing:1px;min-height:14px}
+.cart-promo-msg.ok{color:var(--accent)}
+.cart-promo-msg.err{color:#ff6b6b}
+
 .cart-consent{display:flex;align-items:flex-start;gap:8px;font-size:10px;line-height:1.5;color:rgba(0,255,65,0.6);margin-bottom:14px;cursor:none}
 .cart-consent input{margin-top:2px;accent-color:var(--accent);cursor:none;flex-shrink:0}
 .cart-consent a{color:var(--accent);text-decoration:underline}
@@ -545,6 +556,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .footer-irklink{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:2px;color:rgba(0,255,65,0.35);text-decoration:none;border:1px solid rgba(0,255,65,0.15);border-radius:20px;padding:5px 14px;transition:all .2s;cursor:none}
 .footer-irklink:hover{color:var(--accent);border-color:var(--accent)}
 
+@keyframes mabon-shake{
+  0%,100%{transform:translateX(0)}
+  15%{transform:translateX(-5px) rotate(-1deg)}
+  30%{transform:translateX(5px) rotate(1deg)}
+  45%{transform:translateX(-4px)}
+  60%{transform:translateX(4px)}
+  75%{transform:translateX(-2px)}
+  90%{transform:translateX(2px)}
+}
+#mabon-coin-wrap{display:none;align-items:center;gap:4px;justify-content:center;margin-top:8px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent)}
+#mabon-coin-wrap svg{flex-shrink:0}
+
 #stickyToCatalogBtn{display:none}
 @media(max-width:520px){
   #stickyToCatalogBtn{
@@ -649,6 +672,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="cart-total">
       <span class="cart-total-label">Итого</span>
       <span class="cart-total-price" id="cartTotal">0 ₽</span>
+    </div>
+    <div class="cart-promo">
+      <div class="cart-promo-row">
+        <input type="text" class="cart-promo-input" id="promoInput" placeholder="Промокод" maxlength="20">
+        <button class="cart-promo-btn" onclick="applyPromo()">Ввести</button>
+      </div>
+      <div class="cart-promo-msg" id="promoMsg"></div>
     </div>
     <label class="cart-consent">
       <input type="checkbox" id="consentCheckbox">
@@ -931,6 +961,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="countdown-card glass reveal">
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="138" height="138"></canvas>
+        </div>
+        <div id="mabon-coin-wrap">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="butt"><circle cx="8" cy="8" r="6"/><text x="8" y="11" text-anchor="middle" font-size="7" fill="currentColor" stroke="none" font-family="monospace">₽</text></svg>
+          <span id="mabon-coin-counter">0/3</span>
         </div>
         <div class="countdown-label">До праздника «<span id="cdName">...</span>» осталось</div>
         <div class="countdown-clock">
@@ -1885,6 +1919,59 @@ function triggerGlitch(){
 var savedTheme = localStorage.getItem('jv_theme');
 if(savedTheme) setTheme(savedTheme);
 
+/* ══ Промокод ══ */
+var PROMO_DISCOUNT = null;
+var PROMO_EXPIRY_KEY = 'jv_mabon_promo_exp'; // timestamp окончания срока
+var PROMO_DAYS = 5;
+
+var VALID_PROMOS = {
+  'MABON2026': true
+};
+
+function applyPromo(){
+  var code = (document.getElementById('promoInput').value || '').trim().toUpperCase();
+  var msg = document.getElementById('promoMsg');
+  if(!code){ msg.textContent = ''; return; }
+  if(!VALID_PROMOS[code]){
+    msg.textContent = 'Промокод не найден'; msg.className = 'cart-promo-msg err'; return;
+  }
+  // проверяем срок — он сохраняется при получении промокода (в showPromoModal)
+  var expStr = localStorage.getItem(PROMO_EXPIRY_KEY);
+  if(expStr){
+    var exp = parseInt(expStr, 10);
+    if(Date.now() > exp){
+      msg.textContent = 'Срок действия промокода истёк'; msg.className = 'cart-promo-msg err'; return;
+    }
+    var daysLeft = Math.ceil((exp - Date.now()) / 86400000);
+    PROMO_DISCOUNT = code;
+    msg.textContent = '✓ Промокод принят! Действителен ещё ' + daysLeft + ' дн.'; msg.className = 'cart-promo-msg ok';
+  } else {
+    // промокод введён без получения через монеты — не принимаем
+    msg.textContent = 'Сначала получи промокод через монеты Мабона 🌾'; msg.className = 'cart-promo-msg err'; return;
+  }
+  renderCartTotal();
+}
+window.applyPromo = applyPromo;
+
+function getPromoDiscount(sum){
+  if(!PROMO_DISCOUNT) return 0;
+  if(sum >= 15000) return Math.round(sum * 0.15);
+  if(sum >= 5000) return Math.round(sum * 0.10);
+  return 0;
+}
+
+/* ══ Мабон: показываем счётчик монет ══ */
+(function(){
+  var now = new Date(), m = now.getMonth()+1, d = now.getDate();
+  if(!((m===8&&d>=5)||(m===9&&d<=27))) return;
+  var wrap = document.getElementById('mabon-coin-wrap');
+  if(wrap) wrap.style.display = 'flex';
+  // обновляем счётчик из localStorage при загрузке
+  var cnt = parseInt(localStorage.getItem('jv_mabon_coins')||'0',10);
+  var el = document.getElementById('mabon-coin-counter');
+  if(el) el.textContent = cnt+'/3';
+})();
+
 /* ══ Мобильная липкая кнопка «Смотреть все артефакты» — прячется, когда каталог уже виден ══ */
 (function initStickyToCatalogBtn(){
   var btn = document.getElementById('stickyToCatalogBtn');
@@ -2163,8 +2250,12 @@ function renderCheckoutSummary(){
     var qty = it.qty || 1;
     return '<div class="checkout-summary-row"><span>'+it.name+(qty>1?' × '+qty:'')+'</span><span>'+(it.price*qty).toLocaleString('ru-RU')+' ₽</span></div>';
   }).join('');
+  var discount = getPromoDiscount(sum);
+  if(discount > 0){
+    rows += '<div class="checkout-summary-row" style="color:var(--accent)"><span>Скидка (промокод)</span><span>−'+discount.toLocaleString('ru-RU')+' ₽</span></div>';
+  }
   document.getElementById('checkoutSummary').innerHTML = rows +
-    '<div class="checkout-summary-total"><span>Итого</span><b>'+sum.toLocaleString('ru-RU')+' ₽</b></div>';
+    '<div class="checkout-summary-total"><span>Итого</span><b>'+(sum-discount).toLocaleString('ru-RU')+' ₽</b></div>';
 }
 
 function setFieldInvalid(id, invalid){
@@ -2195,10 +2286,14 @@ function submitOrder(){
   status.className = 'checkout-status';
   status.textContent = 'Формируем счёт…';
 
+  var baseItems = cart.map(function(it){ return {name: it.name, price: it.price, qty: it.qty || 1}; });
+  var discount = getPromoDiscount(baseItems.reduce(function(s,it){ return s+it.price*it.qty; },0));
   var payload = {
-    items: cart.map(function(it){ return {name: it.name, price: it.price, qty: it.qty || 1}; }),
+    items: discount > 0
+      ? baseItems.concat([{name: 'Скидка (промокод '+PROMO_DISCOUNT+')', price: -discount, qty: 1}])
+      : baseItems,
     customer: {name: name, phone: phone, email: email, address: address},
-    comment: comment
+    comment: comment + (PROMO_DISCOUNT ? ' [Промокод: '+PROMO_DISCOUNT+']' : '')
   };
 
   fetch(PAYMENT_API_BASE + '/api/create-payment', {
@@ -2764,6 +2859,320 @@ window.loadMoreCatalog = loadMoreCatalog;
     updateRotation(now);
     trySpawn(now);
     render(now);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ══ МАБОН: рог изобилия + листья + предметы + монеты (5 авг — 27 сент) ══ */
+(function(){
+  var now = new Date();
+  var month = now.getMonth()+1, day = now.getDate();
+  var isMabon = (month === 8 && day >= 5) || (month === 9 && day <= 27);
+  if(!isMabon) return;
+
+  var canvas = document.getElementById('hourglassCanvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var S = canvas.width; // 138
+
+  /* ── монетный счётчик ── */
+  var COIN_KEY = 'jv_mabon_coins';
+  var coinCount = parseInt(localStorage.getItem(COIN_KEY) || '0', 10);
+  var MAX_COINS = 3;
+
+  function getAccent(){ return (_matrixMode === 'red') ? '#ff3232' : '#28ff6e'; }
+  function getDim(){ return (_matrixMode === 'red') ? 'rgba(255,50,50,0.35)' : 'rgba(40,255,110,0.35)'; }
+
+  /* ── 8-bit предметы: пиксельные матрицы 7×7 ── */
+  var ITEMS = [
+    { id:'apple', prob:0.28, pixels:[
+      [0,0,1,1,0,0,0],[0,0,0,1,0,0,0],[0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],[0,0,1,1,1,0,0]
+    ]},
+    { id:'acorn', prob:0.28, pixels:[
+      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],[1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
+      [0,0,1,1,1,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0]
+    ]},
+    { id:'pine', prob:0.22, pixels:[
+      [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],[0,1,1,1,1,1,0],[1,1,0,1,0,1,1],
+      [0,0,1,1,1,0,0],[0,1,0,1,0,1,0],[0,0,0,1,0,0,0]
+    ]},
+    { id:'cherry', prob:0.12, pixels:[
+      [0,1,0,0,0,1,0],[0,1,0,0,0,1,0],[0,0,1,0,1,0,0],[0,0,0,1,0,0,0],
+      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],[0,1,1,1,1,1,0]
+    ]},
+    { id:'coin', prob:0.10, pixels:[
+      [0,1,1,1,1,1,0],[1,1,0,1,0,1,1],[1,0,0,1,0,0,1],[1,1,0,1,0,1,1],
+      [1,0,0,0,0,0,1],[1,1,0,0,0,1,1],[0,1,1,1,1,1,0]
+    ], isCoin:true }
+  ];
+
+  function pickItem(){
+    var r = Math.random(), acc = 0;
+    for(var i = 0; i < ITEMS.length; i++){
+      acc += ITEMS[i].prob;
+      if(r <= acc) return ITEMS[i];
+    }
+    return ITEMS[0];
+  }
+
+  /* ── листья: массив лежащих на дне ── */
+  var LEAF_COUNT = 18;
+  var LEAF_PX = [ [1,0,1,0],[0,1,1,1],[1,1,1,0],[0,1,0,0] ]; // 4×4 пиксель-лист
+  var leaves = [];
+  for(var l = 0; l < LEAF_COUNT; l++){
+    leaves.push({
+      x: 8 + Math.random()*(S-20),
+      y: S - 18 + Math.floor(Math.random()*8),
+      rot: (Math.random()-0.5)*1.2,
+      vx: 0, vy: 0,
+      disturb: 0, // время оставшегося волнения
+      disturb_vx: 0, disturb_vy: 0
+    });
+  }
+
+  function disturbLeaves(impactX){
+    leaves.forEach(function(lf){
+      var dx = lf.x - impactX;
+      var dist = Math.abs(dx);
+      if(dist < 55){
+        var force = (1 - dist/55) * (Math.random()*3+1);
+        lf.disturb = 1.4 + Math.random()*0.6;
+        lf.disturb_vx = (dx > 0 ? 1 : -1) * force * (0.6+Math.random()*0.8);
+        lf.disturb_vy = -(force * (0.5+Math.random()*1.2));
+      }
+    });
+  }
+
+  /* ── летящий предмет ── */
+  var fallingItem = null;
+  var DROP_INTERVAL = 3200; // мс между падениями
+  var lastDrop = -DROP_INTERVAL;
+  var ITEM_PX = 3; // размер пикселя предмета
+
+  /* ── кликабельная монета ── */
+  var coinHitbox = null; // {x,y,w,h} пока монета в воздухе
+
+  canvas.style.cursor = 'default';
+  canvas.addEventListener('click', function(e){
+    if(!coinHitbox || !fallingItem || !fallingItem.item.isCoin) return;
+    var r = canvas.getBoundingClientRect();
+    var scale = S / r.width;
+    var cx = (e.clientX - r.left) * scale;
+    var cy = (e.clientY - r.top) * scale;
+    if(cx >= coinHitbox.x && cx <= coinHitbox.x+coinHitbox.w &&
+       cy >= coinHitbox.y && cy <= coinHitbox.y+coinHitbox.h){
+      coinCount = Math.min(MAX_COINS, coinCount + 1);
+      localStorage.setItem(COIN_KEY, coinCount);
+      updateCoinUI();
+      fallingItem.collected = true;
+      if(coinCount >= MAX_COINS) triggerPromoReward();
+    }
+  });
+  canvas.addEventListener('mousemove', function(e){
+    if(!coinHitbox || !fallingItem || !fallingItem.item.isCoin){ canvas.style.cursor='default'; return; }
+    var r = canvas.getBoundingClientRect();
+    var scale = S / r.width;
+    var cx = (e.clientX - r.left) * scale;
+    var cy = (e.clientY - r.top) * scale;
+    canvas.style.cursor = (cx >= coinHitbox.x && cx <= coinHitbox.x+coinHitbox.w &&
+                           cy >= coinHitbox.y && cy <= coinHitbox.y+coinHitbox.h) ? 'pointer' : 'default';
+  });
+
+  function updateCoinUI(){
+    var el = document.getElementById('mabon-coin-counter');
+    if(el) el.textContent = coinCount + '/' + MAX_COINS;
+  }
+
+  function triggerPromoReward(){
+    setTimeout(function(){
+      // тряска
+      var wrap = document.getElementById('hourglassWrap');
+      if(wrap){ wrap.style.animation = 'mabon-shake 0.5s ease 2'; }
+      // промокод
+      setTimeout(function(){
+        if(wrap) wrap.style.animation = '';
+        showPromoModal();
+      }, 1100);
+    }, 200);
+  }
+
+  function showPromoModal(){
+    // сохраняем срок действия — 5 дней с момента получения
+    var expiry = Date.now() + PROMO_DAYS * 86400000;
+    localStorage.setItem(PROMO_EXPIRY_KEY, String(expiry));
+    var expDate = new Date(expiry);
+    var expStr = expDate.getDate() + '.' + (expDate.getMonth()+1) + '.' + expDate.getFullYear();
+
+    var existing = document.getElementById('mabon-promo-modal');
+    if(existing){ existing.style.display='flex'; return; }
+    var acc = getAccent();
+    var modal = document.createElement('div');
+    modal.id = 'mabon-promo-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)';
+    modal.innerHTML = '<div style="max-width:340px;width:90%;padding:32px 28px;border:1px solid '+acc+';border-radius:16px;background:rgba(0,4,1,0.97);text-align:center;box-shadow:0 0 40px rgba(0,0,0,0.8)">'
+      +'<div style="font-size:32px;margin-bottom:12px">🌾</div>'
+      +'<div style="font-family:\'Cinzel\',serif;font-size:18px;font-weight:700;letter-spacing:2px;color:'+acc+';text-transform:uppercase;margin-bottom:8px">Дар Мабона!</div>'
+      +'<div style="font-size:12px;letter-spacing:1px;color:rgba(200,255,218,0.7);line-height:1.7;margin-bottom:20px">Ты поймал три монеты урожая.<br>Держи промокод на скидку:</div>'
+      // код + кнопка копирования рядом
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">'
+      +'<div id="mabon-promo-code" style="font-family:\'VT323\',monospace;font-size:28px;letter-spacing:4px;color:'+acc+';border:1px dashed '+acc+';padding:10px 16px;border-radius:8px;min-width:160px">MABON2026</div>'
+      +'<button onclick="(function(){var code=\'MABON2026\';if(navigator.clipboard){navigator.clipboard.writeText(code).then(function(){var b=document.getElementById(\'mabon-copy-btn\');if(b){b.textContent=\'✓\';setTimeout(function(){b.textContent=\'⎘\';},1500);}});}else{var t=document.createElement(\'textarea\');t.value=code;document.body.appendChild(t);t.select();document.execCommand(\'copy\');document.body.removeChild(t);var b=document.getElementById(\'mabon-copy-btn\');if(b){b.textContent=\'✓\';setTimeout(function(){b.textContent=\'⎘\';},1500);}}})()" '
+      +'id="mabon-copy-btn" style="background:transparent;border:1px solid '+acc+';color:'+acc+';font-size:20px;width:38px;height:38px;border-radius:8px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1" title="Скопировать промокод">⎘</button>'
+      +'</div>'
+      +'<div style="font-size:10px;color:rgba(200,255,218,0.5);margin-bottom:8px">−10% на артефакты 5 000–15 000 ₽ · −15% от 15 000 ₽</div>'
+      +'<div style="font-size:10px;color:rgba(200,255,218,0.35);margin-bottom:20px">Действителен до '+expStr+'</div>'
+      +'<button onclick="document.getElementById(\'mabon-promo-modal\').style.display=\'none\'" style="background:'+acc+';color:#000;border:none;padding:10px 28px;font-family:\'VT323\',monospace;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer">ЗАКРЫТЬ</button>'
+      +'</div>';
+    document.body.appendChild(modal);
+    // сброс монет после получения промокода
+    coinCount = 0;
+    localStorage.setItem(COIN_KEY, '0');
+    updateCoinUI();
+  }
+
+  /* ── рог изобилия: нарисован в координатах canvas ── */
+  function drawHorn(accent){
+    ctx.save();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = accent;
+    ctx.shadowBlur = 4;
+    // тело рога (левый верхний угол канваса)
+    var px = ITEM_PX;
+    // пиксельный рог: трапеция сужающаяся вправо
+    var hornPixels = [
+      [0,0,0,1,1,1,1,1,1],
+      [0,0,1,1,1,1,1,1,1],
+      [0,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,0,0],
+      [1,1,1,1,1,1,0,0,0],
+      [0,1,1,1,1,0,0,0,0],
+      [0,0,1,1,0,0,0,0,0],
+    ];
+    var ox = 4, oy = 8;
+    ctx.fillStyle = accent;
+    hornPixels.forEach(function(row, ry){
+      row.forEach(function(on, rx){
+        if(on) ctx.fillRect(ox+rx*px, oy+ry*px, px-0.5, px-0.5);
+      });
+    });
+    ctx.restore();
+  }
+
+  /* ── рисуем предмет ── */
+  function drawItemPixels(item, cx, cy, alpha, pulse){
+    var accent = getAccent();
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    if(item.isCoin && pulse > 0){
+      ctx.shadowColor = '#ffee00';
+      ctx.shadowBlur = 8 + pulse * 10;
+      ctx.fillStyle = '#ffee00';
+    } else {
+      ctx.fillStyle = accent;
+      ctx.shadowColor = accent;
+      ctx.shadowBlur = 3;
+    }
+    var px = ITEM_PX;
+    var pw = item.pixels[0].length, ph = item.pixels.length;
+    var ox = cx - (pw*px)/2, oy = cy - (ph*px)/2;
+    item.pixels.forEach(function(row, ry){
+      row.forEach(function(on, rx){
+        if(on) ctx.fillRect(ox+rx*px, oy+ry*px, px-0.5, px-0.5);
+      });
+    });
+    if(item.isCoin){
+      coinHitbox = {x: ox-2, y: oy-2, w: pw*px+4, h: ph*px+4};
+    }
+    ctx.restore();
+  }
+
+  /* ── рисуем листья ── */
+  function drawLeaves(dt){
+    var accent = getDim();
+    leaves.forEach(function(lf){
+      if(lf.disturb > 0){
+        lf.disturb -= dt/1000;
+        lf.x += lf.disturb_vx * dt/1000 * lf.disturb;
+        lf.y += lf.disturb_vy * dt/1000 * lf.disturb;
+        lf.disturb_vy += 12 * dt/1000; // гравитация возврата
+        lf.y = Math.min(S - 6, lf.y);
+        lf.x = Math.max(4, Math.min(S-8, lf.x));
+      }
+      ctx.save();
+      ctx.globalAlpha = 0.55;
+      ctx.fillStyle = accent;
+      ctx.translate(lf.x, lf.y);
+      ctx.rotate(lf.rot);
+      LEAF_PX.forEach(function(row, ry){
+        row.forEach(function(on, rx){
+          if(on) ctx.fillRect(rx*2-4, ry*2-4, 2, 2);
+        });
+      });
+      ctx.restore();
+    });
+  }
+
+  var lastTime = 0;
+
+  function frame(now){
+    var dt = lastTime ? Math.min(now - lastTime, 100) : 16;
+    lastTime = now;
+    ctx.clearRect(0, 0, S, S);
+    var accent = getAccent();
+
+    // рог
+    drawHorn(accent);
+
+    // листья
+    drawLeaves(dt);
+
+    // запуск нового предмета
+    if(!fallingItem && now - lastDrop > DROP_INTERVAL){
+      lastDrop = now;
+      var item = pickItem();
+      var hornMouthX = 4 + 9*ITEM_PX; // примерно выход рога (правый край)
+      var hornMouthY = 8 + 1*ITEM_PX;
+      fallingItem = {
+        item: item,
+        x: hornMouthX,
+        y: hornMouthY,
+        vy: 0,
+        collected: false,
+        landed: false,
+        pulse: 0, pulseDir: 1
+      };
+      if(item.isCoin) coinHitbox = null;
+    }
+
+    // физика падения предмета
+    if(fallingItem && !fallingItem.collected){
+      fallingItem.vy += 180 * dt/1000; // гравитация
+      fallingItem.y += fallingItem.vy * dt/1000;
+
+      // пульс монеты
+      if(fallingItem.item.isCoin){
+        fallingItem.pulse += fallingItem.pulseDir * 3 * dt/1000;
+        if(fallingItem.pulse > 1){ fallingItem.pulse=1; fallingItem.pulseDir=-1; }
+        if(fallingItem.pulse < 0){ fallingItem.pulse=0; fallingItem.pulseDir=1; }
+      }
+
+      var landY = S - 24; // дно (над листьями)
+      if(fallingItem.y >= landY){
+        fallingItem.y = landY;
+        if(!fallingItem.landed){
+          fallingItem.landed = true;
+          disturbLeaves(fallingItem.x);
+          if(fallingItem.item.isCoin) coinHitbox = null; // монета приземлилась — не кликабельна
+          setTimeout(function(){ fallingItem = null; }, 900);
+        }
+      }
+      var alpha = fallingItem.collected ? 0 : 1;
+      drawItemPixels(fallingItem.item, fallingItem.x, fallingItem.y, alpha, fallingItem.pulse||0);
+    }
+
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

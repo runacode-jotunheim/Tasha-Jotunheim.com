@@ -565,9 +565,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   75%{transform:translateX(-2px)}
   90%{transform:translateX(2px)}
 }
-@keyframes mabon-blink{
-  0%,100%{opacity:1}
-  50%{opacity:0.2}
+@keyframes mabon-glow{
+  0%,100%{text-shadow:0 0 6px var(--accent),0 0 12px var(--accent)}
+  50%{text-shadow:0 0 14px var(--accent),0 0 30px var(--accent),0 0 50px var(--accent)}
 }
 #mabon-coin-wrap{display:none;align-items:center;gap:4px;justify-content:center;margin-top:8px;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;color:var(--accent)}
 #mabon-coin-wrap svg{flex-shrink:0}
@@ -964,8 +964,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <h2 class="section-title reveal" style="margin-bottom:8px">Следующий праздник</h2>
       <div class="countdown-card glass reveal">
         <div id="mabon-header" style="display:none;margin-bottom:12px">
-          <div style="font-family:'VT323',monospace;font-size:22px;letter-spacing:3px;color:var(--accent);animation:mabon-blink 1.2s step-end infinite;text-transform:uppercase">⚡ Собери урожай Мабона ⚡</div>
-          <div style="font-size:11px;letter-spacing:1px;color:rgba(200,255,218,0.6);margin-top:6px;line-height:1.6">Поймай 3 монеты <span style="color:#ffd233;font-size:14px">●</span> и получи промокод на скидку</div>
+          <div style="font-family:'VT323',monospace;font-size:clamp(16px,5vw,22px);letter-spacing:3px;color:var(--accent);white-space:nowrap;text-transform:uppercase;animation:mabon-glow 2s ease-in-out infinite">⚡ Собери урожай Мабона ⚡</div>
+          <div style="font-size:13px;letter-spacing:.5px;color:rgba(200,255,218,0.75);margin-top:8px;line-height:1.7">Поймай 3 монеты <span style="color:#ffd233;font-size:16px">●</span> и получи промокод на скидку.<br><span style="font-size:11px;color:rgba(200,255,218,0.45)">Опасайся коричневых яблок 🍂</span></div>
         </div>
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="200" height="200"></canvas>
@@ -2917,7 +2917,13 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   /* ── 8-bit предметы: пиксельные матрицы 7×7 ── */
   var ITEMS = [
-    { id:'apple', prob:0.27, pixels:[
+    { id:'apple', prob:0.20, pixels:[
+      [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],
+      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
+      [0,0,1,1,1,0,0],[0,0,0,1,0,0,0]
+    ]},
+    { id:'rotten_apple', prob:0.12, color:'#7a2a0a', pixels:[
       [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],
       [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
       [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
@@ -2996,29 +3002,41 @@ window.loadMoreCatalog = loadMoreCatalog;
   var ITEM_PX = 3; // размер пикселя предмета
 
   /* ── кликабельная монета ── */
-  var coinHitbox = null; // {x,y,w,h} пока монета в воздухе
+  var coinHitbox = null; // {x,y,w,h} пока предмет в воздухе — все кликабельны
 
   canvas.style.cursor = 'default';
   canvas.addEventListener('click', function(e){
-    if(!coinHitbox || !fallingItem || !fallingItem.item.isCoin) return;
+    if(!coinHitbox || !fallingItem) return;
     var r = canvas.getBoundingClientRect();
     var scale = S / r.width;
     var cx = (e.clientX - r.left) * scale;
     var cy = (e.clientY - r.top) * scale;
     if(cx >= coinHitbox.x && cx <= coinHitbox.x+coinHitbox.w &&
        cy >= coinHitbox.y && cy <= coinHitbox.y+coinHitbox.h){
-      coinCount = Math.min(MAX_COINS, coinCount + 1);
-      localStorage.setItem(COIN_KEY, coinCount);
-      updateCoinUI();
-      fallingItem.collected = true;
-      coinHitbox = null;
-      if(navigator.vibrate) navigator.vibrate([30, 20, 60]);
-      setTimeout(function(){ fallingItem = null; }, 400);
-      if(coinCount >= MAX_COINS) triggerPromoReward();
+      var id = fallingItem.item.id;
+      if(id === 'coin'){
+        coinCount = Math.min(MAX_COINS, coinCount + 1);
+        localStorage.setItem(COIN_KEY, coinCount);
+        updateCoinUI();
+        if(navigator.vibrate) navigator.vibrate([30,20,60]);
+        fallingItem.collected = true; coinHitbox = null;
+        setTimeout(function(){ fallingItem = null; }, 400);
+        if(coinCount >= MAX_COINS) triggerPromoReward();
+      } else if(id === 'rotten_apple'){
+        coinCount = Math.max(0, coinCount - 1);
+        localStorage.setItem(COIN_KEY, coinCount);
+        updateCoinUI();
+        if(navigator.vibrate) navigator.vibrate(200);
+        fallingItem.collected = true; coinHitbox = null;
+        setTimeout(function(){ fallingItem = null; }, 400);
+      } else {
+        fallingItem.collected = true; coinHitbox = null;
+        setTimeout(function(){ fallingItem = null; }, 400);
+      }
     }
   });
   canvas.addEventListener('mousemove', function(e){
-    if(!coinHitbox || !fallingItem || !fallingItem.item.isCoin){ canvas.style.cursor='default'; return; }
+    if(!coinHitbox || !fallingItem){ canvas.style.cursor='default'; return; }
     var r = canvas.getBoundingClientRect();
     var scale = S / r.width;
     var cx = (e.clientX - r.left) * scale;
@@ -3134,6 +3152,10 @@ window.loadMoreCatalog = loadMoreCatalog;
       ctx.shadowColor = '#ffee00';
       ctx.shadowBlur = 8 + pulse * 10;
       ctx.fillStyle = '#ffee00';
+    } else if(item.color){
+      ctx.fillStyle = item.color;
+      ctx.shadowColor = item.color;
+      ctx.shadowBlur = 4;
     } else {
       ctx.fillStyle = accent;
       ctx.shadowColor = accent;
@@ -3147,9 +3169,8 @@ window.loadMoreCatalog = loadMoreCatalog;
         if(on) ctx.fillRect(ox+rx*px, oy+ry*px, px-0.5, px-0.5);
       });
     });
-    if(item.isCoin){
-      coinHitbox = {x: ox-2, y: oy-2, w: pw*px+4, h: ph*px+4};
-    }
+    // hitbox для всех предметов — кликабельны в полёте
+    coinHitbox = {x: ox-2, y: oy-2, w: pw*px+4, h: ph*px+4};
     ctx.restore();
   }
 

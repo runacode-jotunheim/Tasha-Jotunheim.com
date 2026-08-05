@@ -2970,7 +2970,7 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   function buildDeck(){
     // взвешенная колода: кол-во копий каждого предмета пропорционально его весу
-    var weights = {apple:20,rotten_apple:19,strawberry:23,heart:21,ring:18,coin:18};
+    var weights = {apple:20,rotten_apple:19,strawberry:23,heart:21,ring:18,coin:30};
     var deck = [];
     ITEMS.forEach(function(item){
       var n = weights[item.id] || 1;

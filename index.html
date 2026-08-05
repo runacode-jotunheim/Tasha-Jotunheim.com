@@ -964,7 +964,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <h2 class="section-title reveal" style="margin-bottom:8px">Следующий праздник</h2>
       <div class="countdown-card glass reveal">
         <div id="mabon-header" style="display:none;margin-bottom:12px">
-          <div style="font-family:'VT323',monospace;font-size:clamp(16px,5vw,22px);letter-spacing:3px;color:var(--accent);white-space:nowrap;text-transform:uppercase;animation:mabon-glow 2s ease-in-out infinite">⚡ Собери урожай Мабона ⚡</div>
+          <div style="font-family:'VT323',monospace;font-size:clamp(14px,4.5vw,20px);letter-spacing:2px;color:var(--accent);text-transform:uppercase;animation:mabon-glow 2s ease-in-out infinite;line-height:1.2">⚡ Собери урожай Мабона ⚡</div>
           <div style="font-size:13px;letter-spacing:.5px;color:rgba(200,255,218,0.75);margin-top:8px;line-height:1.7">Поймай 3 монеты <span style="color:#ffd233;font-size:16px">●</span> и получи промокод на скидку.<br><span style="font-size:11px;color:rgba(200,255,218,0.45)">Опасайся коричневых яблок 🍂</span></div>
         </div>
         <div class="hourglass-wrap" id="hourglassWrap">
@@ -2958,24 +2958,39 @@ window.loadMoreCatalog = loadMoreCatalog;
     ], isCoin:true }
   ];
 
-  var _lastItems = []; // история последних предметов — защита от повторов
-  function pickItem(){
-    var attempts = 0;
-    while(attempts++ < 10){
-      var r = Math.random(), acc = 0, picked = ITEMS[0];
-      for(var i = 0; i < ITEMS.length; i++){
-        acc += ITEMS[i].prob;
-        if(r <= acc){ picked = ITEMS[i]; break; }
-      }
-      // не допускаем тот же предмет 2 раза подряд
-      var lastId = _lastItems.length ? _lastItems[_lastItems.length-1] : null;
-      if(picked.id !== lastId){
-        _lastItems.push(picked.id);
-        if(_lastItems.length > 3) _lastItems.shift();
-        return picked;
+  // Shuffle-колода: каждый предмет выходит ровно раз за круг.
+  // Тухлое яблоко может попасть 2 раза подряд только на стыке колод — это ок.
+  var _deck = [];
+  var _lastDropped = null;
+
+  function buildDeck(){
+    // взвешенная колода: кол-во копий каждого предмета пропорционально его весу
+    var weights = {apple:20,rotten_apple:19,strawberry:23,heart:21,ring:18,coin:18};
+    var deck = [];
+    ITEMS.forEach(function(item){
+      var n = weights[item.id] || 1;
+      for(var i=0;i<n;i++) deck.push(item);
+    });
+    // Fisher-Yates shuffle
+    for(var i=deck.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var tmp=deck[i]; deck[i]=deck[j]; deck[j]=tmp;
+    }
+    // не допускаем тухлое яблоко первым если оно было последним в прошлой колоде
+    if(_lastDropped && _lastDropped.id==='rotten_apple' && deck[0].id==='rotten_apple'){
+      // меняем первый элемент со случайным не-rotten
+      for(var k=1;k<deck.length;k++){
+        if(deck[k].id!=='rotten_apple'){ var t=deck[0];deck[0]=deck[k];deck[k]=t; break; }
       }
     }
-    return ITEMS[0]; // фолбэк
+    return deck;
+  }
+
+  function pickItem(){
+    if(_deck.length===0) _deck=buildDeck();
+    var item=_deck.shift();
+    _lastDropped=item;
+    return item;
   }
 
   /* ── листья: массив лежащих на дне ── */
@@ -3029,7 +3044,11 @@ window.loadMoreCatalog = loadMoreCatalog;
         coinCount = Math.min(MAX_COINS, coinCount + 1);
         localStorage.setItem(COIN_KEY, coinCount);
         updateCoinUI();
-        if(navigator.vibrate) navigator.vibrate([30,20,60]);
+        if(navigator.vibrate) navigator.vibrate([50,30,80,30,50]);
+        // визуальная вспышка — работает везде включая iOS
+        ctx.save(); ctx.globalAlpha=0.6; ctx.fillStyle='#ffd233';
+        ctx.fillRect(0,0,S,S); ctx.restore();
+        setTimeout(function(){ ctx.clearRect(0,0,S,S); },80);
         fallingItem.collected = true; coinHitbox = null;
         setTimeout(function(){ fallingItem = null; }, 400);
         if(coinCount >= MAX_COINS) triggerPromoReward();
@@ -3037,7 +3056,10 @@ window.loadMoreCatalog = loadMoreCatalog;
         coinCount = Math.max(0, coinCount - 1);
         localStorage.setItem(COIN_KEY, coinCount);
         updateCoinUI();
-        if(navigator.vibrate) navigator.vibrate(200);
+        if(navigator.vibrate) navigator.vibrate(300);
+        ctx.save(); ctx.globalAlpha=0.5; ctx.fillStyle='#8b0000';
+        ctx.fillRect(0,0,S,S); ctx.restore();
+        setTimeout(function(){ ctx.clearRect(0,0,S,S); },120);
         fallingItem.collected = true; coinHitbox = null;
         setTimeout(function(){ fallingItem = null; }, 400);
       } else {

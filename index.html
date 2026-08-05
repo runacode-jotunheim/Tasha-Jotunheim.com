@@ -1957,7 +1957,7 @@ function applyPromo(){
     // промокод введён без получения через монеты — не принимаем
     msg.textContent = 'Сначала получи промокод через монеты Мабона 🌾'; msg.className = 'cart-promo-msg err'; return;
   }
-  renderCartTotal();
+  renderCheckoutSummary();
 }
 window.applyPromo = applyPromo;
 

@@ -2994,32 +2994,54 @@ window.loadMoreCatalog = loadMoreCatalog;
   }
 
   /* ── листья: массив лежащих на дне ── */
-  var LEAF_COUNT = 32;
-  var LEAF_PX = [ [1,0,1,0],[0,1,1,1],[1,1,1,0],[0,1,0,0] ]; // 4×4 пиксель-лист
-  var leaves = [];
-  for(var l = 0; l < LEAF_COUNT; l++){
-    leaves.push({
-      x: 8 + Math.random()*(S-20),
-      y: S - 18 + Math.floor(Math.random()*8),
-      rot: (Math.random()-0.5)*1.2,
-      vx: 0, vy: 0,
-      disturb: 0, // время оставшегося волнения
-      disturb_vx: 0, disturb_vy: 0
-    });
-  }
+  /* ── пиксельный пол (вместо листьев) ── */
+  var FLOOR_Y = S - 16; // Y верхней линии пола
+  var FLOOR_PX = 4;     // размер пикселя пола
+  var FLOOR_COLS = Math.ceil(S / FLOOR_PX);
+  // случайная высота пола в каждой колонке (1-3 пикселя) — тетрис-стиль
+  var floorHeights = [];
+  for(var fc=0;fc<FLOOR_COLS;fc++) floorHeights.push(1 + Math.floor(Math.random()*3));
+
+  // «волны» при ударе предмета
+  var floorWaves = []; // [{col, amp, t}]
 
   function disturbLeaves(impactX){
-    leaves.forEach(function(lf){
-      var dx = lf.x - impactX;
-      var dist = Math.abs(dx);
-      if(dist < 55){
-        var force = (1 - dist/55) * (Math.random()*3+1);
-        lf.disturb = 1.4 + Math.random()*0.6;
-        lf.disturb_vx = (dx > 0 ? 1 : -1) * force * (0.6+Math.random()*0.8);
-        lf.disturb_vy = -(force * (0.5+Math.random()*1.2));
-      }
-    });
+    var impactCol = Math.floor(impactX / FLOOR_PX);
+    floorWaves.push({col: impactCol, amp: 4, t: 0});
   }
+
+  function drawLeaves(dt){
+    var accent = getAccent();
+    // обновляем волны
+    floorWaves = floorWaves.filter(function(w){
+      w.t += dt/1000;
+      return w.t < 0.8;
+    });
+
+    ctx.save();
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.55;
+    for(var c=0;c<FLOOR_COLS;c++){
+      var baseH = floorHeights[c];
+      var extra = 0;
+      floorWaves.forEach(function(w){
+        var dist = Math.abs(c - w.col);
+        if(dist < 8){
+          var waveFade = Math.max(0, 1 - w.t/0.8);
+          var waveShape = Math.max(0, 1 - dist/8);
+          extra += w.amp * waveFade * waveShape * Math.sin(w.t * 18 - dist * 0.8);
+        }
+      });
+      var h = baseH + Math.round(extra);
+      if(h < 1) h = 1;
+      var x = c * FLOOR_PX;
+      var y = FLOOR_Y + (3 - floorHeights[c]) * FLOOR_PX; // выравниваем по низу
+      ctx.fillRect(x, y - Math.round(extra)*FLOOR_PX, FLOOR_PX-1, (h)*FLOOR_PX);
+    }
+    ctx.restore();
+  }
+
+  var landY = FLOOR_Y - ITEM_PX*4; // предмет останавливается над полом
 
   /* ── летящий предмет ── */
   var fallingItem = null;
@@ -3045,8 +3067,8 @@ window.loadMoreCatalog = loadMoreCatalog;
         localStorage.setItem(COIN_KEY, coinCount);
         updateCoinUI();
         if(navigator.vibrate) navigator.vibrate([50,30,80,30,50]);
-        // визуальная вспышка — работает везде включая iOS
-        ctx.save(); ctx.globalAlpha=0.6; ctx.fillStyle='#ffd233';
+        // вспышка в цвет темы
+        ctx.save(); ctx.globalAlpha=0.55; ctx.fillStyle=getAccent();
         ctx.fillRect(0,0,S,S); ctx.restore();
         setTimeout(function(){ ctx.clearRect(0,0,S,S); },80);
         fallingItem.collected = true; coinHitbox = null;
@@ -3057,7 +3079,7 @@ window.loadMoreCatalog = loadMoreCatalog;
         localStorage.setItem(COIN_KEY, coinCount);
         updateCoinUI();
         if(navigator.vibrate) navigator.vibrate(300);
-        ctx.save(); ctx.globalAlpha=0.5; ctx.fillStyle='#8b0000';
+        ctx.save(); ctx.globalAlpha=0.55; ctx.fillStyle='#ffffff';
         ctx.fillRect(0,0,S,S); ctx.restore();
         setTimeout(function(){ ctx.clearRect(0,0,S,S); },120);
         fallingItem.collected = true; coinHitbox = null;
@@ -3335,7 +3357,6 @@ window.loadMoreCatalog = loadMoreCatalog;
         if(fallingItem.pulse < 0){ fallingItem.pulse=0; fallingItem.pulseDir=1; }
       }
 
-      var landY = S - 24;
       if(fallingItem.y >= landY){
         fallingItem.y = landY;
         if(!fallingItem.landed){

@@ -3324,7 +3324,7 @@ window.loadMoreCatalog = loadMoreCatalog;
         if(fallingItem.pulse < 0){ fallingItem.pulse=0; fallingItem.pulseDir=1; }
       }
 
-      if(fallingItem.y >= landY){
+      if(fallingItem && fallingItem.y >= landY){
         fallingItem.y = landY;
         if(!fallingItem.landed){
           fallingItem.landed = true;
@@ -3332,11 +3332,12 @@ window.loadMoreCatalog = loadMoreCatalog;
           disturbLeaves(fallingItem.x);
           if(fallingItem.item.isCoin) coinHitbox = null;
         }
-        // убираем предмет через 900мс после посадки
-        if(now - fallingItem.landedAt > 900) fallingItem = null;
+        if(now - fallingItem.landedAt > 900){ fallingItem = null; }
       }
-      var alpha = fallingItem.collected ? 0 : 1;
-      drawItemPixels(fallingItem.item, fallingItem.x, fallingItem.y, alpha, fallingItem.pulse||0);
+      if(fallingItem){
+        var alpha = fallingItem.collected ? 0 : 1;
+        drawItemPixels(fallingItem.item, fallingItem.x, fallingItem.y, alpha, fallingItem.pulse||0);
+      }
     }
 
     requestAnimationFrame(frame);

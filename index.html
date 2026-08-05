@@ -3353,10 +3353,17 @@ window.loadMoreCatalog = loadMoreCatalog;
       if(fallingItem && fallingItem.y >= landY){
         fallingItem.y = landY;
         if(!fallingItem.landed){
+          // первый удар — мини отскок
           fallingItem.landed = true;
           fallingItem.landedAt = now;
+          fallingItem.vy = -18;
+          fallingItem.vx = 0;
+          fallingItem.angularV = 0;
           disturbLeaves(fallingItem.x);
           if(fallingItem.item.isCoin) coinHitbox = null;
+        } else if(fallingItem.vy > 0){
+          // второй удар после отскока — просто останавливаем
+          fallingItem.vy = 0;
         }
         if(now - fallingItem.landedAt > 900){ fallingItem = null; }
       }

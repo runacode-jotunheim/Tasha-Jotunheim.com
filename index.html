@@ -2969,8 +2969,11 @@ window.loadMoreCatalog = loadMoreCatalog;
   var _lastDropped = null;
 
   function buildDeck(){
-    // взвешенная колода: кол-во копий каждого предмета пропорционально его весу
-    var weights = {apple:20,rotten_apple:19,strawberry:23,heart:21,ring:18,coin:30};
+    // Вес монеты зависит от текущего стака — чем больше собрал, тем реже падает
+    var coinWeight = coinCount === 0 ? 30   // ~23% — азарт в начале
+                   : coinCount === 1 ? 22   // ~18% — всё ещё часто
+                   : 15;                    // ~12% — редко, надо ждать
+    var weights = {apple:20,rotten_apple:19,strawberry:23,heart:21,ring:18,coin:coinWeight};
     var deck = [];
     ITEMS.forEach(function(item){
       var n = weights[item.id] || 1;

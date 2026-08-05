@@ -3007,11 +3007,20 @@ window.loadMoreCatalog = loadMoreCatalog;
   var LEAF_PX = [[1,0,1,0],[0,1,1,1],[1,1,1,0],[0,1,0,0]];
   var leaves = [];
   for(var l=0;l<LEAF_COUNT;l++){
+    var lx = 8 + Math.random()*(S-20);
+    var ly = S - 14 + Math.floor(Math.random()*8);
+    var lr = (Math.random()-0.5)*1.2;
     leaves.push({
-      x: 8 + Math.random()*(S-20),
-      y: S - 14 + Math.floor(Math.random()*8),
-      rot: (Math.random()-0.5)*1.2,
-      disturb: 0, disturb_vx: 0, disturb_vy: 0
+      x: lx, y: ly, rot: lr,
+      homeX: lx, homeY: ly, homeRot: lr,  // исходные позиции
+      disturb: 0, disturb_vx: 0, disturb_vy: 0,
+      returning: false
+    });
+  }
+
+  function resetLeaves(){
+    leaves.forEach(function(lf){
+      lf.returning = true;
     });
   }
 
@@ -3030,8 +3039,19 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   function drawLeaves(dt){
     var accent = getDim();
+    var speed = dt/1000;
     leaves.forEach(function(lf){
-      if(lf.disturb > 0){
+      if(lf.returning){
+        // плавно возвращаемся домой
+        lf.x += (lf.homeX - lf.x) * Math.min(1, speed * 3);
+        lf.y += (lf.homeY - lf.y) * Math.min(1, speed * 3);
+        lf.rot += (lf.homeRot - lf.rot) * Math.min(1, speed * 3);
+        lf.disturb = 0;
+        if(Math.abs(lf.x - lf.homeX) < 0.5 && Math.abs(lf.y - lf.homeY) < 0.5){
+          lf.x = lf.homeX; lf.y = lf.homeY; lf.rot = lf.homeRot;
+          lf.returning = false;
+        }
+      } else if(lf.disturb > 0){
         lf.disturb -= dt/1000;
         lf.x += lf.disturb_vx * dt/1000 * lf.disturb;
         lf.y += lf.disturb_vy * dt/1000 * lf.disturb;
@@ -3162,6 +3182,7 @@ window.loadMoreCatalog = loadMoreCatalog;
     coinCount = 0;
     localStorage.setItem(COIN_KEY, '0');
     updateCoinUI();
+    resetLeaves();
   }
 
   /* ── рог изобилия: нарисован в координатах canvas ── */

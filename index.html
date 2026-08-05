@@ -2730,6 +2730,11 @@ window.loadMoreCatalog = loadMoreCatalog;
   var canvas = document.getElementById('hourglassCanvas');
   var wrap = document.getElementById('hourglassWrap');
   if(!canvas || !wrap) return;
+
+  // Если активен Мабон — hourglass не запускаем, canvas отдаём Мабону
+  var _now = new Date();
+  var _m = _now.getMonth()+1, _d = _now.getDate();
+  if((_m===8&&_d>=5)||(_m===9&&_d<=27)) return;
   var ctx = canvas.getContext('2d');
   var CANVAS_SIZE = canvas.width; // 138 - big enough the rotated shape never clips
   var W = 72, H = 108; // the hourglass shape's own footprint

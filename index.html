@@ -3229,32 +3229,6 @@ window.loadMoreCatalog = loadMoreCatalog;
     ctx.restore();
   }
 
-  /* ── рисуем листья ── */
-  function drawLeaves(dt){
-    var accent = getDim();
-    leaves.forEach(function(lf){
-      if(lf.disturb > 0){
-        lf.disturb -= dt/1000;
-        lf.x += lf.disturb_vx * dt/1000 * lf.disturb;
-        lf.y += lf.disturb_vy * dt/1000 * lf.disturb;
-        lf.disturb_vy += 12 * dt/1000; // гравитация возврата
-        lf.y = Math.min(S - 6, lf.y);
-        lf.x = Math.max(4, Math.min(S-8, lf.x));
-      }
-      ctx.save();
-      ctx.globalAlpha = 0.55;
-      ctx.fillStyle = accent;
-      ctx.translate(lf.x, lf.y);
-      ctx.rotate(lf.rot);
-      LEAF_PX.forEach(function(row, ry){
-        row.forEach(function(on, rx){
-          if(on) ctx.fillRect(rx*2-4, ry*2-4, 2, 2);
-        });
-      });
-      ctx.restore();
-    });
-  }
-
   var lastTime = 0;
 
   // Фазы анимации кубка

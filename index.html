@@ -2917,39 +2917,39 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   /* ── 8-bit предметы: пиксельные матрицы 7×7 ── */
   var ITEMS = [
-    { id:'apple', prob:0.20, pixels:[
+    { id:'apple', prob:0.18, pixels:[
       [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],
       [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
       [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
       [0,0,1,1,1,0,0],[0,0,0,1,0,0,0]
     ]},
-    { id:'rotten_apple', prob:0.12, color:'#7a2a0a', pixels:[
+    { id:'rotten_apple', prob:0.10, color:'#7a2a0a', pixels:[
       [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],
       [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
       [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
       [0,0,1,1,1,0,0],[0,0,0,1,0,0,0]
     ]},
-    { id:'strawberry', prob:0.25, pixels:[
+    { id:'strawberry', prob:0.20, pixels:[
       [0,0,1,0,1,0,0],[0,1,1,1,1,1,0],
       [1,1,1,1,1,1,1],[1,1,0,1,0,1,1],
       [1,1,1,1,1,1,1],[0,1,0,1,0,1,0],
       [0,1,1,1,1,1,0],[0,0,1,1,1,0,0],
       [0,0,0,1,0,0,0]
     ]},
-    { id:'heart', prob:0.25, pixels:[
+    { id:'heart', prob:0.20, pixels:[
       [0,1,1,0,0,0,1,1,0],[1,1,1,1,0,1,1,1,1],
       [1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],
       [1,1,1,1,1,1,1,1,1],[0,1,1,1,1,1,1,1,0],
       [0,0,1,1,1,1,1,0,0],[0,0,0,1,1,1,0,0,0],
       [0,0,0,0,1,0,0,0,0]
     ]},
-    { id:'ring', prob:0.13, pixels:[
+    { id:'ring', prob:0.14, pixels:[
       [0,0,1,1,1,0,0],[0,1,1,0,1,1,0],
       [1,1,0,0,0,1,1],[1,1,0,0,0,1,1],
       [1,1,0,0,0,1,1],[0,1,1,0,1,1,0],
       [0,0,1,1,1,0,0]
     ]},
-    { id:'coin', prob:0.10, pixels:[
+    { id:'coin', prob:0.18, pixels:[
       [0,0,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,0],
       [1,1,0,1,1,1,0,1,1],[1,1,1,1,1,1,1,1,1],
       [1,1,1,1,0,1,1,1,1],[1,1,1,1,1,1,1,1,1],
@@ -2958,13 +2958,24 @@ window.loadMoreCatalog = loadMoreCatalog;
     ], isCoin:true }
   ];
 
+  var _lastItems = []; // история последних предметов — защита от повторов
   function pickItem(){
-    var r = Math.random(), acc = 0;
-    for(var i = 0; i < ITEMS.length; i++){
-      acc += ITEMS[i].prob;
-      if(r <= acc) return ITEMS[i];
+    var attempts = 0;
+    while(attempts++ < 10){
+      var r = Math.random(), acc = 0, picked = ITEMS[0];
+      for(var i = 0; i < ITEMS.length; i++){
+        acc += ITEMS[i].prob;
+        if(r <= acc){ picked = ITEMS[i]; break; }
+      }
+      // не допускаем тот же предмет 2 раза подряд
+      var lastId = _lastItems.length ? _lastItems[_lastItems.length-1] : null;
+      if(picked.id !== lastId){
+        _lastItems.push(picked.id);
+        if(_lastItems.length > 3) _lastItems.shift();
+        return picked;
+      }
     }
-    return ITEMS[0];
+    return ITEMS[0]; // фолбэк
   }
 
   /* ── листья: массив лежащих на дне ── */

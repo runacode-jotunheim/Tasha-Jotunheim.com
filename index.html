@@ -3211,7 +3211,7 @@ window.loadMoreCatalog = loadMoreCatalog;
   }
 
   /* ── рисуем предмет ── */
-  function drawItemPixels(item, cx, cy, alpha, pulse){
+  function drawItemPixels(item, cx, cy, alpha, pulse, angle){
     var accent = getAccent();
     ctx.save();
     ctx.globalAlpha = alpha;
@@ -3230,14 +3230,17 @@ window.loadMoreCatalog = loadMoreCatalog;
     }
     var px = ITEM_PX;
     var pw = item.pixels[0].length, ph = item.pixels.length;
-    var ox = cx - (pw*px)/2, oy = cy - (ph*px)/2;
+    var ox = -(pw*px)/2, oy = -(ph*px)/2;
+    // вращаем вокруг центра предмета
+    ctx.translate(cx, cy);
+    if(angle) ctx.rotate(angle);
     item.pixels.forEach(function(row, ry){
       row.forEach(function(on, rx){
         if(on) ctx.fillRect(ox+rx*px, oy+ry*px, px-0.5, px-0.5);
       });
     });
-    // hitbox для всех предметов — кликабельны в полёте
-    coinHitbox = {x: ox-2, y: oy-2, w: pw*px+4, h: ph*px+4};
+    // hitbox (не вращаем — проще кликать)
+    coinHitbox = {x: cx-pw*px/2-2, y: cy-ph*px/2-2, w: pw*px+4, h: ph*px+4};
     ctx.restore();
   }
 
@@ -3298,7 +3301,6 @@ window.loadMoreCatalog = loadMoreCatalog;
 
   function launchItem(now){
     var item = pickItem();
-    // точка вылета: правый нижний угол кубка при наклоне вправо
     var mouthX = TROPHY_OX + TROPHY_W * TROPHY_PX * 0.85;
     var mouthY = TROPHY_OY + TROPHY_H * TROPHY_PX * 0.65;
     fallingItem = {
@@ -3307,6 +3309,8 @@ window.loadMoreCatalog = loadMoreCatalog;
       y: mouthY,
       vx: 35 + Math.random()*15,
       vy: -20,
+      angle: 0,
+      angularV: (Math.random() - 0.3) * 5,  // вращение в полёте рад/с
       collected: false,
       landed: false,
       pulse: 0, pulseDir: 1
@@ -3334,8 +3338,11 @@ window.loadMoreCatalog = loadMoreCatalog;
       fallingItem.vy += 200 * dt/1000;
       fallingItem.x += (fallingItem.vx||0) * dt/1000;
       fallingItem.y += fallingItem.vy * dt/1000;
+      fallingItem.angle += (fallingItem.angularV||0) * dt/1000;
 
       if(fallingItem.vx > 0) fallingItem.vx = Math.max(0, fallingItem.vx - 50*dt/1000);
+      // угловая скорость гасится при замедлении
+      if(fallingItem.angularV) fallingItem.angularV *= 0.995;
 
       if(fallingItem.item.isCoin){
         fallingItem.pulse += fallingItem.pulseDir * 3 * dt/1000;
@@ -3355,7 +3362,7 @@ window.loadMoreCatalog = loadMoreCatalog;
       }
       if(fallingItem){
         var alpha = fallingItem.collected ? 0 : 1;
-        drawItemPixels(fallingItem.item, fallingItem.x, fallingItem.y, alpha, fallingItem.pulse||0);
+        drawItemPixels(fallingItem.item, fallingItem.x, fallingItem.y, alpha, fallingItem.pulse||0, fallingItem.angle||0);
       }
     }
 

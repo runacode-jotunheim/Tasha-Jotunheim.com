@@ -880,39 +880,52 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
 <!-- NEW COLLECTION -->
 <div class="section-wrap" id="new-collection" style="padding-top:20px;padding-bottom:20px">
-  <span class="section-eye reveal">&#9658; сейчас актуально</span>
+  <span class="section-eye reveal" id="season-collection-eye">&#9658; сейчас актуально</span>
   <h2 class="section-title reveal">Коллекция сезона</h2>
-  <div style="text-align:center;margin-bottom:20px;font-family:'VT323',monospace;font-size:14px;letter-spacing:2px;color:var(--accent-dim);text-transform:uppercase">Врата Льва · 8 авг — 22 сен</div>
-  <div class="new-collection-grid">
-    <div class="new-card glass reveal" onclick="openProductModal(28)">
-      <div class="new-card-badge">Сезонная</div>
-      <div class="new-card-img"><img src="assets/img/products/lev-sredi-lyudey.jpg" alt="Лев среди людей" loading="lazy"></div>
-      <div class="new-card-info">
-        <div class="new-card-collection">Врата Льва</div>
-        <div class="new-card-name">Лев среди людей</div>
-        <div class="new-card-price">10&nbsp;000 ₽</div>
-      </div>
-    </div>
-    <div class="new-card glass reveal" style="transition-delay:.08s" onclick="openProductModal(29)">
-      <div class="new-card-badge">Сезонная</div>
-      <div class="new-card-img"><img src="assets/img/products/strazh-serdtsa.jpg" alt="Страж сердца" loading="lazy"></div>
-      <div class="new-card-info">
-        <div class="new-card-collection">Врата Льва</div>
-        <div class="new-card-name">Страж сердца</div>
-        <div class="new-card-price">15&nbsp;000 ₽</div>
-      </div>
-    </div>
-    <div class="new-card glass reveal" style="transition-delay:.16s" onclick="openProductModal(30)">
-      <div class="new-card-badge">Сезонная</div>
-      <div class="new-card-img"><img src="assets/img/products/put-solntsa.jpg" alt="Путь Солнца" loading="lazy"></div>
-      <div class="new-card-info">
-        <div class="new-card-collection">Врата Льва</div>
-        <div class="new-card-name">Путь Солнца</div>
-        <div class="new-card-price">8&nbsp;800 ₽</div>
-      </div>
-    </div>
+  <div id="season-collection-subtitle" style="text-align:center;margin-bottom:20px;font-family:'VT323',monospace;font-size:14px;letter-spacing:2px;color:var(--accent-dim);text-transform:uppercase"></div>
+  <div class="new-collection-grid" id="season-collection-grid">
+    <!-- заполняется JS -->
   </div>
 </div>
+<script>
+(function(){
+  var now = new Date();
+  var isVrataLva = now <= new Date(2026, 7, 12, 23, 59); // до 12.08 включительно
+
+  var sub = document.getElementById('season-collection-subtitle');
+  var grid = document.getElementById('season-collection-grid');
+
+  if(isVrataLva){
+    sub.textContent = 'Врата Льва · 8 авг — 12 авг';
+    grid.innerHTML = [
+      {id:28, img:'lev-sredi-lyudey.jpg', col:'Врата Льва', name:'Лев среди людей', price:'10\u00a0000 ₽'},
+      {id:29, img:'strazh-serdtsa.jpg',   col:'Врата Льва', name:'Страж сердца',    price:'15\u00a0000 ₽'},
+      {id:30, img:'put-solntsa.jpg',       col:'Врата Льва', name:'Путь Солнца',     price:'8\u00a0800 ₽'}
+    ].map(function(it, i){
+      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.08)+'s" onclick="openProductModal('+it.id+')">'
+        +'<div class="new-card-badge">Сезонная</div>'
+        +'<div class="new-card-img"><img src="assets/img/products/'+it.img+'" alt="'+it.name+'" loading="lazy"></div>'
+        +'<div class="new-card-info"><div class="new-card-collection">'+it.col+'</div>'
+        +'<div class="new-card-name">'+it.name+'</div>'
+        +'<div class="new-card-price">'+it.price+'</div></div></div>';
+    }).join('');
+  } else {
+    sub.textContent = 'Огненная Жатва · Ламмас 2026';
+    grid.innerHTML = [
+      {id:31, img:'ogon-probuzhdeniya.jpg', col:'Огненная Жатва', name:'Огонь пробуждения', price:'7\u00a0800 ₽'},
+      {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13\u00a0000 ₽'},
+      {id:26, img:'zolotoe-zerno.jpg',      col:'Ламмас',         name:'Золотое зерно',      price:'11\u00a0800 ₽'}
+    ].map(function(it, i){
+      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.08)+'s" onclick="openProductModal('+it.id+')">'
+        +'<div class="new-card-badge">Сезонная</div>'
+        +'<div class="new-card-img"><img src="assets/img/products/'+it.img+'" alt="'+it.name+'" loading="lazy"></div>'
+        +'<div class="new-card-info"><div class="new-card-collection">'+it.col+'</div>'
+        +'<div class="new-card-name">'+it.name+'</div>'
+        +'<div class="new-card-price">'+it.price+'</div></div></div>';
+    }).join('');
+  }
+})();
+</script>
 
 <div class="divider reveal"><span>подбор</span></div>
 

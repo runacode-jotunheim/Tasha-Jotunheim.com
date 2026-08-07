@@ -654,6 +654,30 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 <!-- THEME TOGGLE -->
 <a href="#catalog" id="stickyToCatalogBtn">&#9658; Смотреть все артефакты</a>
 
+<div id="mabon-game-overlay" onclick="closeMabonGame()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:800"></div>
+<div id="mabon-game-modal" style="display:none;position:fixed;inset:0;z-index:801;background:rgba(0,4,1,0.98);overflow:hidden">
+  <!-- Шапка игры -->
+  <div id="mg-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(0,255,65,0.15)">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div id="mg-lives" style="font-family:'VT323',monospace;font-size:22px;color:#ff4444;letter-spacing:2px">❤❤❤</div>
+      <div id="mg-score" style="font-family:'VT323',monospace;font-size:22px;color:var(--accent);letter-spacing:2px">0 / 20</div>
+    </div>
+    <div id="mg-timer" style="font-family:'VT323',monospace;font-size:28px;color:var(--accent);letter-spacing:2px">30</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <button onclick="restartMabonGame()" title="Начать заново" style="background:transparent;border:1px solid rgba(0,255,65,0.3);color:var(--accent);width:34px;height:34px;border-radius:6px;cursor:pointer;font-size:16px">↺</button>
+      <button onclick="closeMabonGame()" style="background:transparent;border:1px solid rgba(0,255,65,0.3);color:var(--accent);width:34px;height:34px;border-radius:6px;cursor:pointer;font-size:18px">✕</button>
+    </div>
+  </div>
+  <!-- Игровое поле -->
+  <canvas id="mabon-game-canvas"></canvas>
+  <!-- Оверлей старта/конца -->
+  <div id="mg-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,4,1,0.92);text-align:center;padding:24px">
+    <div id="mg-overlay-title" style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Урожай Мабона</div>
+    <div id="mg-overlay-text" style="font-size:13px;color:rgba(200,255,218,0.7);line-height:1.8;margin-bottom:24px">Лови предметы кубком.<br>Избегай коричневых яблок 🍂<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни</div>
+    <button id="mg-start-btn" onclick="startMabonGame()" style="background:var(--accent);color:#000;border:none;padding:12px 32px;font-family:'VT323',monospace;font-size:20px;letter-spacing:3px;border-radius:8px;cursor:pointer">▶ ИГРАТЬ</button>
+  </div>
+</div>
+
 <div id="theme-toggle">
   <div class="pill-choices" id="pillChoices">
     <div class="pill-btn" onclick="setTheme('red')" title="Красная матрица"><div class="pill-icon red"></div></div>
@@ -965,7 +989,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       <div class="countdown-card glass reveal">
         <div id="mabon-header" style="display:none;margin-bottom:12px">
           <div style="font-family:'VT323',monospace;font-size:clamp(11px,3.8vw,20px);letter-spacing:1px;color:var(--accent);text-transform:uppercase;animation:mabon-glow 2s ease-in-out infinite;line-height:1.2;white-space:nowrap;overflow:hidden">⚡ Собери урожай Мабона ⚡</div>
-          <div style="font-size:13px;letter-spacing:.5px;color:rgba(200,255,218,0.75);margin-top:8px;line-height:1.7">Поймай 3 монеты <span style="color:#ffd233;font-size:16px">●</span> и получи промокод на скидку.<br><span style="font-size:11px;color:rgba(200,255,218,0.45)">Опасайся коричневых яблок 🍂</span></div>
+          <div style="font-size:13px;letter-spacing:.5px;color:rgba(200,255,218,0.75);margin-top:8px;line-height:1.7">Поймай 20 предметов за 30 сек <span style="color:#ffd233;font-size:16px">●</span> и получи промокод.<br><span style="font-size:11px;color:rgba(200,255,218,0.45)">Опасайся коричневых яблок 🍂 — они сжигают жизни</span></div>
+          <button onclick="openMabonGame()" style="margin-top:12px;background:var(--accent);color:#000;border:none;padding:10px 28px;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:pointer;box-shadow:0 0 16px rgba(0,255,65,0.3)">▶ Начать игру</button>
         </div>
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="200" height="200"></canvas>
@@ -1960,6 +1985,391 @@ function applyPromo(){
   renderCheckoutSummary();
 }
 window.applyPromo = applyPromo;
+
+/* ════════════════════════════════════════════════════════
+   МАБОН — ИГРА «УРОЖАЙ»
+   Кубок ловит предметы из дупел деревьев
+════════════════════════════════════════════════════════ */
+(function(){
+  var GOAL = 20, LIVES_START = 3, GAME_TIME = 30;
+  var COOLDOWN_KEY = 'jv_mabon_game_cd'; // 24ч кулдаун на промокод
+
+  var canvas, ctx, W, H;
+  var gameState = 'idle'; // idle | playing | over
+  var score, lives, timeLeft, gameTimer;
+  var items = [], lastSpawn = 0;
+  var spawnInterval = 1400; // мс между спавнами (ускоряется)
+  var cupX, cupW, cupH, cupSpeed;
+  var touchActive = false, touchStartX = 0, cupStartX = 0;
+
+  /* ── Пиксельные матрицы предметов (px=4) ── */
+  var ITEMS_DEF = [
+    {id:'coin',    color:'#ffd233', w:9, pixels:[
+      [0,0,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,0],
+      [1,1,0,1,1,1,0,1,1],[1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,0,1,1,1,1],[1,1,1,1,1,1,1,1,1],
+      [1,1,0,1,1,1,0,1,1],[0,1,1,0,0,0,1,1,0],
+      [0,0,1,1,1,1,1,0,0]]},
+    {id:'strawberry', color:null, w:7, pixels:[
+      [0,0,1,0,1,0,0],[0,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1],[1,1,0,1,0,1,1],
+      [1,1,1,1,1,1,1],[0,1,0,1,0,1,0],
+      [0,1,1,1,1,1,0],[0,0,1,1,1,0,0],
+      [0,0,0,1,0,0,0]]},
+    {id:'ring', color:null, w:7, pixels:[
+      [0,0,1,1,1,0,0],[0,1,1,0,1,1,0],
+      [1,1,0,0,0,1,1],[1,1,0,0,0,1,1],
+      [1,1,0,0,0,1,1],[0,1,1,0,1,1,0],
+      [0,0,1,1,1,0,0]]},
+    {id:'mushroom', color:null, w:7, pixels:[
+      [0,0,1,1,1,0,0],[0,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1],[1,0,1,1,1,0,1],
+      [0,0,1,1,1,0,0],[0,0,1,0,1,0,0],
+      [0,0,1,1,1,0,0]]},
+    {id:'rotten', color:'#7a2a0a', w:7, bad:true, pixels:[
+      [0,0,0,1,0,0,0],[0,0,1,1,1,0,0],
+      [0,1,1,1,1,1,0],[1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1],[0,1,1,1,1,1,0],
+      [0,0,1,1,1,0,0],[0,0,0,1,0,0,0]]}
+  ];
+
+  // Веса: монета чаще, гнилое яблоко ~15%
+  var WEIGHTS = {coin:25, strawberry:22, ring:18, mushroom:20, rotten:15};
+  var _deck = [];
+
+  function buildGameDeck(){
+    var deck = [];
+    ITEMS_DEF.forEach(function(it){ for(var i=0;i<WEIGHTS[it.id];i++) deck.push(it); });
+    for(var i=deck.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1)); var t=deck[i];deck[i]=deck[j];deck[j]=t;
+    }
+    return deck;
+  }
+  function pickGameItem(){
+    if(!_deck.length) _deck = buildGameDeck();
+    return _deck.shift();
+  }
+
+  /* ── Дупла (точки спауна) ── */
+  function getHoles(){
+    // 4 дупла: 2 слева (x~TREE_W/2) и 2 справа (x~W-TREE_W/2)
+    var tw = Math.min(70, W*0.18); // ширина дерева
+    var lx = tw*0.5, rx = W - tw*0.5;
+    var y1 = H*0.22, y2 = H*0.45; // верхнее и нижнее дупло
+    return [{x:lx,y:y1},{x:lx,y:y2},{x:rx,y:y1},{x:rx,y:y2}];
+  }
+
+  /* ── Рисование дерева ── */
+  function drawTree(x, side){
+    var acc = getAccent();
+    var tw = Math.min(70, W*0.18);
+    var trunkW = tw*0.35, trunkX = x - trunkW/2;
+
+    ctx.save();
+    // ствол
+    ctx.fillStyle = acc;
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(trunkX, H*0.2, trunkW, H*0.75);
+
+    // крона (овал из пикселей)
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.ellipse(x, H*0.12, tw*0.65, H*0.14, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // дупла (тёмные прямоугольники)
+    ctx.fillStyle = '#000';
+    ctx.globalAlpha = 0.85;
+    var holes = getHoles();
+    var myHoles = side==='left' ? [holes[0],holes[1]] : [holes[2],holes[3]];
+    myHoles.forEach(function(h){
+      ctx.fillRect(h.x-trunkW*0.45, h.y-8, trunkW*0.9, 16);
+    });
+
+    ctx.restore();
+  }
+
+  /* ── Рисование кубка ── */
+  function drawCup(){
+    var acc = getAccent();
+    var trophy = [
+      [1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,0,0,0,0,0,0,0,1,1],
+      [1,1,0,0,0,0,0,0,0,1,1],
+      [0,1,1,0,0,0,0,0,1,1,0],
+      [0,0,1,1,0,0,0,1,1,0,0],
+      [0,0,0,1,1,1,1,1,0,0,0],
+      [0,0,0,0,1,1,1,0,0,0,0],
+      [0,0,0,0,0,1,0,0,0,0,0],
+      [0,0,0,0,0,1,0,0,0,0,0],
+      [0,0,0,1,1,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,1,1,0],
+    ];
+    var px = Math.floor(cupW/11);
+    ctx.save();
+    ctx.fillStyle = acc;
+    ctx.shadowColor = acc;
+    ctx.shadowBlur = 8;
+    var oy = H - cupH - 6;
+    trophy.forEach(function(row,ry){
+      row.forEach(function(on,rx){
+        if(on) ctx.fillRect(cupX-cupW/2+rx*px, oy+ry*px, px-1, px-1);
+      });
+    });
+    ctx.restore();
+  }
+
+  /* ── Рисование предмета ── */
+  function drawItem(it){
+    var acc = getAccent();
+    var color = it.def.color || acc;
+    var px = 4;
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 4;
+    ctx.globalAlpha = it.alpha || 1;
+    ctx.translate(it.x, it.y);
+    ctx.rotate(it.angle||0);
+    var pw = it.def.pixels[0].length;
+    var ph = it.def.pixels.length;
+    var ox = -pw*px/2, oy = -ph*px/2;
+    it.def.pixels.forEach(function(row,ry){
+      row.forEach(function(on,rx){
+        if(on) ctx.fillRect(ox+rx*px, oy+ry*px, px-1, px-1);
+      });
+    });
+    ctx.restore();
+  }
+
+  /* ── Главный цикл ── */
+  var lastTime = 0;
+  function gameLoop(now){
+    if(gameState !== 'playing') return;
+    var dt = Math.min(now - lastTime, 100);
+    lastTime = now;
+
+    ctx.clearRect(0,0,W,H);
+
+    // деревья
+    var tw = Math.min(70, W*0.18);
+    drawTree(tw*0.5, 'left');
+    drawTree(W-tw*0.5, 'right');
+
+    // спавн предметов
+    var elapsed = now - lastSpawn;
+    var curInterval = Math.max(500, spawnInterval - (GAME_TIME - timeLeft)*25);
+    if(elapsed > curInterval){
+      lastSpawn = now;
+      var holes = getHoles();
+      // случайно 1 или 2 дупла одновременно
+      var count = Math.random()<0.3 ? 2 : 1;
+      var chosen = holes.slice().sort(function(){return Math.random()-0.5;}).slice(0,count);
+      chosen.forEach(function(h){
+        items.push({
+          def: pickGameItem(),
+          x: h.x, y: h.y,
+          vy: 80 + Math.random()*60,
+          angle: 0,
+          angularV: (Math.random()-0.5)*4,
+          alpha: 1
+        });
+      });
+    }
+
+    // обновление предметов
+    var catchY = H - cupH - 6;
+    items = items.filter(function(it){
+      it.y += it.vy * dt/1000;
+      it.angle += it.angularV * dt/1000;
+      // поимка кубком
+      var pw = it.def.pixels[0].length * 4;
+      if(it.y + pw/2 > catchY && it.y - pw/2 < catchY + cupH &&
+         it.x > cupX - cupW/2 - pw/2 && it.x < cupX + cupW/2 + pw/2){
+        if(it.def.bad){
+          loseLife();
+        } else {
+          score++;
+          updateHUD();
+          if(score >= GOAL) gameWin();
+        }
+        return false; // удаляем предмет
+      }
+      // упал ниже экрана
+      if(it.y > H + 20) return false;
+      drawItem(it);
+      return true;
+    });
+
+    // кубок
+    drawCup();
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  /* ── UI / логика ── */
+  function updateHUD(){
+    document.getElementById('mg-score').textContent = score+' / '+GOAL;
+    var hearts = '';
+    for(var i=0;i<lives;i++) hearts += '❤';
+    for(var j=lives;j<LIVES_START;j++) hearts += '🖤';
+    document.getElementById('mg-lives').textContent = hearts;
+  }
+
+  function loseLife(){
+    lives--;
+    updateHUD();
+    // вспышка красным
+    ctx.save(); ctx.fillStyle='#ff0000'; ctx.globalAlpha=0.4;
+    ctx.fillRect(0,0,W,H); ctx.restore();
+    if(navigator.vibrate) navigator.vibrate(300);
+    score = 0;
+    items = [];
+    updateHUD();
+    if(lives <= 0) gameOver(false);
+  }
+
+  function startTimer(){
+    clearInterval(gameTimer);
+    timeLeft = GAME_TIME;
+    document.getElementById('mg-timer').textContent = timeLeft;
+    gameTimer = setInterval(function(){
+      timeLeft--;
+      var el = document.getElementById('mg-timer');
+      if(el) el.textContent = timeLeft;
+      if(timeLeft <= 0){ clearInterval(gameTimer); gameOver(score >= GOAL); }
+    }, 1000);
+  }
+
+  function gameWin(){
+    clearInterval(gameTimer);
+    gameState = 'over';
+    // проверяем кулдаун
+    var cd = parseInt(localStorage.getItem(COOLDOWN_KEY)||'0');
+    var hasPromo = Date.now() > cd;
+    showOverlay(
+      '🌾 Урожай собран!',
+      'Поймано: '+score+' предметов!<br><br>'+(hasPromo
+        ? '<span style="color:#ffd233">Промокод получен: <b>MABON2026</b></span><br><span style="font-size:11px;opacity:.6">Действует 3 дня</span>'
+        : '<span style="opacity:.6">Промокод уже был получен сегодня.<br>Возвращайся завтра!</span>'),
+      '▶ Играть снова', 'restartMabonGame()'
+    );
+    if(hasPromo){
+      var expiry = Date.now() + 3*86400000;
+      localStorage.setItem(PROMO_EXPIRY_KEY, String(expiry));
+      localStorage.setItem(COOLDOWN_KEY, String(Date.now() + 86400000));
+    }
+  }
+
+  function gameOver(win){
+    if(win){ gameWin(); return; }
+    clearInterval(gameTimer);
+    gameState = 'over';
+    showOverlay(
+      lives<=0 ? '💔 Все жизни потрачены' : '⏱ Время вышло',
+      'Поймано: '+score+' из '+GOAL+'<br><span style="opacity:.6">Нужно '+GOAL+', чтобы получить промокод</span>',
+      '▶ Попробовать снова', 'restartMabonGame()'
+    );
+  }
+
+  function showOverlay(title, text, btnText, btnAction){
+    var o = document.getElementById('mg-overlay');
+    document.getElementById('mg-overlay-title').innerHTML = title;
+    document.getElementById('mg-overlay-text').innerHTML = text;
+    var btn = document.getElementById('mg-start-btn');
+    btn.textContent = btnText;
+    btn.setAttribute('onclick', btnAction);
+    o.style.display = 'flex';
+  }
+
+  /* ── Управление кубком ── */
+  function initControls(){
+    var c = canvas;
+    // Тач
+    c.addEventListener('touchstart', function(e){
+      touchActive = true;
+      touchStartX = e.touches[0].clientX;
+      cupStartX = cupX;
+      e.preventDefault();
+    },{passive:false});
+    c.addEventListener('touchmove', function(e){
+      if(!touchActive) return;
+      var dx = e.touches[0].clientX - touchStartX;
+      cupX = Math.max(cupW/2, Math.min(W-cupW/2, cupStartX + dx));
+      e.preventDefault();
+    },{passive:false});
+    c.addEventListener('touchend', function(){ touchActive = false; });
+    // Мышь
+    var mouseDown = false, mouseStartX=0, cupStartXm=0;
+    c.addEventListener('mousedown', function(e){
+      mouseDown=true; mouseStartX=e.clientX; cupStartXm=cupX;
+    });
+    c.addEventListener('mousemove', function(e){
+      if(!mouseDown) return;
+      cupX = Math.max(cupW/2, Math.min(W-cupW/2, cupStartXm + e.clientX - mouseStartX));
+    });
+    c.addEventListener('mouseup', function(){ mouseDown=false; });
+    // Клавиши
+    document.addEventListener('keydown', function(e){
+      if(gameState!=='playing') return;
+      if(e.key==='ArrowLeft'||e.key==='a') cupX = Math.max(cupW/2, cupX - cupSpeed);
+      if(e.key==='ArrowRight'||e.key==='d') cupX = Math.min(W-cupW/2, cupX + cupSpeed);
+    });
+  }
+
+  /* ── Публичные функции ── */
+  window.openMabonGame = function(){
+    var modal = document.getElementById('mabon-game-modal');
+    var overlay = document.getElementById('mabon-game-overlay');
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+    lockBodyScroll();
+    // инициализируем canvas по размеру окна
+    canvas = document.getElementById('mabon-game-canvas');
+    W = window.innerWidth;
+    H = window.innerHeight - 60; // минус шапка
+    canvas.width = W; canvas.height = H;
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    ctx = canvas.getContext('2d');
+    cupW = Math.min(90, W*0.22);
+    cupH = Math.floor(cupW * 12/11);
+    cupSpeed = W * 0.06;
+    cupX = W/2;
+    initControls();
+    gameState = 'idle';
+    showOverlay(
+      '⚡ Урожай Мабона',
+      'Лови предметы кубком из дупел деревьев.<br>Избегай коричневых яблок 🍂<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни',
+      '▶ ИГРАТЬ', 'startMabonGame()'
+    );
+  };
+
+  window.startMabonGame = function(){
+    document.getElementById('mg-overlay').style.display = 'none';
+    score = 0; lives = LIVES_START; items = []; _deck = [];
+    lastSpawn = performance.now();
+    gameState = 'playing';
+    updateHUD();
+    startTimer();
+    lastTime = performance.now();
+    requestAnimationFrame(gameLoop);
+  };
+
+  window.restartMabonGame = function(){
+    document.getElementById('mg-overlay').style.display = 'none';
+    startMabonGame();
+  };
+
+  window.closeMabonGame = function(){
+    clearInterval(gameTimer);
+    gameState = 'idle';
+    document.getElementById('mabon-game-modal').style.display = 'none';
+    document.getElementById('mabon-game-overlay').style.display = 'none';
+    unlockBodyScroll();
+  };
+})();
+
 
 function mabonCopyPromo(){
   var code = 'MABON2026';

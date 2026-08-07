@@ -990,7 +990,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div id="mabon-header" style="display:none;margin-bottom:12px">
           <div style="font-family:'VT323',monospace;font-size:clamp(11px,3.8vw,20px);letter-spacing:1px;color:var(--accent);text-transform:uppercase;animation:mabon-glow 2s ease-in-out infinite;line-height:1.2;white-space:nowrap;overflow:hidden">⚡ Собери урожай Мабона ⚡</div>
           <div style="font-size:13px;letter-spacing:.5px;color:rgba(200,255,218,0.75);margin-top:8px;line-height:1.7">Поймай 20 предметов за 30 сек <span style="color:#ffd233;font-size:16px">●</span> и получи промокод.<br><span style="font-size:11px;color:rgba(200,255,218,0.45)">Опасайся коричневых яблок 🍂 — они сжигают жизни</span></div>
-          <button onclick="openMabonGame()" style="margin-top:12px;background:var(--accent);color:#000;border:none;padding:10px 28px;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:pointer;box-shadow:0 0 16px rgba(0,255,65,0.3)">▶ Начать игру</button>
+          <button onclick="openMabonGame()" style="margin-top:12px;background:var(--accent);color:#000;border:none;padding:10px 28px;font-family:'VT323',monospace;font-size:18px;letter-spacing:3px;text-transform:uppercase;border-radius:8px;cursor:pointer;box-shadow:0 0 16px rgba(0,255,65,0.3)">▶ Начать</button>
         </div>
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="200" height="200"></canvas>
@@ -1956,41 +1956,96 @@ if(savedTheme) setTheme(savedTheme);
 
 /* ══ Промокод ══ */
 var PROMO_DISCOUNT = null;
-var PROMO_EXPIRY_KEY = 'jv_mabon_promo_exp'; // timestamp окончания срока
-var PROMO_DAYS = 3;
+// Ключи localStorage
+var PROMO_CODE_KEY   = 'jv_promo_code';      // текущий код
+var PROMO_EXP_KEY    = 'jv_promo_exp';       // истекает (1 сутки)
+var PROMO_GAME_CD    = 'jv_promo_game_cd';   // кулдаун игры (1 сутки)
+var PROMO_MONTH_KEY  = 'jv_promo_month';     // месяц когда использован
+var PROMO_USED_KEY   = 'jv_promo_used';      // использован при оплате
 
-var VALID_PROMOS = {
-  'MABON2026': true
-};
+// Совместимость со старыми ключами
+var PROMO_EXPIRY_KEY = 'jv_mabon_promo_exp';
+
+function getStoredPromo(){
+  var code = localStorage.getItem(PROMO_CODE_KEY);
+  var exp  = parseInt(localStorage.getItem(PROMO_EXP_KEY)||'0');
+  if(!code || Date.now() > exp) return null;
+  return {code:code, exp:exp};
+}
+
+function savePromo(code){
+  var exp = Date.now() + 86400000; // 1 сутки
+  localStorage.setItem(PROMO_CODE_KEY, code);
+  localStorage.setItem(PROMO_EXP_KEY, String(exp));
+  // совместимость
+  localStorage.setItem(PROMO_EXPIRY_KEY, String(exp));
+  return exp;
+}
+
+function isPromoUsedThisMonth(){
+  var used = localStorage.getItem(PROMO_USED_KEY);
+  if(!used) return false;
+  var usedDate = new Date(parseInt(used));
+  var now = new Date();
+  return usedDate.getMonth()===now.getMonth() && usedDate.getFullYear()===now.getFullYear();
+}
+
+function markPromoUsed(){
+  localStorage.setItem(PROMO_USED_KEY, String(Date.now()));
+}
+
+function autoApplyPromoToCart(){
+  var p = getStoredPromo();
+  if(!p) return;
+  if(isPromoUsedThisMonth()) return;
+  var input = document.getElementById('promoInput');
+  var msg = document.getElementById('promoMsg');
+  if(input && !PROMO_DISCOUNT){
+    input.value = p.code;
+    PROMO_DISCOUNT = p.code;
+    var hoursLeft = Math.ceil((p.exp - Date.now())/3600000);
+    if(msg) {
+      msg.textContent = '✓ Промокод применён автоматически · ещё '+hoursLeft+' ч.';
+      msg.className = 'cart-promo-msg ok';
+    }
+    renderCheckoutSummary();
+  }
+}
 
 function applyPromo(){
   var code = (document.getElementById('promoInput').value || '').trim().toUpperCase();
   var msg = document.getElementById('promoMsg');
   if(!code){ msg.textContent = ''; return; }
-  if(!VALID_PROMOS[code]){
-    // Проверяем динамические промокоды из игры
+
+  // Проверяем использование в этом месяце
+  if(isPromoUsedThisMonth()){
+    msg.textContent = 'Промокод уже использован в этом месяце 🌾'; msg.className = 'cart-promo-msg err'; return;
+  }
+
+  // Проверяем текущий действующий промокод устройства
+  var stored = getStoredPromo();
+  var isValid = (stored && stored.code === code) || code === 'MABON2026';
+
+  // Также проверяем старый механизм (монеты)
+  if(!isValid){
     var dynCodes = JSON.parse(localStorage.getItem('jv_valid_promos')||'{}');
-    if(!dynCodes[code] || Date.now() > dynCodes[code]){
-      msg.textContent = 'Промокод не найден'; msg.className = 'cart-promo-msg err'; return;
-    }
+    isValid = dynCodes[code] && Date.now() < dynCodes[code];
   }
-  // проверяем срок — он сохраняется при получении промокода (в showPromoModal)
-  var expStr = localStorage.getItem(PROMO_EXPIRY_KEY);
-  if(expStr){
-    var exp = parseInt(expStr, 10);
-    if(Date.now() > exp){
-      msg.textContent = 'Срок действия промокода истёк'; msg.className = 'cart-promo-msg err'; return;
-    }
-    var daysLeft = Math.ceil((exp - Date.now()) / 86400000);
-    PROMO_DISCOUNT = code;
-    msg.textContent = '✓ Промокод принят! Действителен ещё ' + daysLeft + ' дн.'; msg.className = 'cart-promo-msg ok';
-  } else {
-    // промокод введён без получения через монеты — не принимаем
-    msg.textContent = 'Сначала получи промокод через монеты Мабона 🌾'; msg.className = 'cart-promo-msg err'; return;
+
+  if(!isValid){
+    msg.textContent = 'Промокод не найден или истёк'; msg.className = 'cart-promo-msg err'; return;
   }
+
+  var exp = stored ? stored.exp : (parseInt(localStorage.getItem(PROMO_EXPIRY_KEY)||'0'));
+  var hoursLeft = Math.max(0, Math.ceil((exp - Date.now())/3600000));
+  PROMO_DISCOUNT = code;
+  msg.textContent = '✓ Промокод принят · 1 раз в месяц · осталось '+hoursLeft+' ч.';
+  msg.className = 'cart-promo-msg ok';
   renderCheckoutSummary();
 }
 window.applyPromo = applyPromo;
+window.autoApplyPromoToCart = autoApplyPromoToCart;
+window.markPromoUsed = markPromoUsed;
 
 /* ════════════════════════════════════════════════════════
    МАБОН — ИГРА «УРОЖАЙ»
@@ -2215,19 +2270,12 @@ window.applyPromo = applyPromo;
   }
 
   /* ── UI / логика ── */
-  function genPromoCode(){
-    var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    var code='MABON';
-    for(var i=0;i<5;i++) code+=chars[Math.floor(Math.random()*chars.length)];
-    return code;
-  }
-
   function updateHUD(){
     document.getElementById('mg-score').textContent = score+' / '+GOAL;
-    var acc = getAccent();
+    var heartColor = (_matrixMode === 'red') ? '#28ff6e' : '#ff3232';
     var hearts = '';
-    for(var i=0;i<lives;i++) hearts += '<span style="color:'+acc+'">❤</span>';
-    for(var j=lives;j<LIVES_START;j++) hearts += '<span style="opacity:.3">❤</span>';
+    for(var i=0;i<lives;i++) hearts += '<span style="color:'+heartColor+'">❤</span>';
+    for(var j=lives;j<LIVES_START;j++) hearts += '<span style="opacity:.25">❤</span>';
     document.getElementById('mg-lives').innerHTML = hearts;
   }
 
@@ -2268,25 +2316,45 @@ window.applyPromo = applyPromo;
   function gameWin(){
     clearInterval(gameTimer);
     gameState = 'over';
-    var cd = parseInt(localStorage.getItem(COOLDOWN_KEY)||'0');
-    var hasPromo = Date.now() > cd;
-    var promoCode = hasPromo ? genPromoCode() : localStorage.getItem('jv_mabon_game_code')||'';
-    if(hasPromo){
-      localStorage.setItem(PROMO_EXPIRY_KEY, String(Date.now() + 3*86400000));
-      localStorage.setItem(COOLDOWN_KEY, String(Date.now() + 86400000));
-      localStorage.setItem('jv_mabon_game_code', promoCode);
-      // Регистрируем промокод как действительный
+    var canGetNew = Date.now() > parseInt(localStorage.getItem(PROMO_GAME_CD)||'0');
+    var usedThisMonth = isPromoUsedThisMonth();
+    var promoCode, promoExp;
+    if(canGetNew && !usedThisMonth){
+      promoCode = genPromoCode();
+      promoExp = savePromo(promoCode);
+      localStorage.setItem(PROMO_GAME_CD, String(Date.now() + 86400000));
       var codes = JSON.parse(localStorage.getItem('jv_valid_promos')||'{}');
-      codes[promoCode] = Date.now() + 3*86400000;
+      codes[promoCode] = promoExp;
       localStorage.setItem('jv_valid_promos', JSON.stringify(codes));
+      setTimeout(autoApplyPromoToCart, 600);
+    } else {
+      var stored = getStoredPromo();
+      promoCode = stored ? stored.code : '';
+      promoExp = stored ? stored.exp : 0;
     }
-    showOverlay(
-      '🌾 Урожай собран!',
-      'Поймано: '+score+' предметов!<br><br>'+(hasPromo
-        ? '<span style="color:#ffd233">Твой промокод:<br><b id="mg-promo-code" style="font-size:22px;letter-spacing:3px;cursor:pointer" onclick="var t=this;navigator.clipboard&&navigator.clipboard.writeText(t.textContent).then(function(){t.textContent=\'СКОПИРОВАНО ✓\'})">'+promoCode+'</b></span><br><span style="font-size:11px;opacity:.6">Нажми на код чтобы скопировать · 3 дня</span>'
-        : '<span style="opacity:.6">Промокод уже получен сегодня.<br>Код: <b>'+promoCode+'</b><br>Возвращайся завтра!</span>'),
-      '▶ Играть снова', 'restartMabonGame()'
-    );
+    var hoursLeft = promoCode ? Math.max(0,Math.ceil((promoExp-Date.now())/3600000)) : 0;
+    var promoHtml = '';
+    if(usedThisMonth){
+      var nm = new Date(new Date().getFullYear(), new Date().getMonth()+1, 1);
+      promoHtml = '<span style="opacity:.65">Промокод использован в этом месяце.<br>Следующий доступен с '+nm.getDate()+'.'+(nm.getMonth()+1)+' \uD83D\uDCC5</span>';
+    } else if(promoCode){
+      promoHtml = '<span style="color:#ffd233">Твой промокод:</span><br>'
+        +'<span id="mg-promo-code" style="font-family:VT323,monospace;font-size:26px;letter-spacing:4px;cursor:pointer;color:var(--accent);border:1px dashed currentColor;padding:8px 18px;display:inline-block;margin:8px 0;border-radius:6px">'+promoCode+'</span>'
+        +'<br><span style="font-size:11px;opacity:.6">Нажми чтобы скопировать · '+hoursLeft+' ч. · 1 раз в месяц</span>';
+    }
+    showOverlay('\uD83C\uDF3E Урожай собран!',
+      'Поймано: <b>'+score+'</b> предметов!<br><br>'+promoHtml,
+      '\u25B6 Играть снова','restartMabonGame()');
+    if(promoCode){
+      setTimeout(function(){
+        var el=document.getElementById('mg-promo-code');
+        if(el) el.onclick=function(){
+          navigator.clipboard&&navigator.clipboard.writeText(promoCode).then(function(){
+            el.textContent='СКОПИРОВАНО \u2713';
+          });
+        };
+      }, 200);
+    }
   }
 
   function gameOver(win){
@@ -2517,7 +2585,9 @@ function openCart(){
   drawer.classList.add('open');
   document.getElementById('cartOverlay').classList.add('show');
   if(!alreadyOpen) lockBodyScroll();
-  syncConsentState(); // на случай если браузер восстановил чекбокс визуально, но не прислал onchange
+  syncConsentState();
+  // Автоподстановка промокода из выигранной игры
+  if(!PROMO_DISCOUNT) setTimeout(autoApplyPromoToCart, 150);
 }
 function closeCart(){
   var drawer = document.getElementById('cart-drawer');
@@ -2777,6 +2847,8 @@ function submitOrder(){
   }).then(function(data){
     if(!data.action || !data.fields) throw new Error('bad payload');
     status.textContent = 'Переходим к оплате…';
+    // Отмечаем промокод использованным — оплата запущена
+    if(PROMO_DISCOUNT) markPromoUsed();
     cart = [];
     saveCartToStorage();
     submitToRobokassa(data.action, data.fields);

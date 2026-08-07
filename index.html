@@ -905,8 +905,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13 000 ₽'},
       {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8 800 ₽'},
       {id:34, img:'vremya-siyat.jpg',       col:'Огненная Жатва', name:'Время сиять',        price:'15 000 ₽'}
-    ].map(function(it, i){
-      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s" onclick="openProductModal('+it.id+')">'
+    ].map(function(it, i, arr){
+      var isLast = i === arr.length - 1 && it.id === 34;
+      var extra = isLast ? 'grid-column:1/-1;max-width:480px;margin:0 auto;width:100%' : '';
+      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s;'+extra+'" onclick="openProductModal('+it.id+')">'
         +'<div class="new-card-badge">Сезонная</div>'
         +'<div class="new-card-img"><img src="assets/img/products/'+it.img+'" alt="'+it.name+'" loading="lazy"></div>'
         +'<div class="new-card-info"><div class="new-card-collection">'+it.col+'</div>'
@@ -922,8 +924,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
       {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13 000 ₽'},
       {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8 800 ₽'},
       {id:34, img:'vremya-siyat.jpg',       col:'Огненная Жатва', name:'Время сиять',        price:'15 000 ₽'}
-    ].map(function(it, i){
-      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s" onclick="openProductModal('+it.id+')">'
+    ].map(function(it, i, arr){
+      var isLast = i === arr.length - 1 && it.id === 34;
+      var extra = isLast ? 'grid-column:1/-1;max-width:480px;margin:0 auto;width:100%' : '';
+      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s;'+extra+'" onclick="openProductModal('+it.id+')">'
         +'<div class="new-card-badge">Сезонная</div>'
         +'<div class="new-card-img"><img src="assets/img/products/'+it.img+'" alt="'+it.name+'" loading="lazy"></div>'
         +'<div class="new-card-info"><div class="new-card-collection">'+it.col+'</div>'

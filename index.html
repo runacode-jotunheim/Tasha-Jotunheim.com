@@ -2265,6 +2265,41 @@ window.markPromoUsed = markPromoUsed;
 
     ctx.clearRect(0,0,W,H);
 
+    // ── Фоновые кроны по центру (атмосфера) ──
+    ctx.save();
+    ctx.fillStyle = getAccent();
+    // большая раскидистая крона слева-центр
+    ctx.globalAlpha = 0.07;
+    ctx.beginPath();
+    ctx.ellipse(W*0.28, H*0.08, W*0.22, H*0.09, -0.15, 0, Math.PI*2);
+    ctx.fill();
+    // большая раскидистая крона справа-центр
+    ctx.beginPath();
+    ctx.ellipse(W*0.72, H*0.08, W*0.22, H*0.09, 0.15, 0, Math.PI*2);
+    ctx.fill();
+    // центральная ветка соединяет
+    ctx.globalAlpha = 0.04;
+    ctx.beginPath();
+    ctx.ellipse(W*0.5, H*0.055, W*0.18, H*0.055, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // ── Название игры в стиле Денди ──
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.globalAlpha = 0.18;
+    // тень / свечение
+    ctx.fillStyle = getAccent();
+    ctx.shadowColor = getAccent();
+    ctx.shadowBlur = 20;
+    ctx.font = 'bold ' + Math.floor(W*0.065) + 'px "VT323", monospace';
+    ctx.letterSpacing = '4px';
+    ctx.fillText('УРОЖАЙ МАБОН', W/2, H*0.085);
+    ctx.font = 'bold ' + Math.floor(W*0.05) + 'px "VT323", monospace';
+    ctx.globalAlpha = 0.12;
+    ctx.fillText('2  0  2  6', W/2, H*0.115);
+    ctx.restore();
+
     // деревья
     var tw = Math.min(70, W*0.18);
     drawTree(tw*0.5, 'left');

@@ -2230,11 +2230,12 @@ window.markPromoUsed = markPromoUsed;
         var isLeft = h.x < W/2;
         // Горизонтальная скорость: из левого дерева летит вправо, из правого — влево
         // Разлёт до середины экрана и дальше — randomX от ближней стороны до противоположной
-        var targetX = W * (0.1 + Math.random() * 0.8); // куда упадёт (10%-90% экрана)
+        var minX = W * 0.05, maxX = W * 0.95;
+        var targetX = minX + Math.random() * (maxX - minX);
         var dx = targetX - h.x;
-        var fallTime = 0.9 + Math.random() * 0.6; // время полёта в секундах
+        var fallTime = 0.9 + Math.random() * 0.6;
         var vx = dx / fallTime;
-        var vy0 = -60 + Math.random() * 40; // небольшой бросок вверх для дуги
+        var vy0 = -60 + Math.random() * 40;
         items.push({
           def: pickGameItem(),
           x: h.x, y: h.y,
@@ -2345,17 +2346,23 @@ window.markPromoUsed = markPromoUsed;
       promoExp = stored ? stored.exp : 0;
     }
     var hoursLeft = promoCode ? Math.max(0,Math.ceil((promoExp-Date.now())/3600000)) : 0;
+    var rulesNote = '<div style="font-size:10px;opacity:.4;margin-top:14px">Промокод действует 24 ч. · 1 раз в месяц</div>';
     var promoHtml = '';
     if(usedThisMonth){
-      var nm = new Date(new Date().getFullYear(), new Date().getMonth()+1, 1);
-      promoHtml = '<span style="opacity:.65">Промокод использован в этом месяце.<br>Следующий доступен с '+nm.getDate()+'.'+(nm.getMonth()+1)+' \uD83D\uDCC5</span>';
+      promoHtml = '<div style="font-size:20px;margin-bottom:6px">\uD83C\uDF3E</div>'
+        +'<span style="font-size:18px;color:var(--accent)">А уже всё…</span><br>'
+        +'<span style="font-size:12px;opacity:.65;line-height:1.8">Промокод этого месяца использован при оплате.<br>Новый появится в следующем месяце.</span>';
+    } else if(promoAlreadyToday && promoCode){
+      promoHtml = '<span style="font-size:13px;opacity:.75">Сегодня ты уже выиграл промокод:</span><br>'
+        +'<span id="mg-promo-code" style="font-family:VT323,monospace;font-size:26px;letter-spacing:4px;cursor:pointer;color:var(--accent);border:1px dashed currentColor;padding:8px 18px;display:inline-block;margin:8px 0;border-radius:6px">'+promoCode+'</span>'
+        +'<br><span style="font-size:11px;opacity:.55">Нажми чтобы скопировать · '+hoursLeft+' ч.</span>';
     } else if(promoCode){
       promoHtml = '<span style="color:#ffd233">Твой промокод:</span><br>'
         +'<span id="mg-promo-code" style="font-family:VT323,monospace;font-size:26px;letter-spacing:4px;cursor:pointer;color:var(--accent);border:1px dashed currentColor;padding:8px 18px;display:inline-block;margin:8px 0;border-radius:6px">'+promoCode+'</span>'
-        +'<br><span style="font-size:11px;opacity:.6">Нажми чтобы скопировать · '+hoursLeft+' ч. · 1 раз в месяц</span>';
+        +'<br><span style="font-size:11px;opacity:.6">Нажми чтобы скопировать · Действует 24 часа</span>';
     }
     showOverlay('\uD83C\uDF3E Урожай собран!',
-      'Поймано: <b>'+score+'</b> предметов!<br><br>'+promoHtml,
+      'Поймано: <b>'+score+'</b> предметов!<br><br>'+promoHtml+rulesNote,
       '\u25B6 Играть снова','restartMabonGame()');
     if(promoCode){
       setTimeout(function(){

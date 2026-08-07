@@ -2331,7 +2331,7 @@ window.markPromoUsed = markPromoUsed;
     // Левое дерево: правый край у x+treeW/2, т.е. прижато к левому краю
     // Правое дерево: левый край у x-treeW/2, прижато к правому краю
     var ox = side==='left' ? 0 : W - treeW;
-    var oy = 0; // от самого верха
+    var oy = Math.floor(H * 0.28); // дерево начинается на 28% высоты
 
     ctx.save();
     ctx.globalAlpha = 0.38;

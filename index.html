@@ -701,16 +701,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="cart-empty">ᚷ<br><br>Корзина пуста.<br>Выберите артефакт<br>из коллекции.</div>
   </div>
   <div class="cart-footer">
-    <div class="cart-total">
-      <span class="cart-total-label">Итого</span>
-      <span class="cart-total-price" id="cartTotal">0 ₽</span>
-    </div>
     <div class="cart-promo">
       <div class="cart-promo-row">
         <input type="text" class="cart-promo-input" id="promoInput" placeholder="Промокод" maxlength="20">
         <button class="cart-promo-btn" onclick="applyPromo()">Ввести</button>
       </div>
       <div class="cart-promo-msg" id="promoMsg"></div>
+    </div>
+    <div class="cart-total">
+      <span class="cart-total-label">Итого</span>
+      <span class="cart-total-price" id="cartTotal">0 ₽</span>
     </div>
     <label class="cart-consent">
       <input type="checkbox" id="consentCheckbox">
@@ -2367,9 +2367,7 @@ window.markPromoUsed = markPromoUsed;
     }
     showOverlay('\uD83C\uDF3E Урожай собран!',
       'Поймано: <b>'+score+'</b> предметов!<br><br>'+promoHtml+rulesNote,
-      '\u25B6 Играть снова','restartMabonGame()');
-    var wa = document.getElementById('mg-win-actions');
-    if(wa) wa.style.display = 'flex';
+      '\u25B6 Играть снова','restartMabonGame()', true);
     if(promoCode){
       setTimeout(function(){
         var el=document.getElementById('mg-promo-code');
@@ -2389,17 +2387,26 @@ window.markPromoUsed = markPromoUsed;
     showOverlay(
       lives<=0 ? '💔 Все жизни потрачены' : '⏱ Время вышло',
       'Поймано: '+score+' из '+GOAL+'<br><span style="opacity:.6">Нужно '+GOAL+', чтобы получить промокод</span>',
-      '▶ Попробовать снова', 'restartMabonGame()'
+      '▶ Попробовать снова', 'restartMabonGame()', false
     );
   }
 
-  function showOverlay(title, text, btnText, btnAction){
+  function showOverlay(title, text, btnText, btnAction, isWin){
     var o = document.getElementById('mg-overlay');
     document.getElementById('mg-overlay-title').innerHTML = title;
     document.getElementById('mg-overlay-text').innerHTML = text;
     var btn = document.getElementById('mg-start-btn');
     btn.textContent = btnText;
     btn.setAttribute('onclick', btnAction);
+    // Кнопка «На сайт» — всегда. «Использовать промокод» — только победителям
+    var wa = document.getElementById('mg-win-actions');
+    if(wa){
+      wa.innerHTML = (isWin
+        ? '<button onclick="closeMabonGame();openCart();" style="background:var(--accent);color:#000;border:none;padding:11px 0;font-family:\'VT323\',monospace;font-size:18px;letter-spacing:2px;border-radius:8px;cursor:pointer;width:100%">🛒 Использовать промокод</button>'
+        : '')
+        + '<button onclick="closeMabonGame();document.getElementById(\'catalog\').scrollIntoView({behavior:\'smooth\'});" style="background:transparent;border:1px solid rgba(0,255,65,0.4);color:var(--accent);padding:10px 0;font-family:\'VT323\',monospace;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;width:100%">← Вернуться на сайт</button>';
+      wa.style.display = 'flex';
+    }
     o.style.display = 'flex';
   }
 
@@ -2460,7 +2467,7 @@ window.markPromoUsed = markPromoUsed;
     showOverlay(
       'Урожай Мабона',
       'Лови предметы кубком из дупел деревьев.<br>Избегай коричневых яблок 🍂<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни',
-      '▶ ИГРАТЬ', 'startMabonGame()'
+      '▶ ИГРАТЬ', 'startMabonGame()', false
     );
   };
 
@@ -2480,8 +2487,6 @@ window.markPromoUsed = markPromoUsed;
     score = 0; lives = LIVES_START; items = []; _deck = [];
     gameState = 'idle';
     document.getElementById('mg-overlay').style.display = 'none';
-    var wa = document.getElementById('mg-win-actions');
-    if(wa) wa.style.display = 'none';
     startMabonGame();
   };
 

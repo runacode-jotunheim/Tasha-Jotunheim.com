@@ -575,15 +575,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 #stickyToCatalogBtn{display:none}
 @media(max-width:520px){
   #stickyToCatalogBtn{
-    display:block;position:fixed;left:16px;right:16px;bottom:16px;z-index:450;
+    display:block;position:fixed;
+    left:50%;transform:translateX(-50%);
+    bottom:16px;z-index:450;
+    white-space:nowrap;
     background:rgba(0,5,2,0.92);color:var(--accent);text-align:center;
-    font-family:'VT323',monospace;font-size:18px;letter-spacing:2px;text-transform:uppercase;
-    padding:13px 0;border-radius:10px;border:1px solid var(--accent);
-    box-shadow:0 4px 20px rgba(0,0,0,0.7),0 0 16px rgba(0,255,65,0.15);
+    font-family:'VT323',monospace;font-size:clamp(13px,3.8vw,16px);letter-spacing:1px;text-transform:uppercase;
+    padding:9px 20px;border-radius:20px;border:1px solid rgba(0,255,65,0.5);
+    box-shadow:0 4px 20px rgba(0,0,0,0.7),0 0 12px rgba(0,255,65,0.12);
     text-decoration:none;transition:transform .25s ease,opacity .25s ease;
     backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   }
-  #stickyToCatalogBtn.hide{transform:translateY(140%);opacity:0;pointer-events:none}
+  #stickyToCatalogBtn.hide{transform:translateX(-50%) translateY(140%);opacity:0;pointer-events:none}
 }
 </style>
 </head>

@@ -898,13 +898,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 
   if(isVrataLva){
     sub.textContent = 'Коллекция Мабона 2026';
-    grid.innerHTML = [
-      {id:31, img:'ogon-probuzhdeniya.jpg', col:'Огненная Жатва', name:'Огонь пробуждения', price:'7\u00a0800 ₽'},
-      {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13\u00a0000 ₽'},
-      {id:32, img:'put-sily.jpg',           col:'Огненная Жатва', name:'Путь силы',          price:'10\u00a0000 ₽'},
-      {id:28, img:'lev-sredi-lyudey.jpg',   col:'Врата Льва',     name:'Лев среди людей',    price:'10\u00a0000 ₽'},
-      {id:29, img:'strazh-serdtsa.jpg',     col:'Врата Льва',     name:'Страж сердца',       price:'15\u00a0000 ₽'},
-      {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8\u00a0800 ₽'}
+      {id:31, img:'ogon-probuzhdeniya.jpg', col:'Огненная Жатва', name:'Огонь пробуждения', price:'7 800 ₽'},
+      {id:28, img:'lev-sredi-lyudey.jpg',   col:'Врата Льва',     name:'Лев среди людей',    price:'10 000 ₽'},
+      {id:32, img:'put-sily.jpg',           col:'Огненная Жатва', name:'Путь силы',          price:'10 000 ₽'},
+      {id:29, img:'strazh-serdtsa.jpg',     col:'Врата Льва',     name:'Страж сердца',       price:'15 000 ₽'},
+      {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13 000 ₽'},
+      {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8 800 ₽'},
+      {id:34, img:'vremya-siyat.jpg',       col:'Огненная Жатва', name:'Время сиять',        price:'15 000 ₽'}
     ].map(function(it, i){
       return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s" onclick="openProductModal('+it.id+')">'
         +'<div class="new-card-badge">Сезонная</div>'
@@ -915,13 +915,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     }).join('');
   } else {
     sub.textContent = 'Огненная Жатва · Ламмас 2026';
-    grid.innerHTML = [
-      {id:31, img:'ogon-probuzhdeniya.jpg', col:'Огненная Жатва', name:'Огонь пробуждения', price:'7\u00a0800 ₽'},
-      {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13\u00a0000 ₽'},
-      {id:32, img:'put-sily.jpg',           col:'Огненная Жатва', name:'Путь силы',          price:'10\u00a0000 ₽'},
-      {id:28, img:'lev-sredi-lyudey.jpg',   col:'Врата Льва',     name:'Лев среди людей',    price:'10\u00a0000 ₽'},
-      {id:29, img:'strazh-serdtsa.jpg',     col:'Врата Льва',     name:'Страж сердца',       price:'15\u00a0000 ₽'},
-      {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8\u00a0800 ₽'}
+      {id:31, img:'ogon-probuzhdeniya.jpg', col:'Огненная Жатва', name:'Огонь пробуждения', price:'7 800 ₽'},
+      {id:28, img:'lev-sredi-lyudey.jpg',   col:'Врата Льва',     name:'Лев среди людей',    price:'10 000 ₽'},
+      {id:32, img:'put-sily.jpg',           col:'Огненная Жатва', name:'Путь силы',          price:'10 000 ₽'},
+      {id:29, img:'strazh-serdtsa.jpg',     col:'Врата Льва',     name:'Страж сердца',       price:'15 000 ₽'},
+      {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13 000 ₽'},
+      {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8 800 ₽'},
+      {id:34, img:'vremya-siyat.jpg',       col:'Огненная Жатва', name:'Время сиять',        price:'15 000 ₽'}
     ].map(function(it, i){
       return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s" onclick="openProductModal('+it.id+')">'
         +'<div class="new-card-badge">Сезонная</div>'

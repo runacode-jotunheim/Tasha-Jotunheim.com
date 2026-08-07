@@ -675,6 +675,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div id="mg-overlay-title" style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Урожай Мабона</div>
     <div id="mg-overlay-text" style="font-size:13px;color:rgba(200,255,218,0.7);line-height:1.8;margin-bottom:24px">Лови предметы кубком.<br>Избегай коричневых яблок 🍂<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни</div>
     <button id="mg-start-btn" onclick="startMabonGame()" style="background:var(--accent);color:#000;border:none;padding:12px 32px;font-family:'VT323',monospace;font-size:20px;letter-spacing:3px;border-radius:8px;cursor:pointer">▶ ИГРАТЬ</button>
+    <div id="mg-win-actions" style="display:none;margin-top:14px;display:none;flex-direction:column;gap:10px;width:100%;max-width:280px">
+      <button onclick="closeMabonGame();openCart();" style="background:var(--accent);color:#000;border:none;padding:11px 0;font-family:'VT323',monospace;font-size:18px;letter-spacing:2px;border-radius:8px;cursor:pointer;width:100%">🛒 Использовать промокод</button>
+      <button onclick="closeMabonGame();document.getElementById('catalog').scrollIntoView({behavior:'smooth'});" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:10px 0;font-family:'VT323',monospace;font-size:16px;letter-spacing:2px;border-radius:8px;cursor:pointer;width:100%">← Вернуться к артефактам</button>
+    </div>
   </div>
 </div>
 
@@ -2364,6 +2368,8 @@ window.markPromoUsed = markPromoUsed;
     showOverlay('\uD83C\uDF3E Урожай собран!',
       'Поймано: <b>'+score+'</b> предметов!<br><br>'+promoHtml+rulesNote,
       '\u25B6 Играть снова','restartMabonGame()');
+    var wa = document.getElementById('mg-win-actions');
+    if(wa) wa.style.display = 'flex';
     if(promoCode){
       setTimeout(function(){
         var el=document.getElementById('mg-promo-code');
@@ -2470,11 +2476,12 @@ window.markPromoUsed = markPromoUsed;
   };
 
   window.restartMabonGame = function(){
-    // Только перезапускает игру — не сбрасывает промокод/кулдаун
     clearInterval(gameTimer);
     score = 0; lives = LIVES_START; items = []; _deck = [];
     gameState = 'idle';
     document.getElementById('mg-overlay').style.display = 'none';
+    var wa = document.getElementById('mg-win-actions');
+    if(wa) wa.style.display = 'none';
     startMabonGame();
   };
 

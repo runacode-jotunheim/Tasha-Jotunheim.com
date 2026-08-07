@@ -2316,10 +2316,11 @@ window.markPromoUsed = markPromoUsed;
   function gameWin(){
     clearInterval(gameTimer);
     gameState = 'over';
-    var canGetNew = Date.now() > parseInt(localStorage.getItem(PROMO_GAME_CD)||'0');
     var usedThisMonth = isPromoUsedThisMonth();
+    // Промокод можно получить 1 раз в сутки (но играть можно сколько угодно)
+    var promoAlreadyToday = Date.now() < parseInt(localStorage.getItem(PROMO_GAME_CD)||'0');
     var promoCode, promoExp;
-    if(canGetNew && !usedThisMonth){
+    if(!promoAlreadyToday && !usedThisMonth){
       promoCode = genPromoCode();
       promoExp = savePromo(promoCode);
       localStorage.setItem(PROMO_GAME_CD, String(Date.now() + 86400000));

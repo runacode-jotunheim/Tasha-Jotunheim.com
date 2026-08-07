@@ -2083,6 +2083,12 @@ window.markPromoUsed = markPromoUsed;
 
   /* ── Пиксельные матрицы предметов (px=4) ── */
   var ITEMS_DEF = [
+    {id:'heart_life', color:'#ff3232', w:9, heal:true, pixels:[
+      [0,1,1,0,0,0,1,1,0],[1,1,1,1,0,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1],[0,1,1,1,1,1,1,1,0],
+      [0,0,1,1,1,1,1,0,0],[0,0,0,1,1,1,0,0,0],
+      [0,0,0,0,1,0,0,0,0]]},
     {id:'coin',    color:'#ffd233', w:9, pixels:[
       [0,0,1,1,1,1,1,0,0],[0,1,1,1,1,1,1,1,0],
       [1,1,0,1,1,1,0,1,1],[1,1,1,1,1,1,1,1,1],
@@ -2113,7 +2119,7 @@ window.markPromoUsed = markPromoUsed;
   ];
 
   // Веса: монета чаще, гнилое яблоко ~15%
-  var WEIGHTS = {coin:22, strawberry:16, ring:13, mushroom:14, rotten:40};
+  var WEIGHTS = {heart_life:6, coin:22, strawberry:16, ring:13, mushroom:14, rotten:40};
   var _deck = [];
 
   function buildGameDeck(){
@@ -2291,7 +2297,17 @@ window.markPromoUsed = markPromoUsed;
       var pw = it.def.pixels[0].length * 4;
       if(it.y + pw/2 > catchY && it.y - pw/2 < catchY + cupH &&
          it.x > cupX - cupW/2 - pw/2 && it.x < cupX + cupW/2 + pw/2){
-        if(it.def.bad){
+        if(it.def.heal){
+          if(lives < LIVES_START){
+            lives++;
+            updateHUD();
+            // вспышка розовым
+            ctx.save(); ctx.fillStyle='#ff3232'; ctx.globalAlpha=0.35;
+            ctx.fillRect(0,0,W,H); ctx.restore();
+            if(navigator.vibrate) navigator.vibrate([30,20,30]);
+          }
+          return false;
+        } else if(it.def.bad){
           loseLife();
         } else {
           score++;

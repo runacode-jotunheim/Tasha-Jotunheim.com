@@ -2077,7 +2077,7 @@ window.markPromoUsed = markPromoUsed;
   var gameState = 'idle'; // idle | playing | over
   var score, lives, timeLeft, gameTimer;
   var items = [], lastSpawn = 0;
-  var spawnInterval = 1400; // мс между спавнами (ускоряется)
+  var spawnInterval = 1100; // мс между спавнами (ускоряется)
   var cupX, cupW, cupH, cupSpeed;
   var touchActive = false, touchStartX = 0, cupStartX = 0;
 
@@ -2113,7 +2113,7 @@ window.markPromoUsed = markPromoUsed;
   ];
 
   // Веса: монета чаще, гнилое яблоко ~15%
-  var WEIGHTS = {coin:25, strawberry:20, ring:16, mushroom:18, rotten:28};
+  var WEIGHTS = {coin:22, strawberry:16, ring:13, mushroom:14, rotten:40};
   var _deck = [];
 
   function buildGameDeck(){
@@ -2239,12 +2239,12 @@ window.markPromoUsed = markPromoUsed;
 
     // спавн предметов
     var elapsed = now - lastSpawn;
-    var curInterval = Math.max(400, spawnInterval - (GAME_TIME - timeLeft)*20);
+    var curInterval = Math.max(300, spawnInterval - (GAME_TIME - timeLeft)*28);
     if(elapsed > curInterval){
       lastSpawn = now;
       var holes = getHoles();
       // 1 или 2 одновременно (30% шанс двух)
-      var count = Math.random() < 0.3 ? 2 : 1;
+      var count = Math.random() < 0.45 ? 2 : 1;
       var chosen = holes.slice().sort(function(){return Math.random()-0.5;}).slice(0,count);
       chosen.forEach(function(h){
         var isLeft = h.x < W/2;
@@ -2253,7 +2253,7 @@ window.markPromoUsed = markPromoUsed;
         var minX = W * 0.05, maxX = W * 0.95;
         var targetX = minX + Math.random() * (maxX - minX);
         var dx = targetX - h.x;
-        var fallTime = 0.9 + Math.random() * 0.6;
+        var fallTime = 0.55 + Math.random() * 0.45;
         var vx = dx / fallTime;
         var vy0 = -60 + Math.random() * 40;
         items.push({

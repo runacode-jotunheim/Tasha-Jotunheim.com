@@ -2176,33 +2176,31 @@ window.markPromoUsed = markPromoUsed;
 
   /* ── Рисование кубка ── */
   function drawCup(){
-    var acc = getAccent();
-    var trophy = [
-      [1,1,1,1,1,1,1,1,1,1,1],
-      [1,1,0,0,0,0,0,0,0,1,1],
-      [1,1,0,0,0,0,0,0,0,1,1],
-      [0,1,1,0,0,0,0,0,1,1,0],
-      [0,0,1,1,0,0,0,1,1,0,0],
-      [0,0,0,1,1,1,1,1,0,0,0],
-      [0,0,0,0,1,1,1,0,0,0,0],
-      [0,0,0,0,0,1,0,0,0,0,0],
-      [0,0,0,0,0,1,0,0,0,0,0],
-      [0,0,0,1,1,1,1,1,0,0,0],
-      [0,0,1,1,1,1,1,1,1,0,0],
-      [0,1,1,1,1,1,1,1,1,1,0],
+    // Плоская тарелка-ловушка: широкая, невысокая, яркая
+    var px = Math.floor(cupW / 13);
+    if(px < 2) px = 2;
+    var dish = [
+      [1,1,0,0,0,0,0,0,0,0,0,1,1],  // края
+      [0,1,1,0,0,0,0,0,0,0,1,1,0],
+      [0,0,1,1,0,0,0,0,0,1,1,0,0],
+      [0,0,0,1,1,1,1,1,1,1,0,0,0],  // дно
+      [0,0,0,0,1,1,1,1,1,0,0,0,0],  // подставка
     ];
-    var px = Math.floor(cupW/11);
+    var dw = dish[0].length;
+    var dh = dish.length;
+    var oy = H - dh*px - 8; // прижат к низу с отступом
     ctx.save();
-    ctx.fillStyle = acc;
-    ctx.shadowColor = acc;
-    ctx.shadowBlur = 8;
-    var oy = H - cupH - 6;
-    trophy.forEach(function(row,ry){
-      row.forEach(function(on,rx){
-        if(on) ctx.fillRect(cupX-cupW/2+rx*px, oy+ry*px, px-1, px-1);
+    ctx.fillStyle = '#28ff6e'; // всегда ярко-зелёный, не зависит от темы
+    ctx.shadowColor = '#28ff6e';
+    ctx.shadowBlur = 12;
+    dish.forEach(function(row, ry){
+      row.forEach(function(on, rx){
+        if(on) ctx.fillRect(cupX - dw*px/2 + rx*px, oy + ry*px, px-1, px-1);
       });
     });
     ctx.restore();
+    // обновляем cupH под реальную высоту тарелки для хитбокса
+    cupH = dh * px;
   }
 
   /* ── Рисование предмета ── */

@@ -995,7 +995,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="hourglass-wrap" id="hourglassWrap">
           <canvas id="hourglassCanvas" width="200" height="200"></canvas>
         </div>
-        <div id="mabon-coin-wrap">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="butt"><circle cx="8" cy="8" r="6"/><text x="8" y="11" text-anchor="middle" font-size="7" fill="currentColor" stroke="none" font-family="monospace">₽</text></svg>
           <span id="mabon-coin-counter">0/3</span>
         </div>
@@ -2220,20 +2219,29 @@ window.markPromoUsed = markPromoUsed;
 
     // спавн предметов
     var elapsed = now - lastSpawn;
-    var curInterval = Math.max(500, spawnInterval - (GAME_TIME - timeLeft)*25);
+    var curInterval = Math.max(400, spawnInterval - (GAME_TIME - timeLeft)*20);
     if(elapsed > curInterval){
       lastSpawn = now;
       var holes = getHoles();
-      // случайно 1 или 2 дупла одновременно
-      var count = Math.random()<0.3 ? 2 : 1;
+      // 1 или 2 одновременно (30% шанс двух)
+      var count = Math.random() < 0.3 ? 2 : 1;
       var chosen = holes.slice().sort(function(){return Math.random()-0.5;}).slice(0,count);
       chosen.forEach(function(h){
+        var isLeft = h.x < W/2;
+        // Горизонтальная скорость: из левого дерева летит вправо, из правого — влево
+        // Разлёт до середины экрана и дальше — randomX от ближней стороны до противоположной
+        var targetX = W * (0.1 + Math.random() * 0.8); // куда упадёт (10%-90% экрана)
+        var dx = targetX - h.x;
+        var fallTime = 0.9 + Math.random() * 0.6; // время полёта в секундах
+        var vx = dx / fallTime;
+        var vy0 = -60 + Math.random() * 40; // небольшой бросок вверх для дуги
         items.push({
           def: pickGameItem(),
           x: h.x, y: h.y,
-          vy: 80 + Math.random()*60,
+          vx: vx,
+          vy: vy0,
           angle: 0,
-          angularV: (Math.random()-0.5)*4,
+          angularV: (Math.random()-0.5)*5,
           alpha: 1
         });
       });
@@ -2242,6 +2250,8 @@ window.markPromoUsed = markPromoUsed;
     // обновление предметов
     var catchY = H - cupH - 6;
     items = items.filter(function(it){
+      it.vy += 280 * dt/1000; // гравитация
+      it.x += it.vx * dt/1000;
       it.y += it.vy * dt/1000;
       it.angle += it.angularV * dt/1000;
       // поимка кубком
@@ -2255,10 +2265,11 @@ window.markPromoUsed = markPromoUsed;
           updateHUD();
           if(score >= GOAL) gameWin();
         }
-        return false; // удаляем предмет
+        return false;
       }
-      // упал ниже экрана
+      // упал ниже экрана или вышел за края
       if(it.y > H + 20) return false;
+      if(it.x < -30 || it.x > W + 30) return false;
       drawItem(it);
       return true;
     });
@@ -2434,7 +2445,7 @@ window.markPromoUsed = markPromoUsed;
     initControls();
     gameState = 'idle';
     showOverlay(
-      '⚡ Урожай Мабона',
+      'Урожай Мабона',
       'Лови предметы кубком из дупел деревьев.<br>Избегай коричневых яблок 🍂<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни',
       '▶ ИГРАТЬ', 'startMabonGame()'
     );
@@ -2498,16 +2509,13 @@ function getPromoDiscount(sum){
   return 0;
 }
 
-/* ══ Мабон: показываем счётчик монет ══ */
+/* ══ Мабон: показываем заголовок, скрываем canvas ══ */
 (function(){
   var now = new Date(), m = now.getMonth()+1, d = now.getDate();
   if(!((m===8&&d>=5)||(m===9&&d<=27))) return;
-  var wrap = document.getElementById('mabon-coin-wrap');
-  if(wrap) wrap.style.display = 'flex';
-  // обновляем счётчик из localStorage при загрузке
-  var cnt = parseInt(localStorage.getItem('jv_mabon_coins')||'0',10);
-  var el = document.getElementById('mabon-coin-counter');
-  if(el) el.textContent = cnt+'/3';
+  // Скрываем canvas с анимацией — вместо него кнопка «Начать»
+  var hw = document.getElementById('hourglassWrap');
+  if(hw) hw.style.display = 'none';
   var hdr = document.getElementById('mabon-header');
   if(hdr) hdr.style.display = 'block';
 })();

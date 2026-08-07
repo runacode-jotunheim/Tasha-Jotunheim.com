@@ -1922,6 +1922,8 @@ setCursorMode('busy'); // busy while the loader is up
 
 /* ══ THEME ══ */
 var _matrixMode = 'green';
+function getAccent(){ return (_matrixMode === 'red') ? '#ff3232' : '#28ff6e'; }
+function getDim(){ return (_matrixMode === 'red') ? 'rgba(255,50,50,0.35)' : 'rgba(40,255,110,0.35)'; }
 function togglePills(){ document.getElementById('pillChoices').classList.toggle('open'); }
 window.togglePills = togglePills;
 
@@ -1966,7 +1968,11 @@ function applyPromo(){
   var msg = document.getElementById('promoMsg');
   if(!code){ msg.textContent = ''; return; }
   if(!VALID_PROMOS[code]){
-    msg.textContent = 'Промокод не найден'; msg.className = 'cart-promo-msg err'; return;
+    // Проверяем динамические промокоды из игры
+    var dynCodes = JSON.parse(localStorage.getItem('jv_valid_promos')||'{}');
+    if(!dynCodes[code] || Date.now() > dynCodes[code]){
+      msg.textContent = 'Промокод не найден'; msg.className = 'cart-promo-msg err'; return;
+    }
   }
   // проверяем срок — он сохраняется при получении промокода (в showPromoModal)
   var expStr = localStorage.getItem(PROMO_EXPIRY_KEY);
@@ -2209,25 +2215,35 @@ window.applyPromo = applyPromo;
   }
 
   /* ── UI / логика ── */
+  function genPromoCode(){
+    var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var code='MABON';
+    for(var i=0;i<5;i++) code+=chars[Math.floor(Math.random()*chars.length)];
+    return code;
+  }
+
   function updateHUD(){
     document.getElementById('mg-score').textContent = score+' / '+GOAL;
+    var acc = getAccent();
     var hearts = '';
-    for(var i=0;i<lives;i++) hearts += '❤';
-    for(var j=lives;j<LIVES_START;j++) hearts += '🖤';
-    document.getElementById('mg-lives').textContent = hearts;
+    for(var i=0;i<lives;i++) hearts += '<span style="color:'+acc+'">❤</span>';
+    for(var j=lives;j<LIVES_START;j++) hearts += '<span style="opacity:.3">❤</span>';
+    document.getElementById('mg-lives').innerHTML = hearts;
   }
 
   function loseLife(){
     lives--;
     updateHUD();
-    // вспышка красным
-    ctx.save(); ctx.fillStyle='#ff0000'; ctx.globalAlpha=0.4;
+    // белая вспышка на весь экран
+    ctx.save(); ctx.fillStyle='#ffffff'; ctx.globalAlpha=0.7;
     ctx.fillRect(0,0,W,H); ctx.restore();
-    if(navigator.vibrate) navigator.vibrate(300);
-    score = 0;
-    items = [];
-    updateHUD();
-    if(lives <= 0) gameOver(false);
+    if(navigator.vibrate) navigator.vibrate([100,50,200]);
+    setTimeout(function(){
+      score = 0;
+      items = [];
+      updateHUD();
+      if(lives <= 0) gameOver(false);
+    }, 300);
   }
 
   function startTimer(){
@@ -2242,24 +2258,35 @@ window.applyPromo = applyPromo;
     }, 1000);
   }
 
+  function genPromoCode(){
+    var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var code='M';
+    for(var i=0;i<7;i++) code+=chars[Math.floor(Math.random()*chars.length)];
+    return code;
+  }
+
   function gameWin(){
     clearInterval(gameTimer);
     gameState = 'over';
-    // проверяем кулдаун
     var cd = parseInt(localStorage.getItem(COOLDOWN_KEY)||'0');
     var hasPromo = Date.now() > cd;
+    var promoCode = hasPromo ? genPromoCode() : localStorage.getItem('jv_mabon_game_code')||'';
+    if(hasPromo){
+      localStorage.setItem(PROMO_EXPIRY_KEY, String(Date.now() + 3*86400000));
+      localStorage.setItem(COOLDOWN_KEY, String(Date.now() + 86400000));
+      localStorage.setItem('jv_mabon_game_code', promoCode);
+      // Регистрируем промокод как действительный
+      var codes = JSON.parse(localStorage.getItem('jv_valid_promos')||'{}');
+      codes[promoCode] = Date.now() + 3*86400000;
+      localStorage.setItem('jv_valid_promos', JSON.stringify(codes));
+    }
     showOverlay(
       '🌾 Урожай собран!',
       'Поймано: '+score+' предметов!<br><br>'+(hasPromo
-        ? '<span style="color:#ffd233">Промокод получен: <b>MABON2026</b></span><br><span style="font-size:11px;opacity:.6">Действует 3 дня</span>'
-        : '<span style="opacity:.6">Промокод уже был получен сегодня.<br>Возвращайся завтра!</span>'),
+        ? '<span style="color:#ffd233">Твой промокод:<br><b id="mg-promo-code" style="font-size:22px;letter-spacing:3px;cursor:pointer" onclick="var t=this;navigator.clipboard&&navigator.clipboard.writeText(t.textContent).then(function(){t.textContent=\'СКОПИРОВАНО ✓\'})">'+promoCode+'</b></span><br><span style="font-size:11px;opacity:.6">Нажми на код чтобы скопировать · 3 дня</span>'
+        : '<span style="opacity:.6">Промокод уже получен сегодня.<br>Код: <b>'+promoCode+'</b><br>Возвращайся завтра!</span>'),
       '▶ Играть снова', 'restartMabonGame()'
     );
-    if(hasPromo){
-      var expiry = Date.now() + 3*86400000;
-      localStorage.setItem(PROMO_EXPIRY_KEY, String(expiry));
-      localStorage.setItem(COOLDOWN_KEY, String(Date.now() + 86400000));
-    }
   }
 
   function gameOver(win){
@@ -2325,12 +2352,11 @@ window.applyPromo = applyPromo;
     modal.style.display = 'block';
     overlay.style.display = 'block';
     lockBodyScroll();
-    // инициализируем canvas по размеру окна
     canvas = document.getElementById('mabon-game-canvas');
     W = window.innerWidth;
-    H = window.innerHeight - 60; // минус шапка
+    H = window.innerHeight - 60;
     canvas.width = W; canvas.height = H;
-    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    canvas.style.cssText = 'display:block;width:'+W+'px;height:'+H+'px;';
     ctx = canvas.getContext('2d');
     cupW = Math.min(90, W*0.22);
     cupH = Math.floor(cupW * 12/11);
@@ -2357,6 +2383,10 @@ window.applyPromo = applyPromo;
   };
 
   window.restartMabonGame = function(){
+    // Только перезапускает игру — не сбрасывает промокод/кулдаун
+    clearInterval(gameTimer);
+    score = 0; lives = LIVES_START; items = []; _deck = [];
+    gameState = 'idle';
     document.getElementById('mg-overlay').style.display = 'none';
     startMabonGame();
   };
@@ -3326,9 +3356,6 @@ window.loadMoreCatalog = loadMoreCatalog;
   var COIN_KEY = 'jv_mabon_coins';
   var coinCount = parseInt(localStorage.getItem(COIN_KEY) || '0', 10);
   var MAX_COINS = 3;
-
-  function getAccent(){ return (_matrixMode === 'red') ? '#ff3232' : '#28ff6e'; }
-  function getDim(){ return (_matrixMode === 'red') ? 'rgba(255,50,50,0.35)' : 'rgba(40,255,110,0.35)'; }
 
   /* ── 8-bit предметы: пиксельные матрицы 7×7 ── */
   var ITEMS = [

@@ -2315,8 +2315,10 @@ window.markPromoUsed = markPromoUsed;
     var mat = side==='left' ? TL : TR;
     var rows = mat.length, cols = mat[0].length;
     // Масштабируем под реальный размер игры
-    var px = Math.max(2, Math.floor(W * 0.048 / cols * cols / cols));
-    px = Math.floor(W * 0.048 / 25);
+    // Масштаб: подбираем px чтобы дерево занимало ~22% ширины и ~75% высоты
+    var pxByW = Math.floor(W * 0.22 / cols);
+    var pxByH = Math.floor(H * 0.75 / rows);
+    var px = Math.min(pxByW, pxByH);
     if(px < 2) px = 2;
     var treeW = cols * px;
     var treeH = rows * px;

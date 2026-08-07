@@ -2148,15 +2148,16 @@ window.markPromoUsed = markPromoUsed;
   function drawTree(x, side){
     var acc = getAccent();
     var tw = Math.min(72, W*0.18);
-    var trunkBase = tw*0.28;   // ширина у основания
-    var trunkTop  = tw*0.18;   // ширина у кроны — сужается
+    var trunkBase = tw*0.28;
+    var trunkTop  = tw*0.18;
     var trunkTop_y = H*0.22;
     var trunkBot_y = H*0.96;
 
     ctx.save();
     ctx.fillStyle = acc;
+    ctx.strokeStyle = acc;
 
-    // ── Ствол — трапеция (сужается кверху) ──
+    // ── Ствол — трапеция ──
     ctx.globalAlpha = 0.55;
     ctx.beginPath();
     ctx.moveTo(x - trunkBase/2, trunkBot_y);
@@ -2166,24 +2167,58 @@ window.markPromoUsed = markPromoUsed;
     ctx.closePath();
     ctx.fill();
 
+    // ── Ветки — линии из ствола ──
+    ctx.lineWidth = Math.max(2, tw*0.06);
+    ctx.lineCap = 'round';
+    var branches = side === 'left' ? [
+      // от левого ствола ветки идут влево (внутрь экрана) и вверх
+      {fx:x+trunkTop*0.3, fy:H*0.24, tx:x+tw*1.8,  ty:H*0.12},  // длинная вправо
+      {fx:x+trunkTop*0.2, fy:H*0.30, tx:x+tw*2.2,  ty:H*0.22},  // средняя вправо
+      {fx:x-trunkTop*0.2, fy:H*0.26, tx:x-tw*0.6,  ty:H*0.14},  // маленькая влево
+      {fx:x+trunkTop*0.1, fy:H*0.38, tx:x+tw*1.4,  ty:H*0.30},  // нижняя вправо
+    ] : [
+      {fx:x-trunkTop*0.3, fy:H*0.24, tx:x-tw*1.8,  ty:H*0.12},
+      {fx:x-trunkTop*0.2, fy:H*0.30, tx:x-tw*2.2,  ty:H*0.22},
+      {fx:x+trunkTop*0.2, fy:H*0.26, tx:x+tw*0.6,  ty:H*0.14},
+      {fx:x-trunkTop*0.1, fy:H*0.38, tx:x-tw*1.4,  ty:H*0.30},
+    ];
+
+    branches.forEach(function(b, i){
+      ctx.globalAlpha = 0.45 - i*0.05;
+      ctx.lineWidth = Math.max(1.5, tw*0.06 - i*0.8);
+      ctx.beginPath();
+      ctx.moveTo(b.fx, b.fy);
+      // кривая ветка
+      var cpx = (b.fx + b.tx)/2 + (side==='left' ? tw*0.3 : -tw*0.3);
+      var cpy = b.fy - H*0.04;
+      ctx.quadraticCurveTo(cpx, cpy, b.tx, b.ty);
+      ctx.stroke();
+      // маленькие веточки на конце
+      ctx.globalAlpha = 0.3 - i*0.04;
+      ctx.lineWidth = Math.max(1, tw*0.03);
+      var spread = side==='left' ? tw*0.5 : -tw*0.5;
+      ctx.beginPath(); ctx.moveTo(b.tx, b.ty);
+      ctx.lineTo(b.tx + spread*0.6, b.ty - H*0.03); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(b.tx, b.ty);
+      ctx.lineTo(b.tx + spread*0.3, b.ty - H*0.04); ctx.stroke();
+    });
+
     // ── Крона — три перекрывающихся эллипса ──
+    ctx.fillStyle = acc;
     ctx.globalAlpha = 0.45;
-    // нижний (самый широкий)
     ctx.beginPath();
     ctx.ellipse(x, H*0.18, tw*0.72, H*0.10, 0, 0, Math.PI*2);
     ctx.fill();
-    // средний
     ctx.globalAlpha = 0.5;
     ctx.beginPath();
     ctx.ellipse(x, H*0.12, tw*0.55, H*0.09, 0, 0, Math.PI*2);
     ctx.fill();
-    // верхний (верхушка)
     ctx.globalAlpha = 0.45;
     ctx.beginPath();
     ctx.ellipse(x + tw*0.08, H*0.065, tw*0.35, H*0.065, 0, 0, Math.PI*2);
     ctx.fill();
 
-    // ── Дупла — овальные, чуть наклонённые ──
+    // ── Дупла — овальные ──
     var holes = getHoles();
     var myHoles = side==='left' ? [holes[0],holes[1]] : [holes[2],holes[3]];
     ctx.fillStyle = 'rgba(0,0,0,0.9)';
@@ -2192,7 +2227,6 @@ window.markPromoUsed = markPromoUsed;
       ctx.beginPath();
       ctx.ellipse(h.x, h.y, trunkBase*0.38, 9, 0.15, 0, Math.PI*2);
       ctx.fill();
-      // обводка дупла — лёгкое свечение
       ctx.strokeStyle = acc;
       ctx.globalAlpha = 0.3;
       ctx.lineWidth = 1;
@@ -2265,39 +2299,18 @@ window.markPromoUsed = markPromoUsed;
 
     ctx.clearRect(0,0,W,H);
 
-    // ── Фоновые кроны по центру (атмосфера) ──
-    ctx.save();
-    ctx.fillStyle = getAccent();
-    // большая раскидистая крона слева-центр
-    ctx.globalAlpha = 0.07;
-    ctx.beginPath();
-    ctx.ellipse(W*0.28, H*0.08, W*0.22, H*0.09, -0.15, 0, Math.PI*2);
-    ctx.fill();
-    // большая раскидистая крона справа-центр
-    ctx.beginPath();
-    ctx.ellipse(W*0.72, H*0.08, W*0.22, H*0.09, 0.15, 0, Math.PI*2);
-    ctx.fill();
-    // центральная ветка соединяет
-    ctx.globalAlpha = 0.04;
-    ctx.beginPath();
-    ctx.ellipse(W*0.5, H*0.055, W*0.18, H*0.055, 0, 0, Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-
-    // ── Название игры в стиле Денди ──
+    // ── Название игры — высоко вверху, не мешает игре ──
     ctx.save();
     ctx.textAlign = 'center';
-    ctx.globalAlpha = 0.18;
-    // тень / свечение
     ctx.fillStyle = getAccent();
     ctx.shadowColor = getAccent();
-    ctx.shadowBlur = 20;
-    ctx.font = 'bold ' + Math.floor(W*0.065) + 'px "VT323", monospace';
-    ctx.letterSpacing = '4px';
-    ctx.fillText('УРОЖАЙ МАБОН', W/2, H*0.085);
-    ctx.font = 'bold ' + Math.floor(W*0.05) + 'px "VT323", monospace';
-    ctx.globalAlpha = 0.12;
-    ctx.fillText('2  0  2  6', W/2, H*0.115);
+    ctx.shadowBlur = 10;
+    ctx.font = 'bold ' + Math.floor(W*0.055) + 'px "VT323", monospace';
+    ctx.globalAlpha = 0.15;
+    ctx.fillText('УРОЖАЙ МАБОНА', W/2, H*0.042);
+    ctx.font = Math.floor(W*0.04) + 'px "VT323", monospace';
+    ctx.globalAlpha = 0.1;
+    ctx.fillText('2 0 2 6', W/2, H*0.068);
     ctx.restore();
 
     // деревья

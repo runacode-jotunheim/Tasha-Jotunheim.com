@@ -676,7 +676,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   <!-- Оверлей старта/конца -->
   <div id="mg-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,4,1,0.92);text-align:center;padding:24px">
     <div id="mg-overlay-title" style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px">Урожай Мабона</div>
-    <div id="mg-overlay-text" style="font-size:13px;color:rgba(200,255,218,0.7);line-height:1.8;margin-bottom:24px">Лови предметы кубком.<br>Опасайся протухших яблок 🍎 — они сжигают жизни<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни</div>
+    <div id="mg-overlay-text" style="font-size:13px;color:rgba(200,255,218,0.7);line-height:1.8;margin-bottom:24px">Лови предметы кубком из дупел деревьев.<br><span style="color:#28ff6e">🟢 обычные — 1 очко</span>  <span style="color:#ffd233">🟡 монета — 2 очка</span>  <span style="color:#ff3232">❤ сердечко — 3 очка + жизнь</span><br>Опасайся протухших яблок 🍎 — они сжигают жизни<br><br><span style="color:#ffd233">Набери 20 очков за 30 сек = промокод на скидку</span><br><br>❤ ❤ ❤ — 3 жизни</div>
     <button id="mg-start-btn" onclick="startMabonGame()" style="background:var(--accent);color:#000;border:none;padding:12px 32px;font-family:'VT323',monospace;font-size:20px;letter-spacing:3px;border-radius:8px;cursor:pointer">▶ ИГРАТЬ</button>
     <div id="mg-win-actions" style="display:none;margin-top:14px;display:none;flex-direction:column;gap:10px;width:100%;max-width:280px">
       <button onclick="closeMabonGame();openCart();" style="background:var(--accent);color:#000;border:none;padding:11px 0;font-family:'VT323',monospace;font-size:18px;letter-spacing:2px;border-radius:8px;cursor:pointer;width:100%">🛒 Использовать промокод</button>
@@ -2296,19 +2296,23 @@ window.markPromoUsed = markPromoUsed;
       if(it.y + pw/2 > catchY && it.y - pw/2 < catchY + cupH &&
          it.x > cupX - cupW/2 - pw/2 && it.x < cupX + cupW/2 + pw/2){
         if(it.def.heal){
+          // сердечко: +3 очка всегда + лечение если не фул
+          score += 3;
           if(lives < LIVES_START){
             lives++;
-            updateHUD();
-            // вспышка розовым
+            // вспышка розовым при лечении
             ctx.save(); ctx.fillStyle='#ff3232'; ctx.globalAlpha=0.35;
             ctx.fillRect(0,0,W,H); ctx.restore();
             if(navigator.vibrate) navigator.vibrate([30,20,30]);
           }
+          updateHUD();
+          if(score >= GOAL) gameWin();
           return false;
         } else if(it.def.bad){
           loseLife();
         } else {
-          score++;
+          // монета +2, остальные +1
+          score += (it.def.id === 'coin') ? 2 : 1;
           updateHUD();
           if(score >= GOAL) gameWin();
         }
@@ -2507,7 +2511,7 @@ window.markPromoUsed = markPromoUsed;
     gameState = 'idle';
     showOverlay(
       'Урожай Мабона',
-      'Лови предметы кубком из дупел деревьев.<br>Опасайся протухших яблок 🍎 — они сжигают жизни<br><span style="color:#ffd233">20 пойманных за 30 сек = промокод</span><br><br>❤ ❤ ❤ — 3 жизни',
+      'Лови предметы кубком из дупел деревьев.<br><span style="color:#28ff6e">🟢 обычные — 1 очко</span>  <span style="color:#ffd233">🟡 монета — 2 очка</span>  <span style="color:#ff3232">❤ сердечко — 3 очка + жизнь</span><br>Опасайся протухших яблок 🍎 — они сжигают жизни<br><br><span style="color:#ffd233">Набери '+GOAL+' очков за 30 сек = промокод на скидку</span><br><br>❤ ❤ ❤ — 3 жизни',
       '▶ ИГРАТЬ', 'startMabonGame()', false
     );
   };

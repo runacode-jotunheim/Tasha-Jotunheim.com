@@ -147,8 +147,8 @@ body:active .cursor-sprite{transform:scale(0.88)}
 .about-photo-slot img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;filter:saturate(1.05)}
 .about-text{font-size:13px;line-height:2;color:#c8ffda}
 .new-collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-@media(min-width:1440px){.new-collection-grid{grid-template-columns:repeat(4,1fr);gap:24px}}
-@media(max-width:700px){.new-collection-grid{grid-template-columns:1fr;max-width:340px}}
+@media(min-width:1440px){.new-collection-grid{grid-template-columns:repeat(6,1fr);gap:16px}}
+@media(max-width:700px){.new-collection-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
 .new-card{position:relative;cursor:none;overflow:hidden}
 .new-card-badge{position:absolute;top:10px;left:10px;z-index:6;font-family:'VT323',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#000;background:var(--accent);padding:4px 10px;border-radius:5px;box-shadow:0 0 10px rgba(0,255,65,0.4)}
 .new-card-img{width:100%;aspect-ratio:2/3;overflow:hidden;background:rgba(0,20,8,0.6)}
@@ -915,9 +915,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     grid.innerHTML = [
       {id:31, img:'ogon-probuzhdeniya.jpg', col:'Огненная Жатва', name:'Огонь пробуждения', price:'7\u00a0800 ₽'},
       {id:33, img:'ognenny-feniks.jpg',     col:'Огненная Жатва', name:'Огненный феникс',   price:'13\u00a0000 ₽'},
-      {id:32, img:'put-sily.jpg',           col:'Огненная Жатва', name:'Путь силы',          price:'10\u00a0000 ₽'}
+      {id:32, img:'put-sily.jpg',           col:'Огненная Жатва', name:'Путь силы',          price:'10\u00a0000 ₽'},
+      {id:28, img:'lev-sredi-lyudey.jpg',   col:'Врата Льва',     name:'Лев среди людей',    price:'10\u00a0000 ₽'},
+      {id:29, img:'strazh-serdtsa.jpg',     col:'Врата Льва',     name:'Страж сердца',       price:'15\u00a0000 ₽'},
+      {id:30, img:'put-solntsa.jpg',        col:'Врата Льва',     name:'Путь Солнца',        price:'8\u00a0800 ₽'}
     ].map(function(it, i){
-      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.08)+'s" onclick="openProductModal('+it.id+')">'
+      return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s" onclick="openProductModal('+it.id+')">'
         +'<div class="new-card-badge">Сезонная</div>'
         +'<div class="new-card-img"><img src="assets/img/products/'+it.img+'" alt="'+it.name+'" loading="lazy"></div>'
         +'<div class="new-card-info"><div class="new-card-collection">'+it.col+'</div>'
@@ -951,39 +954,32 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <div class="scroll-nav-wrap">
       <button class="scroll-nav-arrow left" onclick="scrollByAmount('topSalesScroll',-1)" aria-label="Прокрутить влево">&#10094;</button>
       <div class="top-sales-scroll" id="topSalesScroll">
-        <div class="top-sale-card glass reveal" onclick="openProductModal(1)">
-          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
-          <div class="top-sale-info">
-            <div class="top-sale-name">Йотун Вайб</div>
-            <div class="top-sale-price">7 900 ₽</div>
-          </div>
-        </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(8)">
+        <div class="top-sale-card glass reveal" onclick="openProductModal(8)">
           <div class="top-sale-img"><img src="assets/img/products/elf-zaschita.jpg" alt="Эльфийская защита" loading="lazy"></div>
           <div class="top-sale-info">
             <div class="top-sale-name">Эльфийская защита</div>
-            <div class="top-sale-price">7 800 ₽</div>
+            <div class="top-sale-price">7&nbsp;800 ₽</div>
           </div>
         </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(7)">
+        <div class="top-sale-card glass reveal" style="transition-delay:.06s" onclick="openProductModal(7)">
           <div class="top-sale-img"><img src="assets/img/products/vozvraschenie-k-zhizni.jpg" alt="Возвращение к жизни" loading="lazy"></div>
           <div class="top-sale-info">
             <div class="top-sale-name">Возвращение к жизни</div>
-            <div class="top-sale-price">8 800 ₽</div>
+            <div class="top-sale-price">8&nbsp;800 ₽</div>
           </div>
         </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(9)">
-          <div class="top-sale-img"><img src="assets/img/products/osoznannaya-udacha.jpg" alt="Осознанная удача" loading="lazy"></div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.12s" onclick="openProductModal(1)">
+          <div class="top-sale-img"><img src="assets/img/products/jotun-vibe.jpg" alt="Йотун Вайб" loading="lazy"></div>
           <div class="top-sale-info">
-            <div class="top-sale-name">Осознанная удача</div>
-            <div class="top-sale-price">13 000 ₽</div>
+            <div class="top-sale-name">Йотун Вайб</div>
+            <div class="top-sale-price">7&nbsp;900 ₽</div>
           </div>
         </div>
-        <div class="top-sale-card glass reveal" style="transition-delay:.24s" onclick="openProductModal(11)">
-          <div class="top-sale-img"><img src="assets/img/products/alaya-vedma.jpg" alt="Алая ведьма" loading="lazy"></div>
+        <div class="top-sale-card glass reveal" style="transition-delay:.18s" onclick="openProductModal(28)">
+          <div class="top-sale-img"><img src="assets/img/products/lev-sredi-lyudey.jpg" alt="Лев среди людей" loading="lazy"></div>
           <div class="top-sale-info">
-            <div class="top-sale-name">Алая ведьма</div>
-            <div class="top-sale-price">8 800 ₽</div>
+            <div class="top-sale-name">Лев среди людей</div>
+            <div class="top-sale-price">10&nbsp;000 ₽</div>
           </div>
         </div>
       </div>

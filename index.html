@@ -2331,7 +2331,15 @@ window.markPromoUsed = markPromoUsed;
     // Левое дерево: правый край у x+treeW/2, т.е. прижато к левому краю
     // Правое дерево: левый край у x-treeW/2, прижато к правому краю
     var ox = side==='left' ? 0 : W - treeW;
-    var oy = Math.floor(H * 0.42 - treeH); // корни на 42% высоты, крона уходит вверх
+    var oy = 0; // верхушка от самого верха
+    // Масштабируем высоту чтобы нижний край дерева был на 42% экрана
+    var targetH = Math.floor(H * 0.42);
+    if(treeH < targetH){
+      px = Math.floor(targetH / rows);
+      treeW = cols * px;
+      treeH = rows * px;
+      ox = side==='left' ? 0 : W - treeW;
+    }
 
     ctx.save();
     ctx.globalAlpha = 0.38;

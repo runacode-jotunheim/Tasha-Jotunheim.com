@@ -2186,8 +2186,9 @@ window.markPromoUsed = markPromoUsed;
 
   /* ── Рисование предмета ── */
   function drawItem(it){
-    var acc = getAccent();
-    var color = it.def.color || acc;
+    // Цвета фиксированные — не зависят от темы
+    var color = it.def.color       // коричневый для тухлого яблока
+      || (it.def.id === 'coin' ? '#ffd233' : '#28ff6e'); // монета — золото, остальные — зелёный
     var px = 4;
     ctx.save();
     ctx.fillStyle = color;
@@ -2259,6 +2260,18 @@ window.markPromoUsed = markPromoUsed;
       it.x += it.vx * dt/1000;
       it.y += it.vy * dt/1000;
       it.angle += it.angularV * dt/1000;
+      // отскок от стенок экрана
+      var pw = it.def.pixels[0].length * 4;
+      var r = pw / 2;
+      if(it.x - r < 0){
+        it.x = r;
+        it.vx = Math.abs(it.vx) * 0.7; // отскок с небольшим затуханием
+        it.angularV *= -0.7;
+      } else if(it.x + r > W){
+        it.x = W - r;
+        it.vx = -Math.abs(it.vx) * 0.7;
+        it.angularV *= -0.7;
+      }
       // поимка кубком
       var pw = it.def.pixels[0].length * 4;
       if(it.y + pw/2 > catchY && it.y - pw/2 < catchY + cupH &&
@@ -2272,9 +2285,8 @@ window.markPromoUsed = markPromoUsed;
         }
         return false;
       }
-      // упал ниже экрана или вышел за края
+      // упал ниже экрана — удаляем
       if(it.y > H + 20) return false;
-      if(it.x < -30 || it.x > W + 30) return false;
       drawItem(it);
       return true;
     });

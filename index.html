@@ -2485,8 +2485,8 @@ window.markPromoUsed = markPromoUsed;
     canvas.width = W; canvas.height = H;
     canvas.style.cssText = 'display:block;width:'+W+'px;height:'+H+'px;';
     ctx = canvas.getContext('2d');
-    cupW = Math.min(90, W*0.22);
-    cupH = Math.floor(cupW * 12/11);
+    cupW = Math.min(110, W*0.28);  // шире
+    cupH = Math.floor(cupW * 9/13); // ниже (блюдце шире относительно высоты)
     cupSpeed = W * 0.06;
     cupX = W/2;
     initControls();

@@ -2147,28 +2147,57 @@ window.markPromoUsed = markPromoUsed;
   /* ── Рисование дерева ── */
   function drawTree(x, side){
     var acc = getAccent();
-    var tw = Math.min(70, W*0.18);
-    var trunkW = tw*0.35, trunkX = x - trunkW/2;
+    var tw = Math.min(72, W*0.18);
+    var trunkBase = tw*0.28;   // ширина у основания
+    var trunkTop  = tw*0.18;   // ширина у кроны — сужается
+    var trunkTop_y = H*0.22;
+    var trunkBot_y = H*0.96;
 
     ctx.save();
-    // ствол
     ctx.fillStyle = acc;
-    ctx.globalAlpha = 0.5;
-    ctx.fillRect(trunkX, H*0.2, trunkW, H*0.75);
 
-    // крона (овал из пикселей)
-    ctx.globalAlpha = 0.6;
+    // ── Ствол — трапеция (сужается кверху) ──
+    ctx.globalAlpha = 0.55;
     ctx.beginPath();
-    ctx.ellipse(x, H*0.12, tw*0.65, H*0.14, 0, 0, Math.PI*2);
+    ctx.moveTo(x - trunkBase/2, trunkBot_y);
+    ctx.lineTo(x + trunkBase/2, trunkBot_y);
+    ctx.lineTo(x + trunkTop/2,  trunkTop_y);
+    ctx.lineTo(x - trunkTop/2,  trunkTop_y);
+    ctx.closePath();
     ctx.fill();
 
-    // дупла (тёмные прямоугольники)
-    ctx.fillStyle = '#000';
-    ctx.globalAlpha = 0.85;
+    // ── Крона — три перекрывающихся эллипса ──
+    ctx.globalAlpha = 0.45;
+    // нижний (самый широкий)
+    ctx.beginPath();
+    ctx.ellipse(x, H*0.18, tw*0.72, H*0.10, 0, 0, Math.PI*2);
+    ctx.fill();
+    // средний
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    ctx.ellipse(x, H*0.12, tw*0.55, H*0.09, 0, 0, Math.PI*2);
+    ctx.fill();
+    // верхний (верхушка)
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    ctx.ellipse(x + tw*0.08, H*0.065, tw*0.35, H*0.065, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // ── Дупла — овальные, чуть наклонённые ──
     var holes = getHoles();
     var myHoles = side==='left' ? [holes[0],holes[1]] : [holes[2],holes[3]];
+    ctx.fillStyle = 'rgba(0,0,0,0.9)';
+    ctx.globalAlpha = 1;
     myHoles.forEach(function(h){
-      ctx.fillRect(h.x-trunkW*0.45, h.y-8, trunkW*0.9, 16);
+      ctx.beginPath();
+      ctx.ellipse(h.x, h.y, trunkBase*0.38, 9, 0.15, 0, Math.PI*2);
+      ctx.fill();
+      // обводка дупла — лёгкое свечение
+      ctx.strokeStyle = acc;
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     });
 
     ctx.restore();

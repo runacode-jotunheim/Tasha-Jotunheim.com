@@ -1003,10 +1003,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
         <div class="cat-name">Nail Amulets</div>
         <div class="cat-count">2 набора</div>
       </div>
-      <div class="cat-tile glass reveal" id="mabon-game-tile" style="display:none;transition-delay:.24s;border-color:rgba(0,255,65,0.4)" onclick="openMabonGame()">
-        <span class="cat-icon" style="animation:mabon-glow 2s ease-in-out infinite">⚡</span>
-        <div class="cat-name">Поймай урожай</div>
-        <div class="cat-count" style="color:var(--accent)">Сыграть</div>
+      <div class="cat-tile glass reveal" style="opacity:.5;cursor:default;transition-delay:.24s">
+        <span class="cat-icon">✦</span>
+        <div class="cat-name">Создать свой</div>
+        <div class="cat-count">скоро</div>
       </div>
     </div>
   </div>
@@ -2735,8 +2735,6 @@ function getPromoDiscount(sum){
   if(hw) hw.style.display = 'none';
   var hdr = document.getElementById('mabon-header');
   if(hdr) hdr.style.display = 'block';
-  var tile = document.getElementById('mabon-game-tile');
-  if(tile) tile.style.display = '';
   var heroBtn = document.getElementById('hero-mabon-btn');
   if(heroBtn) heroBtn.style.display = '';
 })();

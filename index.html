@@ -2648,9 +2648,9 @@ window.markPromoUsed = markPromoUsed;
     lockBodyScroll();
     canvas = document.getElementById('mabon-game-canvas');
     // На ПК ограничиваем ширину — игра как мобильное окно по центру
-    var maxW = 480;
+    var maxW = 480, maxH = Math.floor(window.innerHeight * 0.88);
     W = Math.min(window.innerWidth, maxW);
-    H = window.innerHeight - 60;
+    H = Math.min(window.innerHeight - 60, maxH);
     // Центрируем canvas на широком экране
     var mleft = window.innerWidth > maxW ? Math.floor((window.innerWidth - maxW)/2) : 0;
     canvas.width = W; canvas.height = H;

@@ -2643,16 +2643,27 @@ window.markPromoUsed = markPromoUsed;
   window.openMabonGame = function(){
     var modal = document.getElementById('mabon-game-modal');
     var overlay = document.getElementById('mabon-game-overlay');
-    modal.style.display = 'block';
-    overlay.style.display = 'block';
+    var isDesktop = window.innerWidth > 600;
+
+    if(isDesktop){
+      // ПК: маленькое окно по центру с затемнением вокруг
+      var GW = 480, GH = 700;
+      modal.style.cssText = 'display:block;position:fixed;z-index:801;background:rgba(0,4,1,0.98);overflow:hidden;'
+        + 'width:'+GW+'px;height:'+GH+'px;'
+        + 'left:50%;top:50%;transform:translate(-50%,-50%);'
+        + 'border:1px solid rgba(0,255,65,0.3);border-radius:12px;box-shadow:0 0 60px rgba(0,0,0,0.9)';
+      overlay.style.display = 'block';
+      W = GW; H = GH - 60;
+    } else {
+      // Мобайл: fullscreen как было
+      modal.style.cssText = 'display:block;position:fixed;inset:0;z-index:801;background:rgba(0,4,1,0.98);overflow:hidden;';
+      overlay.style.display = 'block';
+      W = window.innerWidth;
+      H = window.innerHeight - 60;
+    }
+
     lockBodyScroll();
     canvas = document.getElementById('mabon-game-canvas');
-    // На ПК ограничиваем ширину — игра как мобильное окно по центру
-    var maxW = 480;
-    W = Math.min(window.innerWidth, maxW);
-    H = window.innerHeight - 60;
-    // Центрируем canvas на широком экране
-    canvas.style.marginLeft = window.innerWidth > maxW ? Math.floor((window.innerWidth - maxW)/2)+'px' : '0';
     canvas.width = W; canvas.height = H;
     canvas.style.cssText = 'display:block;width:'+W+'px;height:'+H+'px;';
     ctx = canvas.getContext('2d');

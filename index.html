@@ -2323,8 +2323,7 @@ window.markPromoUsed = markPromoUsed;
     ];
     var dw = dish[0].length;
     var dh = dish.length;
-    var BASKET_OFFSET = 36;
-    var oy = H - dh*px - BASKET_OFFSET;
+    var oy = H - dh*px - 8; // прижат к низу с отступом
     ctx.save();
     ctx.fillStyle = '#28ff6e'; // всегда ярко-зелёный, не зависит от темы
     ctx.shadowColor = '#28ff6e';
@@ -2423,7 +2422,7 @@ window.markPromoUsed = markPromoUsed;
     }
 
     // обновление предметов
-    var catchY = H - cupH - BASKET_OFFSET;
+    var catchY = H - cupH - 6;
     items = items.filter(function(it){
       it.vy += 280 * dt/1000; // гравитация
       it.x += it.vx * dt/1000;

@@ -19,7 +19,6 @@
     var last=i===arr.length-1&&it.id===34;
     var ext=last?'grid-column:1/-1;max-width:480px;margin:0 auto;width:100%':'';
     return '<div class="new-card glass reveal" style="transition-delay:'+(i*0.06)+'s;'+ext+'" onclick="openProductModal('+it.id+')">'
-      +'<div class="new-card-badge">Сезонная</div>'
       +'<div class="new-card-img"><img src="assets/img/products/'+it.img+'" alt="'+it.name+'" loading="lazy"></div>'
       +'<div class="new-card-info"><div class="new-card-collection">'+it.col+'</div>'
       +'<div class="new-card-name">'+it.name+'</div>'

@@ -2652,12 +2652,9 @@ window.markPromoUsed = markPromoUsed;
     W = Math.min(window.innerWidth, maxW);
     H = window.innerHeight - 60;
     // Центрируем canvas на широком экране
-    var mleft = window.innerWidth > maxW ? Math.floor((window.innerWidth - maxW)/2) : 0;
+    canvas.style.marginLeft = window.innerWidth > maxW ? Math.floor((window.innerWidth - maxW)/2)+'px' : '0';
     canvas.width = W; canvas.height = H;
-    canvas.style.cssText = 'display:block;width:'+W+'px;height:'+H+'px;margin-left:'+mleft+'px;';
-    // Центрируем шапку игры
-    var hdr = document.getElementById('mg-header');
-    if(hdr){ hdr.style.maxWidth = maxW+'px'; hdr.style.marginLeft = mleft+'px'; }
+    canvas.style.cssText = 'display:block;width:'+W+'px;height:'+H+'px;';
     ctx = canvas.getContext('2d');
     cupW = Math.min(110, W*0.28);  // шире
     cupH = Math.floor(cupW * 9/13); // ниже (блюдце шире относительно высоты)

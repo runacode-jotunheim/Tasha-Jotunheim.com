@@ -338,7 +338,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 
 <!-- Модалка быстрой покупки нейл-амулетов -->
 <div id="nail-buy-overlay" style="display:none;position:fixed;inset:0;z-index:902;background:rgba(0,4,1,0.92)" onclick="closeNailModal()"></div>
-<div id="nail-buy-modal" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:903;width:min(85vw,320px);background:#060d06;border:1px solid var(--accent);border-radius:16px;padding:16px;box-sizing:border-box;max-height:75vh;flex-direction:column">
+<div id="nail-buy-modal" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:903;width:min(85vw,320px);background:#060d06;border:1px solid var(--accent);border-radius:16px;padding:16px;box-sizing:border-box;max-height:75vh">
   <button onclick="closeNailModal()" style="position:absolute;top:12px;right:12px;background:none;border:1px solid var(--accent);color:var(--accent);font-size:18px;cursor:pointer;border-radius:50%;width:36px;height:36px;line-height:1;display:flex;align-items:center;justify-content:center;z-index:1">✕</button>
   <div style="overflow-y:auto;flex:1">
     <img id="nail-modal-img" src="" alt="" style="width:100%;border-radius:10px;margin-bottom:12px;max-height:220px;object-fit:cover">
@@ -1349,7 +1349,9 @@ function openNailModal(type){
     ? '24 руны Старшего Футарка. Каждая руна — отдельный амулет для ногтя. Миниатюрная защита, сила и намерение — всегда с тобой.'
     : '13 Старших Арканов Таро. Носи ту карту, энергия которой нужна прямо сейчас. Лаконично, мощно, стильно.';
   document.getElementById('nail-buy-overlay').style.display = 'block';
-  document.getElementById('nail-buy-modal').style.display = 'flex';
+  var m = document.getElementById('nail-buy-modal');
+  m.style.display = 'block';
+  m.style.overflow = 'auto';
 }
 function closeNailModal(){
   document.body.style.overflow = '';

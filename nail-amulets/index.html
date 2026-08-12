@@ -303,17 +303,29 @@ body:active .cursor-sprite{transform:scale(0.88)}
   <p class="hero-nail-sub">Рунические и таро-амулеты для ногтей — миниатюрная магия на кончиках пальцев. Пройди ниже и узнай, какая энергия нужна тебе прямо сейчас.</p>
 
   <div class="hero-nail-photos">
-    <div class="hero-nail-photo-item">
+    <div class="hero-nail-photo-item" onclick="openNailModal('rune')" style="cursor:pointer">
       <div class="hero-nail-photo-slot"><img src="../assets/img/nail-amulets/runes-set.jpg" alt="Набор нейл-амулетов — Старший Футарк, руны" loading="lazy" draggable="false" oncontextmenu="return false"></div>
       <div class="hero-nail-photo-caption">Старший Футарк · Руны</div>
     </div>
-    <div class="hero-nail-photo-item">
+    <div class="hero-nail-photo-item" onclick="openNailModal('tarot')" style="cursor:pointer">
       <div class="hero-nail-photo-slot"><img src="../assets/img/nail-amulets/tarot-set.jpg" alt="Набор нейл-амулетов — Старшие Арканы, таро" loading="lazy" draggable="false" oncontextmenu="return false"></div>
       <div class="hero-nail-photo-caption">Старшие Арканы · Таро</div>
     </div>
   </div>
   <button class="hero-nail-start-btn" onclick="openOracleModal()">&#9658; Подобрать амулет</button>
 </div>
+
+<!-- Модалка быстрой покупки нейл-амулетов -->
+<div id="nail-buy-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,4,1,0.92)" onclick="closeNailModal()"></div>
+<div id="nail-buy-modal" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:901;width:min(90vw,420px);background:#060d06;border:1px solid var(--accent);border-radius:16px;padding:24px;box-sizing:border-box">
+  <button onclick="closeNailModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--accent);font-size:20px;cursor:pointer">✕</button>
+  <img id="nail-modal-img" src="" alt="" style="width:100%;border-radius:10px;margin-bottom:16px">
+  <div id="nail-modal-title" style="font-family:'Cinzel',serif;font-size:18px;color:var(--accent);margin-bottom:8px"></div>
+  <div id="nail-modal-desc" style="font-size:13px;color:#ccc;line-height:1.6;margin-bottom:16px"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--accent)">1 000 ₽</span>
+    <button onclick="buyNailFromModal()" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:12px 24px;font-family:'Cinzel',serif;font-size:14px;cursor:pointer;font-weight:700">► В корзину</button>
+  </div>
 </div>
 
 <canvas id="portalFlashCanvas"></canvas>
@@ -1287,7 +1299,38 @@ function removeFromCart(i){
   renderCart();
 }
 renderCart();
-window.addToCart = addToCart; window.removeFromCart = removeFromCart;
+var _nailModalType = null;
+function openNailModal(type){
+  _nailModalType = type;
+  var isRune = type === 'rune';
+  document.getElementById('nail-modal-img').src = isRune
+    ? '../assets/img/nail-amulets/runes-set.jpg'
+    : '../assets/img/nail-amulets/tarot-set.jpg';
+  document.getElementById('nail-modal-title').textContent = isRune
+    ? 'Набор нейл-амулетов — Руны'
+    : 'Набор нейл-амулетов — Таро';
+  document.getElementById('nail-modal-desc').textContent = isRune
+    ? '24 руны Старшего Футарка. Каждая руна — отдельный амулет для ногтя. Миниатюрная защита, сила и намерение — всегда с тобой.'
+    : '13 Старших Арканов Таро. Носи ту карту, энергия которой нужна прямо сейчас. Лаконично, мощно, стильно.';
+  document.getElementById('nail-buy-overlay').style.display = 'block';
+  document.getElementById('nail-buy-modal').style.display = 'block';
+}
+function closeNailModal(){
+  document.getElementById('nail-buy-overlay').style.display = 'none';
+  document.getElementById('nail-buy-modal').style.display = 'none';
+}
+function buyNailFromModal(){
+  var isRune = _nailModalType === 'rune';
+  addToCart(
+    isRune ? 'nail-set-rune' : 'nail-set-tarot',
+    isRune ? 'Набор нейл-амулетов (Руны)' : 'Набор нейл-амулетов (Таро)',
+    1000, isRune ? '\u16A6' : '\uD83C\uDCCF', 1
+  );
+  closeNailModal();
+}
+window.openNailModal = openNailModal;
+window.closeNailModal = closeNailModal;
+window.buyNailFromModal = buyNailFromModal;
 
 // Барабаны количества (0-5) для наборов Руны/Таро на финальном экране оракула.
 var amuletQty = {rune:0, tarot:0};

@@ -312,19 +312,40 @@ body:active .cursor-sprite{transform:scale(0.88)}
       <div class="hero-nail-photo-caption">Старшие Арканы · Таро</div>
     </div>
   </div>
-  <button class="hero-nail-start-btn" onclick="openOracleModal()">&#9658; Подобрать амулет</button>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button class="hero-nail-start-btn" onclick="openOracleModal()">&#9658; Подобрать амулет</button>
+    <button class="hero-nail-start-btn" onclick="openNailBuyChoice()" style="background:transparent;border:1px solid var(--accent);color:var(--accent)">&#9658; Приобрести амулеты</button>
+  </div>
 </div><!-- /pageCompressWrap -->
 
+<!-- Модалка выбора типа набора -->
+<div id="nail-choice-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,4,1,0.85)" onclick="closeNailChoice()"></div>
+<div id="nail-choice-modal" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:901;width:min(88vw,360px);background:#060d06;border:1px solid var(--accent);border-radius:16px;padding:24px;box-sizing:border-box;text-align:center">
+  <button onclick="closeNailChoice()" style="position:absolute;top:10px;right:12px;background:none;border:1px solid var(--accent);color:var(--accent);font-size:14px;cursor:pointer;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center">✕</button>
+  <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--accent);margin-bottom:20px">Выберите набор</div>
+  <div style="display:flex;gap:12px">
+    <button onclick="openNailModal('rune')" style="flex:1;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:16px 8px;font-family:'Cinzel',serif;font-size:13px;cursor:pointer">
+      <div style="font-size:24px;margin-bottom:6px">ᚦ</div>
+      Руны<br><span style="font-size:11px;opacity:0.7">24 руны Футарка</span>
+    </button>
+    <button onclick="openNailModal('tarot')" style="flex:1;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:16px 8px;font-family:'Cinzel',serif;font-size:13px;cursor:pointer">
+      <div style="font-size:24px;margin-bottom:6px">🃏</div>
+      Таро<br><span style="font-size:11px;opacity:0.7">13 Старших Арканов</span>
+    </button>
+  </div>
+  <div style="margin-top:12px;font-size:12px;color:#888">1 000 ₽ за набор</div>
+</div>
+
 <!-- Модалка быстрой покупки нейл-амулетов -->
-<div id="nail-buy-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,4,1,0.92)" onclick="closeNailModal()"></div>
-<div id="nail-buy-modal" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:901;width:min(90vw,420px);background:#060d06;border:1px solid var(--accent);border-radius:16px;padding:24px;box-sizing:border-box">
-  <button onclick="closeNailModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:var(--accent);font-size:20px;cursor:pointer">✕</button>
-  <img id="nail-modal-img" src="" alt="" style="width:100%;border-radius:10px;margin-bottom:16px">
-  <div id="nail-modal-title" style="font-family:'Cinzel',serif;font-size:18px;color:var(--accent);margin-bottom:8px"></div>
-  <div id="nail-modal-desc" style="font-size:13px;color:#ccc;line-height:1.6;margin-bottom:16px"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:20px;color:var(--accent)">1 000 ₽</span>
-    <button onclick="buyNailFromModal()" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:12px 24px;font-family:'Cinzel',serif;font-size:14px;cursor:pointer;font-weight:700">► В корзину</button>
+<div id="nail-buy-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,4,1,0.85)" onclick="closeNailModal()"></div>
+<div id="nail-buy-modal" style="display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:901;width:min(88vw,380px);background:#060d06;border:1px solid var(--accent);border-radius:16px;padding:20px;box-sizing:border-box;max-height:80vh;overflow-y:auto">
+  <button onclick="closeNailModal()" style="position:absolute;top:10px;right:12px;background:none;border:1px solid var(--accent);color:var(--accent);font-size:16px;cursor:pointer;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+  <img id="nail-modal-img" src="" alt="" style="width:100%;border-radius:10px;margin-bottom:12px;max-height:220px;object-fit:cover">
+  <div id="nail-modal-title" style="font-family:'Cinzel',serif;font-size:16px;color:var(--accent);margin-bottom:6px"></div>
+  <div id="nail-modal-desc" style="font-size:12px;color:#ccc;line-height:1.5;margin-bottom:14px"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--accent);white-space:nowrap">1 000 ₽</span>
+    <button onclick="buyNailFromModal()" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px 20px;font-family:'Cinzel',serif;font-size:13px;cursor:pointer;font-weight:700;white-space:nowrap">► В корзину</button>
   </div>
 </div>
 
@@ -1300,7 +1321,16 @@ function removeFromCart(i){
 }
 renderCart();
 var _nailModalType = null;
+function openNailBuyChoice(){
+  document.getElementById('nail-choice-overlay').style.display = 'block';
+  document.getElementById('nail-choice-modal').style.display = 'block';
+}
+function closeNailChoice(){
+  document.getElementById('nail-choice-overlay').style.display = 'none';
+  document.getElementById('nail-choice-modal').style.display = 'none';
+}
 function openNailModal(type){
+  closeNailChoice();
   _nailModalType = type;
   var isRune = type === 'rune';
   document.getElementById('nail-modal-img').src = isRune
@@ -1331,6 +1361,8 @@ function buyNailFromModal(){
 window.openNailModal = openNailModal;
 window.closeNailModal = closeNailModal;
 window.buyNailFromModal = buyNailFromModal;
+window.openNailBuyChoice = openNailBuyChoice;
+window.closeNailChoice = closeNailChoice;
 
 // Барабаны количества (0-5) для наборов Руны/Таро на финальном экране оракула.
 var amuletQty = {rune:0, tarot:0};

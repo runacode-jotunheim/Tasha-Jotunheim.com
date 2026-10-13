@@ -30,6 +30,7 @@ async function sendMail(to, subject, text, html) {
   const fromName = process.env.MAIL_FROM_NAME || 'Артефакты Йотунхейм';
   await getTransport().sendMail({
     from: `"${fromName}" <${process.env.SMTP_USER}>`,
+    replyTo: process.env.MAIL_REPLY_TO || undefined,
     to, subject, text, html,
   });
   return true;

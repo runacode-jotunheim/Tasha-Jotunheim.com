@@ -1,8 +1,14 @@
-// Telegram: тот же бот, что шлёт уведомления о заказах в служебный чат.
-// Добавлено: личные сообщения клиентам (код входа, бонусы) и приём /start link_<токен> через вебхук.
+// Telegram: два бота.
+// TELEGRAM_BOT_TOKEN — служебный бот (уведомления о заказах в чат Таши).
+// TELEGRAM_CLIENT_BOT_TOKEN — клиентский бот @Jotunheimgame_bot (коды входа, бонусы, привязка /start link_<токен>).
+// Если клиентский не задан — всё идёт через служебный, как раньше.
 
-async function api(method, payload) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
+function clientToken() {
+  return process.env.TELEGRAM_CLIENT_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN;
+}
+
+async function api(method, payload, token) {
+  token = token || clientToken();
   if (!token) return null;
   const MAX = 3;
   for (let attempt = 1; attempt <= MAX; attempt++) {
@@ -34,13 +40,15 @@ function sendTo(chatId, text, extra) {
 
 // Служебный чат Таши (как раньше).
 function notifyAdmin(text) {
-  return sendTo(process.env.TELEGRAM_CHAT_ID, text);
+  const chat = process.env.TELEGRAM_CHAT_ID;
+  if (!chat || !process.env.TELEGRAM_BOT_TOKEN) return Promise.resolve(null);
+  return api('sendMessage', { chat_id: chat, text }, process.env.TELEGRAM_BOT_TOKEN);
 }
 
 async function setupWebhook() {
   const url = process.env.TELEGRAM_WEBHOOK_URL;
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
-  if (!url || !secret || !process.env.TELEGRAM_BOT_TOKEN) return;
+  if (!url || !secret || !clientToken()) return;
   const r = await api('setWebhook', { url, secret_token: secret, allowed_updates: ['message'] });
   if (r) console.log('[telegram] вебхук установлен:', url);
 }

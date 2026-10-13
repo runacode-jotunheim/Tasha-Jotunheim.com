@@ -287,9 +287,72 @@ function sizeCanvas(w,h){
   canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
   canvas.width = Math.round(w*DPR); canvas.height = Math.round(h*DPR);
 }
+function artHeart(c,x,y,w,h,full){
+  c.beginPath();
+  c.moveTo(x + w/2, y + h*0.92);
+  c.bezierCurveTo(x - w*0.05, y + h*0.55, x + w*0.02, y + h*0.02, x + w*0.27, y + h*0.06);
+  c.bezierCurveTo(x + w*0.4, y + h*0.08, x + w*0.47, y + h*0.18, x + w/2, y + h*0.28);
+  c.bezierCurveTo(x + w*0.53, y + h*0.18, x + w*0.6, y + h*0.08, x + w*0.73, y + h*0.06);
+  c.bezierCurveTo(x + w*0.98, y + h*0.02, x + w*1.05, y + h*0.55, x + w/2, y + h*0.92);
+  c.closePath();
+  if(full){
+    var g = c.createRadialGradient(x + w*0.35, y + h*0.3, w*0.05, x + w/2, y + h/2, w*0.7);
+    g.addColorStop(0,'#ff9a9a'); g.addColorStop(0.5,'#ff2a2a'); g.addColorStop(1,'#8a0000');
+    c.fillStyle = g; c.fill();
+    c.fillStyle = 'rgba(255,255,255,0.6)'; ell(c, x + w*0.3, y + h*0.27, w*0.09, h*0.06, -0.6); c.fill();
+  } else {
+    c.strokeStyle = 'rgba(255,60,60,0.55)'; c.lineWidth = Math.max(1, w*0.07); c.stroke();
+  }
+}
+function artStar(c,x,y,w,h){
+  var cx = x + w/2, cy = y + h*0.53, R = w*0.48, r = w*0.2;
+  glow(c, cx, cy, w*0.7, '0,255,65', 0.25);
+  c.beginPath();
+  for(var i=0;i<10;i++){ var a = -Math.PI/2 + i*Math.PI/5, rr = i%2 ? r : R; c.lineTo(cx + Math.cos(a)*rr, cy + Math.sin(a)*rr); }
+  c.closePath();
+  var g = c.createLinearGradient(0, y, 0, y + h);
+  g.addColorStop(0,'#b6ffcb'); g.addColorStop(1,'#00c834');
+  c.fillStyle = g; c.fill();
+}
+function artClock(c,x,y,w,h){
+  var cx = x + w/2, cy = y + h/2, R = w*0.42;
+  c.fillStyle = 'rgba(0,255,65,0.12)'; ell(c, cx, cy, R, R); c.fill();
+  c.strokeStyle = '#00ff41'; c.lineWidth = Math.max(1, w*0.09); ell(c, cx, cy, R, R); c.stroke();
+  c.lineCap = 'round'; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx, cy - R*0.6); c.moveTo(cx, cy); c.lineTo(cx + R*0.45, cy + R*0.2); c.stroke();
+}
+function makeIcon(type, size){
+  var cv = document.createElement('canvas');
+  cv.className = 'sg-ico';
+  cv.width = Math.round(size*DPR); cv.height = Math.round(size*DPR);
+  cv.style.width = size + 'px'; cv.style.height = size + 'px';
+  var c = cv.getContext('2d'); c.setTransform(DPR,0,0,DPR,0,0);
+  if(type === 'pumpkin') artPumpkin(c, size*0.04, size*0.08, size*0.92, size*0.84, false, false);
+  else if(type === 'candy'){ c.save(); c.scale(size/10, size/10); artCandy(c, 0.5, 2.5); c.restore(); }
+  else if(type === 'heart') artHeart(c, size*0.06, size*0.1, size*0.88, size*0.82, true);
+  else if(type === 'heart0') artHeart(c, size*0.06, size*0.1, size*0.88, size*0.82, false);
+  else if(type === 'star') artStar(c, 0, 0, size, size);
+  else if(type === 'clock') artClock(c, 0, 0, size, size);
+  return cv;
+}
+var hudCache = {};
+function hudSlot(el, key, icon, text){
+  var size = Math.round(parseFloat(getComputedStyle(el).fontSize) * 1.05) || 24;
+  var sig = icon + '|' + size;
+  if(hudCache[key] !== sig){
+    el.innerHTML = '';
+    if(icon) el.appendChild(makeIcon(icon, size));
+    var sp = document.createElement('span'); el.appendChild(sp);
+    hudCache[key] = sig;
+  }
+  var span = el.lastChild;
+  if(span.textContent !== text) span.textContent = text;
+}
 function setLives(n, max){
-  var s = ''; for(var i=0;i<max;i++) s += i < n ? '♥' : '♡';
-  hudLives.textContent = s;
+  var size = Math.round(parseFloat(getComputedStyle(hudLives).fontSize) * 1.05) || 24;
+  var sig = n + '/' + max + '|' + size;
+  if(hudCache.lives === sig) return;
+  hudCache.lives = sig; hudLives.innerHTML = '';
+  for(var i=0;i<max;i++) hudLives.appendChild(makeIcon(i < n ? 'heart' : 'heart0', size));
 }
 function showOv(title, html, btns){
   ovTitle.textContent = title; ovText.innerHTML = html; ovBtns.innerHTML = '';
@@ -305,7 +368,7 @@ function showOv(title, html, btns){
 function hideOv(){ ov.classList.remove('show'); }
 
 function openGame(g){
-  current = g;
+  current = g; hudCache = {};
   gameEl.classList.add('open');
   document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
@@ -476,8 +539,8 @@ var Grave = {
     this.hud();
   },
   hud:function(){
-    hudScore.textContent = '🎃 ' + this.score + '/' + this.GOAL;
-    hudMid.textContent = Math.ceil(this.time) + ' с';
+    hudSlot(hudScore, 'score', 'pumpkin', this.score + '/' + this.GOAL);
+    hudSlot(hudMid, 'mid', 'clock', Math.ceil(this.time) + ' с');
     setLives(this.lives, this.LIVES);
   },
   rise:function(e){
@@ -660,8 +723,8 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 }
 
 var Runner = {
-  id:'runner', title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124,
-  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы, бок ворона или стена склепа — удар.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
+  id:'runner', title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
+  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы или бок ворона — удар. Стена склепа не бьёт — упрёшься и встанешь, пока не перепрыгнешь.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){
@@ -693,12 +756,12 @@ var Runner = {
     this.t = 0; this.speed = 90; this.dist = 0; this.scroll = 0;
     this.solids = []; this.foes = []; this.cand = []; this.fx = []; this.pops = [];
     this.next = 150; this.score = 0; this.points = 0; this.lives = this.LIVES; this.shake = 0;
-    this.unlocked = false; this.banner = 0; this.recent = [];
+    this.unlocked = false; this.banner = 0; this.recent = []; this.stall = false;
     this.hud();
   },
   hud:function(){
-    hudScore.textContent = '🍬 ' + this.score + (this.unlocked ? ' ✓' : '/' + this.GOAL);
-    hudMid.textContent = '★ ' + this.points;
+    hudSlot(hudScore, 'score', 'candy', this.score + (this.unlocked ? ' \u2713' : '/' + this.GOAL));
+    hudSlot(hudMid, 'mid', 'star', String(this.points));
     setLives(this.lives, this.LIVES);
   },
   jump:function(){
@@ -726,7 +789,8 @@ var Runner = {
     // чем быстрее бег, тем медленнее ворон сам по себе — чтобы успевал появиться в кадре
     var vx = 5 + 30*(1 - clamp01((this.speed - 90)/150));
     var o = {type:'crow', x:x, y:y, w:13, h:8, vx:vx, f:Math.random()};
-    if(dive) o.dive = {base:y, amp:dive.amp, w:dive.w, t:Math.random()*6};
+    if(dive && dive.swoop) o.swoop = {st:0};
+    else if(dive) o.dive = {base:y, amp:dive.amp, w:dive.w, t:Math.random()*6};
     this.foes.push(o);
   },
   crypt:function(x, h, w){
@@ -752,8 +816,12 @@ var Runner = {
       R.crow(x, G-16); R.crow(x+6, G-64); return 19; }},
     {id:'flock', min:18, wt:function(t){ return 1 + t/60; }, make:function(R,x,G){
       R.crow(x, G-28); R.crow(x+22, G-46); R.crow(x+44, G-62); return 57; }},
-    {id:'diver', min:20, wt:function(t){ return 1 + t/50; }, make:function(R,x,G){
-      R.crow(x, G-40, {amp:24, w:3.2}); return 13; }},
+    {id:'diver', min:14, wt:function(t){ return 1.2 + t/40; }, make:function(R,x,G){
+      R.crow(x, G-46, {amp:36, w:3.6}); return 13; }},
+    {id:'swoop', min:10, wt:function(t){ return 1.4 + t/35; }, make:function(R,x,G){
+      R.crow(x, G-78, {swoop:true}); return 13; }},
+    {id:'swoopPair', min:30, wt:function(t){ return 0.8 + t/60; }, make:function(R,x,G){
+      R.crow(x, G-78, {swoop:true}); R.crow(x+48, G-84, {swoop:true}); return 61; }},
     {id:'crypt', min:5, wt:function(){ return 2; }, make:function(R,x,G){
       var ch = Math.round(rand(14,24)), cw = Math.round(rand(26,48));
       R.crypt(x, ch, cw);
@@ -818,7 +886,8 @@ var Runner = {
     var G = this.G, h = this.hero, i, o;
     this.t += dt;
     this.speed = Math.min(230, 90 + this.t*2.2);
-    var dx = this.speed*dt; this.dist += dx; this.scroll += dx;
+    // упёрся в стену склепа — мир стоит, пока не перепрыгнешь
+    var dx = this.stall ? 0 : this.speed*dt; this.dist += dx; this.scroll += dx;
     this.next -= dx; if(this.next <= 0) this.spawn();
     var prevY = h.y;
     h.vy = Math.min(420, h.vy + GRAV*dt); h.y += h.vy*dt;
@@ -826,7 +895,16 @@ var Runner = {
     for(i=this.solids.length-1;i>=0;i--){ o = this.solids[i]; o.x -= dx; if(o.x + o.w < -20) this.solids.splice(i,1); }
     for(i=this.foes.length-1;i>=0;i--){
       o = this.foes[i]; o.x -= dx + (o.dead ? 0 : (o.vx || 0)*dt);
-      if(o.type === 'crow'){ o.f += dt; if(o.dive && !o.dead){ o.dive.t += dt; o.y = o.dive.base + Math.sin(o.dive.t*o.dive.w)*o.dive.amp; } }
+      if(o.type === 'crow'){
+        o.f += dt;
+        if(o.dive && !o.dead){ o.dive.t += dt; o.y = o.dive.base + Math.sin(o.dive.t*o.dive.w)*o.dive.amp; }
+        if(o.swoop && !o.dead){
+          // пикировщик: летит высоко, увидев героя — ныряет к земле, потом взмывает
+          if(o.swoop.st === 0 && o.x - h.x < 70 + this.speed*0.25) o.swoop.st = 1;
+          if(o.swoop.st === 1){ o.y += (150 + this.speed*0.4)*dt; if(o.y >= G-15){ o.y = G-15; o.swoop.st = 2; } }
+          else if(o.swoop.st === 2){ o.y -= 120*dt; }
+        }
+      }
       if(o.dead){ o.dead += dt; o.vy += 500*dt; o.y += o.vy*dt; if(o.dead > 0.7) { this.foes.splice(i,1); continue; } }
       if(o.x < -30) this.foes.splice(i,1);
     }
@@ -844,16 +922,26 @@ var Runner = {
     } else {
       h.onGround = false; h.coyote = Math.max(0, h.coyote - dt);
     }
-    var hb = {x:h.x+2, y:h.y+1, w:6, h:13};
+    var hb = {x:h.x+2, y:h.y+1, w:6, h:13}, blocked = false;
     function hit(o, ins){ return hb.x < o.x+o.w-ins && hb.x+hb.w > o.x+ins && hb.y < o.y+o.h-ins && hb.y+hb.h > o.y+ins; }
     for(i=0;i<this.solids.length;i++){
       o = this.solids[i];
-      if(o.type !== 'crypt' || o.hit) continue;
-      if(hit(o, 1) && h.y + 14 > o.y + 2){
+      if(o.type !== 'crypt') continue;
+      var touch = hb.x + hb.w >= o.x + 0.5 && hb.x < o.x + o.w - 1 && h.y + 14 > o.y + 2 && hb.y < o.y + o.h;
+      if(touch){
         if(h.onGround && h.y + 14 - o.y <= 9){ h.y = o.y - 14; h.vy = 0; hb.y = h.y + 1; continue; }
-        o.hit = true; if(h.inv <= 0) this.hurt();
+        // стена склепа: не бьёт, а упирает героя и тащит назад вместе с экраном
+        if(!this.stall) burst(this.fx, h.x+8, h.y+8, '#9a9ab0', 5, 35);
+        h.x = Math.min(h.x, o.x - 6.5); hb.x = h.x + 2; blocked = true;
       }
     }
+    this.stall = blocked;
+    if(!blocked && h.x < this.HOME) h.x = Math.min(this.HOME, h.x + 22*dt);
+    if(h.x < -6){
+      this.hurt(); h.x = this.HOME; h.y = 10; h.vy = 0; h.onGround = false; h.canDouble = true;
+      for(i=this.solids.length-1;i>=0;i--){ o = this.solids[i]; if(o.type === 'crypt' && o.x < this.HOME + 12 && o.x + o.w > this.HOME - 4) this.solids.splice(i,1); }
+    }
+    hb.x = h.x + 2; hb.y = h.y + 1;
     for(i=0;i<this.foes.length;i++){
       o = this.foes[i];
       if(o.dead || o.hit) continue;
@@ -905,7 +993,10 @@ var Runner = {
         else { c.translate(o.x + o.w/2, o.y + o.h/2); c.rotate(o.dead*8); c.translate(-(o.x + o.w/2), -(o.y + o.h/2)); }
       }
       if(o.type === 'pump') artPumpkin(c, o.x, o.y, o.w, o.h, false, !o.dead);
-      else artCrow(c, o.x, o.y, o.f);
+      else {
+        if(o.swoop && !o.dead && o.swoop.st){ var ang = o.swoop.st === 1 ? -0.55 : 0.4; c.translate(o.x + 6.5, o.y + 4); c.rotate(ang); c.translate(-(o.x + 6.5), -(o.y + 4)); }
+        artCrow(c, o.x, o.y, o.f);
+      }
       c.restore();
     }
     if(!(h.inv > 0 && Math.floor(h.inv*12) % 2)) artHero(c, h.x, h.y, h.anim*11, !h.onGround);

@@ -36,7 +36,10 @@ body{padding:0 16px 40px;background:radial-gradient(ellipse at 50% -10%,rgba(255
 .sg-x{all:unset;cursor:pointer;width:clamp(36px,2.2vw,52px);height:clamp(36px,2.2vw,52px);border:1px solid rgba(0,255,65,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--acc);flex-shrink:0}
 #sg-score{flex:1;color:var(--pump);white-space:nowrap}
 #sg-mid{flex:1;text-align:center;white-space:nowrap}
-#sg-lives{flex:1;text-align:right;color:#ff3b3b;letter-spacing:2px;white-space:nowrap}
+#sg-lives{flex:1;display:flex;justify-content:flex-end;gap:4px;white-space:nowrap}
+#sg-score,#sg-mid{display:flex;align-items:center;gap:6px}
+#sg-mid{justify-content:center}
+.sg-ico{display:block;flex-shrink:0}
 #sg-stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:8px}
 #sg-canvas{display:block;border-radius:12px;border:1px solid rgba(0,255,65,0.25);box-shadow:0 0 30px rgba(255,122,26,0.08);image-rendering:pixelated;touch-action:none}
 .sg-hint{text-align:center;font-size:11px;color:rgba(0,255,65,0.45);padding:0 12px 14px;min-height:30px;letter-spacing:1px}
@@ -98,6 +101,6 @@ body{padding:0 16px 40px;background:radial-gradient(ellipse at 50% -10%,rgba(255
   </div>
 </div>
 
-<script src="samhain-games.js?v=3" charset="utf-8"></script>
+<script src="samhain-games.js?v=4" charset="utf-8"></script>
 </body>
 </html>

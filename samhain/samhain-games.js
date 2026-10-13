@@ -440,8 +440,9 @@ function showOv(title, html, btns){
     ovBtns.appendChild(e);
   });
   ov.classList.add('show');
+  $('sg-game').classList.add('ov-on');
 }
-function hideOv(){ ov.classList.remove('show'); }
+function hideOv(){ ov.classList.remove('show'); $('sg-game').classList.remove('ov-on'); }
 
 /* ── Telegram Mini App: на весь экран, кнопка «Назад», фиксация горизонтали ── */
 var TGA = null;

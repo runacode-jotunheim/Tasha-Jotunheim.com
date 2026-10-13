@@ -95,6 +95,10 @@ html.in-tg .sg-x{display:none}
 #sg-ov-btns{display:flex;flex-direction:column;gap:10px}
 .sg-btn{all:unset;cursor:pointer;background:var(--acc);color:#000;padding:11px 0;border-radius:10px;font-family:'VT323',monospace;font-size:20px;letter-spacing:3px;text-transform:uppercase;text-align:center}
 .sg-btn.ghost{background:transparent;color:var(--acc);border:1px solid rgba(0,255,65,0.5)}
+#sg-game.sg-immersive.ov-on .sg-hud{opacity:0}
+html.in-tg #sg-game.sg-immersive #sg-ov{padding-top:calc(10px + var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px))}
+#sg-gate .g-s,#sg-gate .g-b,#sg-gate .g-b2,#sg-gate .g-l{font-family:Menlo,ui-monospace,'Courier New',monospace}
+#sg-gate .g-b,#sg-gate .g-b2{font-size:17px;letter-spacing:1px;font-weight:700}
 .sg-code{margin-top:14px;padding:10px;border:1px dashed rgba(255,179,92,0.6);border-radius:8px;color:var(--pump);font-size:12px}
 @media (orientation:landscape) and (max-height:520px){
   .sg-ov-card{max-width:720px;padding:14px 18px}
@@ -173,6 +177,6 @@ html.in-tg .sg-x{display:none}
 
 <script src="https://telegram.org/js/telegram-web-app.js?57" async></script>
 <script src="../assets/js/games-link.js?v=2"></script>
-<script src="samhain-games.js?v=23" charset="utf-8"></script>
+<script src="samhain-games.js?v=24" charset="utf-8"></script>
 </body>
 </html>

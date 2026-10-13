@@ -48,7 +48,7 @@ const cust = (email) => ({ name: 'Тест', phone: '+7 900 000-00-' + String(Ma
     // 1. A регистрируется, получает реф-ссылку
     const A = await login('a@test.ru', { name: 'Аня' });
     let me = (await call('GET', '/api/me', null, A)).json;
-    assert.strictEqual(me.rank.name, 'Минн-Йотун'); assert.strictEqual(me.jc.balance, 0);
+    assert.strictEqual(me.rank.name, 'Мини-Йотун'); assert.strictEqual(me.jc.balance, 0);
     const link = (await call('GET', '/api/ref/link', null, A)).json;
     assert.ok(/\?ref=[A-Z0-9]{7}$/.test(link.url));
     const link2 = (await call('GET', '/api/ref/link', null, A)).json;

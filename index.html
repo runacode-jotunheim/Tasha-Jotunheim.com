@@ -595,6 +595,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
   #stickyToCatalogBtn.hide{transform:translateX(-50%) translateY(140%);opacity:0;pointer-events:none}
 }
 </style>
+<link rel="stylesheet" href="assets/css/account.css?v=1">
 </head>
 <body>
 
@@ -3043,6 +3044,11 @@ function closeCheckout(){
 window.openCheckout = openCheckout;
 window.closeCheckout = closeCheckout;
 
+// Для кабинета: корзина с id товаров (сервер считает цены по своему каталогу)
+window.getCartForAccount = function(){
+  return cart.map(function(it){ return {id: it.id, name: it.name, price: it.price, qty: it.qty || 1}; });
+};
+
 function renderCheckoutSummary(){
   var sum = cart.reduce(function(s, it){ return s + it.price * (it.qty || 1); }, 0);
   var rows = cart.map(function(it){
@@ -3055,6 +3061,8 @@ function renderCheckoutSummary(){
   }
   document.getElementById('checkoutSummary').innerHTML = rows +
     '<div class="checkout-summary-total"><span>Итого</span><b>'+(sum-discount).toLocaleString('ru-RU')+' ₽</b></div>';
+  // Программа лояльности (включается сама, когда сервер с базой запущен)
+  if(window.JotunAccount && window.JotunAccount.enabled) window.JotunAccount.decorateCheckout();
 }
 
 function setFieldInvalid(id, invalid){
@@ -3085,28 +3093,36 @@ function submitOrder(){
   status.className = 'checkout-status';
   status.textContent = 'Формируем счёт…';
 
-  var baseItems = cart.map(function(it){ return {name: it.name, price: it.price, qty: it.qty || 1}; });
-  var discount = getPromoDiscount(baseItems.reduce(function(s,it){ return s+it.price*it.qty; },0));
+  var baseItems = cart.map(function(it){ return {id: it.id, name: it.name, price: it.price, qty: it.qty || 1}; });
+  var ACC = (window.JotunAccount && window.JotunAccount.enabled) ? window.JotunAccount : null;
+  // участникам программы промокод не нужен — у них скидка ранга (сервер всё равно его не учтёт)
+  var discount = (ACC && ACC.me) ? 0 : getPromoDiscount(baseItems.reduce(function(s,it){ return s+it.price*it.qty; },0));
   var payload = {
     items: discount > 0
       ? baseItems.concat([{name: 'Скидка (промокод '+PROMO_DISCOUNT+')', price: -discount, qty: 1}])
       : baseItems,
     customer: {name: name, phone: phone, email: email, address: address},
-    comment: comment + (PROMO_DISCOUNT ? ' [Промокод: '+PROMO_DISCOUNT+']' : '')
+    comment: comment + (PROMO_DISCOUNT && discount > 0 ? ' [Промокод: '+PROMO_DISCOUNT+']' : '')
   };
-
-  fetch(PAYMENT_API_BASE + '/api/create-payment', {
+  var fetchOpts = {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload)
-  }).then(function(r){
+    headers: {'Content-Type': 'application/json'}
+  };
+  if(ACC){
+    var extra = ACC.checkoutExtras();
+    for(var k in extra) payload[k] = extra[k];
+    fetchOpts.credentials = 'include';
+  }
+  fetchOpts.body = JSON.stringify(payload);
+
+  fetch((ACC ? ACC.apiBase : PAYMENT_API_BASE) + '/api/create-payment', fetchOpts).then(function(r){
     if(!r.ok) throw new Error('bad response');
     return r.json();
   }).then(function(data){
     if(!data.action || !data.fields) throw new Error('bad payload');
     status.textContent = 'Переходим к оплате…';
     // Отмечаем промокод использованным — оплата запущена
-    if(PROMO_DISCOUNT) markPromoUsed();
+    if(PROMO_DISCOUNT && discount > 0) markPromoUsed();
     cart = [];
     saveCartToStorage();
     submitToRobokassa(data.action, data.fields);
@@ -4438,5 +4454,6 @@ initMiniMatrixBg('lpMatrixBg');
 
 }); // end DOMContentLoaded
 </script>
+<script src="assets/js/account.js?v=1" charset="utf-8" defer></script>
 </body>
 </html>

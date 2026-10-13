@@ -1,0 +1,81 @@
+/* ══ Кабинет и программа Йотунхейм ══ */
+#acc-btn{display:none;align-items:center;gap:6px;background:transparent;border:1px solid rgba(0,255,65,0.35);color:var(--accent);border-radius:20px;padding:6px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;margin-right:8px;white-space:nowrap}
+#acc-btn.on{display:inline-flex}
+#acc-btn:hover{border-color:var(--accent);box-shadow:0 0 12px rgba(0,255,65,0.2)}
+#acc-btn .acc-dot{width:6px;height:6px;border-radius:50%;background:#ffb35c;box-shadow:0 0 6px #ffb35c}
+@media(max-width:600px){#acc-btn .acc-label{display:none}#acc-btn{padding:6px 9px;margin-right:6px}}
+
+#acc-overlay{position:fixed;inset:0;z-index:1200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.86);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px}
+#acc-overlay.open{display:flex}
+.acc-card{position:relative;width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow-y:auto;border:1px solid rgba(0,255,65,0.35);border-radius:18px;background:#030805;color:#c8ffda;font-family:'Share Tech Mono',monospace;box-shadow:0 0 40px rgba(0,255,65,0.08)}
+.acc-x{position:absolute;top:12px;right:12px;z-index:3;width:34px;height:34px;border-radius:50%;border:1px solid rgba(0,255,65,0.5);background:rgba(0,0,0,0.6);color:var(--accent);font-size:15px;cursor:pointer}
+.acc-pad{padding:22px 20px}
+.acc-title{font-family:'Cinzel',serif;font-weight:900;font-size:22px;letter-spacing:2px;text-transform:uppercase;color:#ffb35c;margin-bottom:8px}
+.acc-sub{font-size:12px;line-height:1.6;color:rgba(200,255,218,0.7);margin-bottom:16px}
+.acc-input{width:100%;box-sizing:border-box;background:rgba(0,255,65,0.04);border:1px solid rgba(0,255,65,0.3);border-radius:10px;padding:12px 14px;color:#fff;font-family:'Share Tech Mono',monospace;font-size:15px;outline:none}
+.acc-input:focus{border-color:var(--accent)}
+.acc-code{font-size:26px;letter-spacing:10px;text-align:center}
+.acc-btn-main{width:100%;margin-top:12px;background:var(--accent);color:#000;border:none;border-radius:10px;padding:12px 0;font-family:'VT323',monospace;font-size:20px;letter-spacing:3px;text-transform:uppercase;cursor:pointer}
+.acc-btn-main:disabled{opacity:.5;cursor:default}
+.acc-btn-ghost{background:transparent;border:1px solid rgba(0,255,65,0.5);color:var(--accent);border-radius:10px;padding:9px 14px;font-family:'Share Tech Mono',monospace;font-size:12px;cursor:pointer}
+.acc-link{background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;font-family:inherit;font-size:12px;padding:0}
+.acc-msg{min-height:18px;margin-top:10px;font-size:12px;color:rgba(200,255,218,0.7)}
+.acc-msg.err{color:#ff6b6b}
+.acc-note{margin-top:12px;padding:10px 12px;border:1px dashed rgba(255,179,92,0.5);border-radius:10px;font-size:12px;color:#ffb35c;line-height:1.5}
+
+/* шапка ранга: фон меняется по рангу */
+.acc-hero{position:relative;padding:26px 20px 20px;border-radius:18px 18px 0 0;overflow:hidden;min-height:150px}
+.acc-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15),rgba(3,8,5,0.95))}
+.acc-hero>*{position:relative;z-index:1}
+.acc-hero[data-rank="0"]{background:radial-gradient(circle at 70% 20%,#1c4a2a,#03100a 70%)}
+.acc-hero[data-rank="1"]{background:radial-gradient(circle at 70% 20%,#2f5a1e,#0a1405 70%)}
+.acc-hero[data-rank="2"]{background:radial-gradient(circle at 70% 20%,#5a4a1e,#140f05 70%)}
+.acc-hero[data-rank="3"]{background:radial-gradient(circle at 70% 20%,#1e4a5a,#05101a 70%)}
+.acc-hero[data-rank="4"]{background:radial-gradient(circle at 70% 20%,#3a3a4a,#06060c 70%)}
+.acc-hero[data-rank="5"]{background:radial-gradient(circle at 70% 20%,#6a2a12,#140603 70%)}
+.acc-hero[data-rank="6"]{background:radial-gradient(circle at 70% 20%,#5a6a7a,#0a0e14 70%)}
+.acc-hero[data-rank="7"]{background:radial-gradient(circle at 70% 20%,#7a5a12,#140c02 70%)}
+.acc-hero.has-img{background-size:cover;background-position:center}
+.acc-eye{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(200,255,218,0.6)}
+.acc-rank{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(26px,7vw,36px);letter-spacing:2px;text-transform:uppercase;color:#ffb35c;margin:6px 0 4px;text-shadow:0 0 18px rgba(255,179,92,0.35)}
+.acc-pct{font-size:13px;color:var(--accent)}
+.acc-prog{margin-top:14px}
+.acc-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.1);overflow:hidden}
+.acc-bar>i{display:block;height:100%;background:linear-gradient(90deg,#00ff41,#ffb35c)}
+.acc-prog-t{margin-top:6px;font-size:11px;line-height:1.5;color:rgba(200,255,218,0.75)}
+
+.acc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.acc-tile{border:1px solid rgba(0,255,65,0.2);border-radius:12px;padding:12px;background:rgba(0,255,65,0.03)}
+.acc-tile b{display:block;font-family:'VT323',monospace;font-size:26px;color:#ffd84a;font-weight:normal;line-height:1.1}
+.acc-tile span{font-size:11px;color:rgba(200,255,218,0.65)}
+.acc-jc{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:0.82em}
+.acc-sec{margin:16px 0 8px;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:rgba(200,255,218,0.55)}
+.acc-ref{display:flex;gap:8px}
+.acc-ref input{flex:1;min-width:0;font-size:12px}
+.acc-ref-t{margin-top:6px;font-size:11px;color:rgba(200,255,218,0.55)}
+.acc-ranks{display:grid;grid-template-columns:auto 1fr;gap:0;border:1px solid rgba(0,255,65,0.18);border-radius:12px;overflow:hidden;font-size:11.5px;line-height:1.45}
+.acc-ranks>div{padding:8px 10px;border-top:1px solid rgba(0,255,65,0.1)}
+.acc-ranks>div:nth-child(-n+2){border-top:none}
+.acc-ranks .rn{font-family:'Cinzel',serif;font-weight:700;color:#c8ffda;white-space:nowrap}
+.acc-ranks .rb{color:rgba(200,255,218,0.75)}
+.acc-ranks .rb small{display:block;color:rgba(200,255,218,0.45);font-size:10.5px;margin-top:2px}
+.acc-ranks .cur{background:rgba(255,179,92,0.1)}
+.acc-ranks .cur.rn{color:#ffb35c}
+.acc-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+/* блок в оформлении заказа */
+#ckAccount{margin:6px 0 12px;padding:12px;border:1px solid rgba(0,255,65,0.22);border-radius:10px;font-size:12px;line-height:1.5;color:rgba(200,255,218,0.8)}
+#ckAccount label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+#ckAccount input[type=checkbox]{margin-top:2px;accent-color:#00ff41}
+#ckAccount .ck-mem{color:#ffb35c}
+#ckAccount .ck-row{margin-top:8px}
+
+/* баннер cookie */
+#cookie-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:1100;display:none;align-items:center;gap:12px;max-width:620px;margin:0 auto;padding:12px 14px;border:1px solid rgba(0,255,65,0.35);border-radius:12px;background:rgba(0,6,2,0.96);color:rgba(200,255,218,0.85);font-family:'Share Tech Mono',monospace;font-size:11.5px;line-height:1.5;box-shadow:0 6px 30px rgba(0,0,0,0.6)}
+#cookie-bar.on{display:flex}
+#cookie-bar a{color:var(--accent)}
+#cookie-bar button{flex-shrink:0;background:var(--accent);color:#000;border:none;border-radius:8px;padding:8px 14px;font-family:'VT323',monospace;font-size:17px;letter-spacing:2px;cursor:pointer}
+@media(max-width:520px){#cookie-bar{bottom:72px}}
+
+#ref-toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:1100;display:none;max-width:calc(100% - 24px);padding:10px 16px;border:1px solid rgba(255,179,92,0.6);border-radius:12px;background:rgba(10,6,0,0.95);color:#ffb35c;font-family:'Share Tech Mono',monospace;font-size:12px;text-align:center}
+#ref-toast.on{display:block}

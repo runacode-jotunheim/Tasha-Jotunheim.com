@@ -163,11 +163,13 @@ function artHole(c,hx,hy,rw,rh,rnd){
   for(var i=0;i<5;i++){ var a = rnd()*Math.PI*2; ell(c, hx + Math.cos(a)*rw*1.15, hy + Math.sin(a)*rh*1.45, rw*0.06, rw*0.045); c.fill(); }
 }
 
-function artHero(c,x,y,ph,air){
+function artHero(c,x,y,ph,air,stand){
   var cx = x + 5, wv = Math.sin(ph*1.3)*1.2;
   glow(c, x+11.2, y+10, 13, '255,190,60', 0.42);
   c.lineCap = 'round'; c.strokeStyle = '#140c20'; c.lineWidth = 1.7;
-  if(air){
+  if(stand && !air){
+    c.beginPath(); c.moveTo(cx-1, y+10.5); c.lineTo(cx-1.6, y+13.8); c.moveTo(cx+1, y+10.5); c.lineTo(cx+1.6, y+13.8); c.stroke();
+  } else if(air){
     c.beginPath(); c.moveTo(cx-1, y+10.5); c.lineTo(cx-2.5, y+13); c.moveTo(cx+1, y+10.5); c.lineTo(cx+2.8, y+12.4); c.stroke();
   } else {
     var a = Math.sin(ph)*0.75;
@@ -220,6 +222,12 @@ function artCrow(c,x,y,ph){
   c.strokeStyle = 'rgba(170,160,215,0.5)'; c.stroke();
 }
 
+function artTinyStar(c,x,y,r,rot){
+  c.beginPath();
+  for(var i=0;i<10;i++){ var a = rot - Math.PI/2 + i*Math.PI/5, rr = i%2 ? r*0.42 : r; c.lineTo(x + Math.cos(a)*rr, y + Math.sin(a)*rr); }
+  c.closePath(); c.fillStyle = '#ffe14a'; c.fill();
+  c.strokeStyle = 'rgba(120,70,0,0.6)'; c.lineWidth = r*0.18; c.stroke();
+}
 function artCandy(c,x,y){
   var cx = x + 4.5, cy = y + 2.5;
   glow(c, cx, cy, 6, '255,95,162', 0.25);
@@ -763,7 +771,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 
 var Runner = {
   id:'runner', landscapeOnly:true, title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
-  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы или бок ворона — удар. Стена склепа не бьёт — упрёшься и встанешь, пока не перепрыгнешь.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
+  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы или бок ворона — удар. Стена склепа не бьёт — упрёшься, встанешь с головокружением, и 2 секунды двойной прыжок не работает.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){
@@ -791,7 +799,7 @@ var Runner = {
     if(!this.hero) this.reset();
   },
   reset:function(){
-    this.hero = {x:30, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0};
+    this.hero = {x:30, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0, dizzy:0};
     this.t = 0; this.speed = 90; this.dist = 0; this.scroll = 0;
     this.solids = []; this.foes = []; this.cand = []; this.fx = []; this.pops = [];
     this.next = 150; this.score = 0; this.points = 0; this.lives = this.LIVES; this.shake = 0;
@@ -808,6 +816,8 @@ var Runner = {
     if(h.onGround || h.coyote > 0){
       h.vy = -JUMP1; h.onGround = false; h.coyote = 0;
       burst(this.fx, h.x+5, h.y+14, '#7a5a3a', 5, 40);
+    } else if(h.canDouble && h.dizzy > 0){
+      burst(this.fx, h.x+5, h.y-2, '#ffe14a', 4, 25);
     } else if(h.canDouble){
       h.vy = -JUMP2; h.canDouble = false;
       burst(this.fx, h.x+5, h.y+13, '#00ff41', 7, 45);
@@ -930,7 +940,7 @@ var Runner = {
     this.next -= dx; if(this.next <= 0) this.spawn();
     var prevY = h.y;
     h.vy = Math.min(420, h.vy + GRAV*dt); h.y += h.vy*dt;
-    h.anim += dt; if(h.inv > 0) h.inv -= dt;
+    h.anim += dt; if(h.inv > 0) h.inv -= dt; if(h.dizzy > 0) h.dizzy -= dt;
     for(i=this.solids.length-1;i>=0;i--){ o = this.solids[i]; o.x -= dx; if(o.x + o.w < -20) this.solids.splice(i,1); }
     for(i=this.foes.length-1;i>=0;i--){
       o = this.foes[i]; o.x -= dx + (o.dead ? 0 : (o.vx || 0)*dt);
@@ -970,7 +980,10 @@ var Runner = {
       if(touch){
         if(h.onGround && h.y + 14 - o.y <= 9){ h.y = o.y - 14; h.vy = 0; hb.y = h.y + 1; continue; }
         // стена склепа: не бьёт, а упирает героя и тащит назад вместе с экраном
-        if(!this.stall) burst(this.fx, h.x+8, h.y+8, '#9a9ab0', 5, 35);
+        if(!this.stall){
+          burst(this.fx, h.x+8, h.y+8, '#9a9ab0', 6, 35);
+          this.shake = 0.3; h.dizzy = 2; vibrate(90);
+        }
         h.x = Math.min(h.x, o.x - 6.5); hb.x = h.x + 2; blocked = true;
       }
     }
@@ -1038,7 +1051,15 @@ var Runner = {
       }
       c.restore();
     }
-    if(!(h.inv > 0 && Math.floor(h.inv*12) % 2)) artHero(c, h.x, h.y, h.anim*11, !h.onGround);
+    if(!(h.inv > 0 && Math.floor(h.inv*12) % 2)) artHero(c, h.x, h.y, h.anim*11, !h.onGround, this.stall);
+    if(h.dizzy > 0){
+      c.globalAlpha = Math.min(1, h.dizzy*2);
+      for(var si=0;si<3;si++){
+        var sa = this.t*6 + si*2.094;
+        artTinyStar(c, h.x + 5 + Math.cos(sa)*5.5, h.y - 3.5 + Math.sin(sa)*1.7, 1.5, this.t*4 + si);
+      }
+      c.globalAlpha = 1;
+    }
     for(i=0;i<this.fx.length;i++){
       var p = this.fx[i]; c.globalAlpha = Math.min(1, p.life*2); c.fillStyle = p.c;
       ell(c, p.x, p.y, 0.6, 0.6); c.fill();

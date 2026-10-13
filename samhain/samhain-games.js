@@ -198,7 +198,7 @@ function artHero(c,x,y,ph,air,stand,hdx,reach){
   // мальчик в худи с капюшоном, в руке тыква-фонарь
   var cx = x + 5;
   hdx = hdx || 0; reach = reach || 0;
-  glow(c, x+11.4, y+10, 13, '255,150,30', 0.45);
+  glow(c, x+11.2, y+10, 13, '255,190,60', 0.45);
   c.lineCap = 'round';
   // ноги — джинсы, кеды
   c.strokeStyle = '#2c3d66'; c.lineWidth = 1.9;
@@ -223,19 +223,35 @@ function artHero(c,x,y,ph,air,stand,hdx,reach){
   c.fillStyle = 'rgba(15,17,24,0.55)'; rrect(c, cx-2.3, y+8.1, 4.8, 1.9, 0.6); c.fill();
   c.strokeStyle = '#e8e8ee'; c.lineWidth = 0.3;
   c.beginPath(); c.moveTo(cx+0.4, y+5.2); c.lineTo(cx+0.2, y+7.1); c.moveTo(cx+1.9, y+5.2); c.lineTo(cx+2.1, y+7.1); c.stroke();
-  // рука с тыквой-фонарём
+  // рука с фонарём
   c.strokeStyle = '#3c414e'; c.lineWidth = 1.45;
-  c.beginPath(); c.moveTo(cx+1.6, y+6); c.lineTo(x+10.2, y+8.4); c.stroke();
-  c.fillStyle = '#f0d2b0'; ell(c, x+10.4, y+8.5, 0.7, 0.65); c.fill();
-  artPumpkin(c, x+9.3, y+8.6, 4.4, 3.9, 'normal', false);
+  c.beginPath(); c.moveTo(cx+1.6, y+6); c.lineTo(x+10.4, y+8.1); c.stroke();
+  c.fillStyle = '#f0d2b0'; ell(c, x+10.6, y+8.1, 0.65, 0.6); c.fill();
+  c.fillStyle = '#2a1a10'; c.fillRect(x+10.2, y+8.1, 2.2, 0.6);
+  var lg = c.createLinearGradient(0, y+8.7, 0, y+11.6);
+  lg.addColorStop(0,'#fff6c0'); lg.addColorStop(1,'#ffa800');
+  c.fillStyle = lg; c.fillRect(x+10.2, y+8.7, 2.2, 2.9);
+  c.strokeStyle = '#2a1a10'; c.lineWidth = 0.3; c.strokeRect(x+10.2, y+8.7, 2.2, 2.9);
   // голова в капюшоне
   c.save(); c.translate(hdx, 0);
   var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5.2);
   hg.addColorStop(0,'#737b8d'); hg.addColorStop(1,'#2e323d');
-  c.fillStyle = hg; c.beginPath();
-  c.moveTo(cx-3.8, y+5.4); c.quadraticCurveTo(cx-4.5, y-0.8, cx+0.4, y-0.8);
-  c.quadraticCurveTo(cx+4.9, y-0.4, cx+4.1, y+5.4); c.closePath(); c.fill();
-  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; c.stroke();
+  // капюшон с заломом: кончик уходит назад и чуть вниз
+  function hood(){
+    c.beginPath();
+    c.moveTo(cx-3.6, y+5.4);
+    c.quadraticCurveTo(cx-4.6, y+3, cx-5.6, y+1.6);
+    c.lineTo(cx-4.9, y+0.9);
+    c.quadraticCurveTo(cx-3.2, y-1.3, cx+0.6, y-0.9);
+    c.quadraticCurveTo(cx+4.7, y-0.3, cx+4.1, y+5.4);
+    c.closePath();
+  }
+  c.fillStyle = hg; hood(); c.fill();
+  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; hood(); c.stroke();
+  c.strokeStyle = 'rgba(15,17,24,0.6)'; c.lineWidth = 0.4;
+  c.beginPath(); c.moveTo(cx-4.9, y+0.9); c.quadraticCurveTo(cx-3.3, y+0.7, cx-2.2, y+1.9); c.stroke();
+  c.strokeStyle = 'rgba(15,17,24,0.45)'; c.lineWidth = 0.55;
+  c.beginPath(); c.moveTo(cx-0.6, y+0.4); c.quadraticCurveTo(cx+2.2, y-0.2, cx+3.6, y+1.6); c.stroke();
   c.fillStyle = '#f0d2b0'; ell(c, cx+1.5, y+3.2, 1.9, 2); c.fill();
   c.fillStyle = '#3a2414'; c.beginPath();
   c.moveTo(cx-0.3, y+1.3); c.quadraticCurveTo(cx+1.6, y+0.6, cx+3.3, y+1.6); c.lineTo(cx+2.6, y+2.2); c.lineTo(cx+1.9, y+1.7); c.lineTo(cx+1.1, y+2.3); c.lineTo(cx+0.2, y+1.9); c.closePath(); c.fill();
@@ -392,7 +408,7 @@ function artCoin(c,x,y,w,h){
   g.addColorStop(0,'#fff6c0'); g.addColorStop(0.55,'#ffcc33'); g.addColorStop(1,'#b07800');
   c.fillStyle = g; ell(c, cx, cy, R, R); c.fill();
   c.strokeStyle = '#8a5c00'; c.lineWidth = Math.max(1, w*0.06); ell(c, cx, cy, R*0.78, R*0.78); c.stroke();
-  c.fillStyle = '#7a4f00'; c.font = 'bold ' + Math.round(w*0.36) + "px 'VT323', monospace";
+  c.fillStyle = '#7a4f00'; c.font = '800 ' + Math.round(w*0.34) + "px Arial, Helvetica, sans-serif";
   c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('JC', cx, cy + w*0.02);
 }
 function artClock(c,x,y,w,h){
@@ -848,13 +864,13 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 
 var Runner = {
   id:'runner', landscapeOnly:true, title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
-  rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай JC*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 JC</b><span>Тыква</span><b>10 JC</b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* JC (JotunCoins, ЙотунКоины) — валюта реферальной программы Йотунхейм, 1 JC = 1 ₽. В играх можно заработать до 500 JC в неделю и до 2 000 JC в месяц, игровые JC сгорают в конце месяца. JC можно оплатить до 50% заказа. <a href="../index.html#referral">Подробнее о программе</a></div>',
+  rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай <span class="sg-jc">JC</span>*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 <span class="sg-jc">JC</span></b><span>Тыква</span><b>10 <span class="sg-jc">JC</span></b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* <span class="sg-jc">JC</span> — валюта реферальной программы, 1 <span class="sg-jc">JC</span> = 1 ₽. Максимум 500 <span class="sg-jc">JC</span> в неделю и 2 000 <span class="sg-jc">JC</span> в месяц. Подробнее — на <a href="../index.html#referral">странице программы</a>.</div>',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){
     var b = this.best(), rec = this.points > b;
     if(rec) lsSet(this.bestKey, String(this.points));
-    return 'Заработано: <b>' + this.points + ' JC</b>' + (rec ? ' — новый рекорд!' : ' · рекорд ' + b + ' JC') +
+    return 'Заработано: <b>' + this.points + ' <span class="sg-jc">JC</span></b>' + (rec ? ' — новый рекорд!' : ' · рекорд ' + b + ' <span class="sg-jc">JC</span>') +
       '<br>Конфет: <b>' + this.score + '</b> · ' + Math.floor(this.dist/10) + ' м';
   },
   winText:function(){ return this.summary(); },

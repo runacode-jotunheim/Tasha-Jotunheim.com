@@ -473,10 +473,38 @@ function tgGate(){
     });
     return;
   }
+  fsButton();
   if(!url || testing) return;
-  var gate = $('sg-gate'), btn = $('sg-gate-btn');
-  btn.href = url; gate.classList.add('on');
-  setTimeout(function(){ location.href = url; }, 700);
+  // компьютер — сразу играем в браузере; телефон — предлагаем Telegram, но не заставляем
+  if(!TOUCH) return;
+  var bar = $('sg-tgbar'); bar.href = url; bar.classList.add('on');
+  var MODE_KEY = 'sg_mode';
+  var saved = null; try{ saved = JSON.parse(localStorage.getItem(MODE_KEY) || 'null'); }catch(e){}
+  if(saved && saved.mode === 'browser' && Date.now() - saved.t < 30 * 864e5) return;
+  var gate = $('sg-gate');
+  $('sg-gate-btn').href = url;
+  var ua = navigator.userAgent;
+  $('sg-gate-dl').href = /iPhone|iPad|iPod/.test(ua) ? 'https://apps.apple.com/app/telegram-messenger/id686449807'
+    : (/Android/.test(ua) ? 'https://play.google.com/store/apps/details?id=org.telegram.messenger' : 'https://telegram.org/apps');
+  $('sg-gate-browser').onclick = function(){
+    try{ localStorage.setItem(MODE_KEY, JSON.stringify({mode: 'browser', t: Date.now()})); }catch(e){}
+    gate.classList.remove('on');
+  };
+  gate.classList.add('on');
+}
+// Кнопка «на весь экран» — для браузеров, где это разрешено (компьютер, Android; на iPhone Safari не умеет)
+function fsButton(){
+  var b = $('sg-fs'), el = document.documentElement;
+  if(TGA || !b || !(el.requestFullscreen || el.webkitRequestFullscreen) || !(document.fullscreenEnabled || document.webkitFullscreenEnabled)) return;
+  b.classList.add('on');
+  b.onclick = function(){
+    var on = document.fullscreenElement || document.webkitFullscreenElement;
+    try{
+      if(on){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+      else { (el.requestFullscreen || el.webkitRequestFullscreen).call(el); }
+    }catch(e){}
+  };
+  document.addEventListener('fullscreenchange', function(){ if(current){ current.setup(); current.draw(); } });
 }
 // telegram-web-app.js грузится асинхронно (без VPN telegram.org может не открываться — страница не должна зависать)
 function tgWait(n){

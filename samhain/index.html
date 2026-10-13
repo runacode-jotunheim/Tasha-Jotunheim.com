@@ -81,6 +81,11 @@ html.in-tg .sg-x{display:none}
 #sg-gate .g-s{font-size:13px;line-height:1.7;color:rgba(200,255,218,0.75);max-width:360px}
 #sg-gate .g-b{display:inline-block;background:#2aabee;color:#fff;text-decoration:none;border-radius:12px;padding:13px 26px;font-family:'VT323',monospace;font-size:22px;letter-spacing:2px;text-transform:uppercase}
 #sg-gate .g-l{color:rgba(0,255,65,0.7);font-size:12px}
+#sg-gate .g-b2{background:transparent;border:1px solid rgba(0,255,65,0.55);color:var(--acc);border-radius:12px;padding:11px 24px;font-family:'VT323',monospace;font-size:20px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
+.sg-tgbar{display:none;max-width:720px;margin:-8px auto 18px;padding:10px 14px;border:1px solid rgba(42,171,238,0.6);border-radius:12px;color:#8fd3ff;text-decoration:none;font-size:12px;text-align:center}
+.sg-tgbar.on{display:block}
+#sg-fs{display:none}
+#sg-fs.on{display:flex}
 #sg-ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.72);padding:16px}
 #sg-ov.show{display:flex}
 .sg-ov-card{width:100%;max-width:380px;max-height:calc(100% - 8px);overflow-y:auto;border:1px solid rgba(0,255,65,0.4);border-radius:16px;background:rgba(0,8,3,0.95);padding:24px 20px;text-align:center}
@@ -107,8 +112,10 @@ html.in-tg .sg-x{display:none}
 
 <div id="sg-gate">
   <div class="g-t">Игры Йотунхейм</div>
-  <div class="g-s">Игры живут в Telegram — там они открываются на весь экран, а JotunCoins сохраняются за тобой.</div>
+  <div class="g-s">В Telegram игры открываются на весь экран, как приложение. Нет Telegram — играй прямо в браузере.</div>
   <a class="g-b" id="sg-gate-btn" href="#">Открыть в Telegram</a>
+  <button class="g-b2" id="sg-gate-browser" type="button">Играть в браузере</button>
+  <a class="g-l" id="sg-gate-dl" href="https://telegram.org/apps" target="_blank" rel="noopener">Нет Telegram? Скачать</a>
   <a class="g-l" href="../index.html">&#9664; Вернуться на сайт</a>
 </div>
 <header class="sg-head"><a href="../index.html" class="sg-back">&#9664; На сайт</a></header>
@@ -117,6 +124,7 @@ html.in-tg .sg-x{display:none}
   <span class="sg-eye">&#9658; самайн 2026</span>
   <h1>Игры Самайна</h1>
   <p class="sg-sub">Выбери игру. Победа — промокод на скидку.</p>
+  <a class="sg-tgbar" id="sg-tgbar" href="#">Есть Telegram? Открой игры там — на весь экран &#9654;</a>
   <div class="sg-tiles">
     <button class="sg-tile" data-game="grave">
       <canvas class="sg-prev" data-prev="grave"></canvas>
@@ -144,6 +152,7 @@ html.in-tg .sg-x{display:none}
     <div id="sg-score"></div>
     <div id="sg-mid"></div>
     <div id="sg-lives"></div>
+    <button class="sg-x" id="sg-fs" type="button" aria-label="На весь экран" title="На весь экран">&#9974;</button>
   </div>
   <div id="sg-stage"><canvas id="sg-canvas"></canvas></div>
   <div class="sg-hint" id="sg-hint"></div>
@@ -164,6 +173,6 @@ html.in-tg .sg-x{display:none}
 
 <script src="https://telegram.org/js/telegram-web-app.js?57" async></script>
 <script src="../assets/js/games-link.js?v=1"></script>
-<script src="samhain-games.js?v=22" charset="utf-8"></script>
+<script src="samhain-games.js?v=23" charset="utf-8"></script>
 </body>
 </html>

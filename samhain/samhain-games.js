@@ -163,8 +163,9 @@ function artHole(c,hx,hy,rw,rh,rnd){
   for(var i=0;i<5;i++){ var a = rnd()*Math.PI*2; ell(c, hx + Math.cos(a)*rw*1.15, hy + Math.sin(a)*rh*1.45, rw*0.06, rw*0.045); c.fill(); }
 }
 
-function artHero(c,x,y,ph,air,stand){
+function artHero(c,x,y,ph,air,stand,hdx,reach){
   var cx = x + 5, wv = Math.sin(ph*1.3)*1.2;
+  hdx = hdx || 0; reach = reach || 0;
   glow(c, x+11.2, y+10, 13, '255,190,60', 0.42);
   c.lineCap = 'round'; c.strokeStyle = '#140c20'; c.lineWidth = 1.7;
   if(stand && !air){
@@ -190,6 +191,7 @@ function artHero(c,x,y,ph,air,stand){
   lg.addColorStop(0,'#fff6c0'); lg.addColorStop(1,'#ffa800');
   c.fillStyle = lg; c.fillRect(x+10.2, y+8.7, 2.2, 2.9);
   c.strokeStyle = '#2a1a10'; c.lineWidth = 0.3; c.strokeRect(x+10.2, y+8.7, 2.2, 2.9);
+  c.save(); c.translate(hdx, 0);
   var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5);
   hg.addColorStop(0,'#ad86ec'); hg.addColorStop(1,'#3b2170');
   c.fillStyle = hg; c.beginPath();
@@ -202,6 +204,30 @@ function artHero(c,x,y,ph,air,stand){
   c.fillStyle = 'rgba(40,20,70,0.45)'; ell(c, cx+0.4, y+2.4, 1.3, 1.1); c.fill();
   glow(c, cx+1.8, y+2.9, 2.4, '0,255,65', 0.5);
   c.fillStyle = '#00ff41'; c.fillRect(cx+0.7, y+2.55, 0.75, 0.75); c.fillRect(cx+2.15, y+2.55, 0.75, 0.75);
+  c.restore();
+  if(reach > 0){
+    // свободная рука тянется к голове и отпускает
+    var hx = lerp(cx+0.6, cx+3.3+hdx, reach), hy = lerp(y+8.6, y+1.8, reach);
+    c.strokeStyle = '#5a35a0'; c.lineWidth = 1.3; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(cx-0.6, y+5.8); c.quadraticCurveTo(cx-1.2 + reach*1.5, y+4.5 - reach*1.5, hx, hy); c.stroke();
+    c.fillStyle = '#f2d7b6'; ell(c, hx, hy, 0.85, 0.8); c.fill();
+  }
+}
+function artCanary(c,x,y,s,dir,ph){
+  c.save(); c.translate(x, y); c.scale(dir*s/3, s/3);
+  c.fillStyle = '#e0a800';
+  c.beginPath(); c.moveTo(-1.3, 0.2); c.lineTo(-2.7, -0.4); c.lineTo(-2.5, 0.9); c.closePath(); c.fill();
+  var g = c.createRadialGradient(0.2, -0.2, 0.1, 0, 0.3, 1.8);
+  g.addColorStop(0,'#fffbc0'); g.addColorStop(0.55,'#ffd60a'); g.addColorStop(1,'#d79a00');
+  c.fillStyle = g; ell(c, 0, 0.3, 1.6, 1.1); c.fill();
+  c.fillStyle = '#ffe23a'; ell(c, 1.25, -0.6, 0.92, 0.88); c.fill();
+  c.fillStyle = '#ff8a00'; c.beginPath(); c.moveTo(2.05, -0.75); c.lineTo(2.85, -0.5); c.lineTo(2.05, -0.28); c.closePath(); c.fill();
+  c.fillStyle = '#111'; ell(c, 1.5, -0.8, 0.2, 0.2); c.fill();
+  var wy = Math.sin(ph*28)*1.1;
+  c.fillStyle = '#f2c200'; c.beginPath();
+  c.moveTo(-0.6, 0.1); c.quadraticCurveTo(-0.2, -0.6 - wy, 0.7, -0.2 - wy*0.9); c.lineTo(0.5, 0.5); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(120,70,0,0.45)'; c.lineWidth = 0.15; c.stroke();
+  c.restore();
 }
 
 function artCrow(c,x,y,ph){
@@ -799,7 +825,7 @@ var Runner = {
     if(!this.hero) this.reset();
   },
   reset:function(){
-    this.hero = {x:30, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0, dizzy:0};
+    this.hero = {x:30, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0, dizzy:0, bump:0, ouch:0};
     this.t = 0; this.speed = 90; this.dist = 0; this.scroll = 0;
     this.solids = []; this.foes = []; this.cand = []; this.fx = []; this.pops = [];
     this.next = 150; this.score = 0; this.points = 0; this.lives = this.LIVES; this.shake = 0;
@@ -940,7 +966,7 @@ var Runner = {
     this.next -= dx; if(this.next <= 0) this.spawn();
     var prevY = h.y;
     h.vy = Math.min(420, h.vy + GRAV*dt); h.y += h.vy*dt;
-    h.anim += dt; if(h.inv > 0) h.inv -= dt; if(h.dizzy > 0) h.dizzy -= dt;
+    h.anim += dt; if(h.inv > 0) h.inv -= dt; if(h.dizzy > 0) h.dizzy -= dt; if(h.bump > 0) h.bump -= dt; if(h.ouch > 0) h.ouch -= dt;
     for(i=this.solids.length-1;i>=0;i--){ o = this.solids[i]; o.x -= dx; if(o.x + o.w < -20) this.solids.splice(i,1); }
     for(i=this.foes.length-1;i>=0;i--){
       o = this.foes[i]; o.x -= dx + (o.dead ? 0 : (o.vx || 0)*dt);
@@ -982,7 +1008,7 @@ var Runner = {
         // стена склепа: не бьёт, а упирает героя и тащит назад вместе с экраном
         if(!this.stall){
           burst(this.fx, h.x+8, h.y+8, '#9a9ab0', 6, 35);
-          this.shake = 0.3; h.dizzy = 2; vibrate(90);
+          this.shake = 0.3; h.dizzy = 2; h.bump = 0.2; h.ouch = 0.8; vibrate(90);
         }
         h.x = Math.min(h.x, o.x - 6.5); hb.x = h.x + 2; blocked = true;
       }
@@ -1051,15 +1077,28 @@ var Runner = {
       }
       c.restore();
     }
-    if(!(h.inv > 0 && Math.floor(h.inv*12) % 2)) artHero(c, h.x, h.y, h.anim*11, !h.onGround, this.stall);
+    var hdx = h.bump > 0 ? Math.sin(h.bump*90)*0.9 : 0;
+    var reach = h.ouch > 0 ? Math.sin(Math.PI*(1 - h.ouch/0.8)) : 0;
+    // канарейки нимбом: задние рисуем за героем, передние — перед ним
+    var birds = [];
     if(h.dizzy > 0){
-      c.globalAlpha = Math.min(1, h.dizzy*2);
       for(var si=0;si<3;si++){
-        var sa = this.t*6 + si*2.094;
-        artTinyStar(c, h.x + 5 + Math.cos(sa)*5.5, h.y - 3.5 + Math.sin(sa)*1.7, 1.5, this.t*4 + si);
+        var sa = this.t*4.2 + si*2.094;
+        birds.push({x:h.x + 5 + hdx + Math.cos(sa)*6.2, y:h.y - 3 + Math.sin(sa)*1.9, front:Math.sin(sa) > 0, dir:-Math.sin(sa) >= 0 ? 1 : -1, ph:this.t + si});
+      }
+    }
+    var fade = Math.min(1, h.dizzy*2);
+    function drawBirds(front){
+      for(var bi=0;bi<birds.length;bi++){
+        var bd = birds[bi]; if(bd.front !== front) continue;
+        c.globalAlpha = fade * (front ? 1 : 0.75);
+        artCanary(c, bd.x, bd.y, front ? 3 : 2.5, bd.dir, bd.ph);
       }
       c.globalAlpha = 1;
     }
+    drawBirds(false);
+    if(!(h.inv > 0 && Math.floor(h.inv*12) % 2)) artHero(c, h.x, h.y, h.anim*11, !h.onGround, this.stall, hdx, reach);
+    drawBirds(true);
     for(i=0;i<this.fx.length;i++){
       var p = this.fx[i]; c.globalAlpha = Math.min(1, p.life*2); c.fillStyle = p.c;
       ell(c, p.x, p.y, 0.6, 0.6); c.fill();

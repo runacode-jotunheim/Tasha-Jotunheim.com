@@ -358,6 +358,16 @@ function artStar(c,x,y,w,h){
   g.addColorStop(0,'#b6ffcb'); g.addColorStop(1,'#00c834');
   c.fillStyle = g; c.fill();
 }
+function artCoin(c,x,y,w,h){
+  var cx = x + w/2, cy = y + h/2, R = w*0.44;
+  glow(c, cx, cy, w*0.65, '255,210,60', 0.3);
+  var g = c.createRadialGradient(cx - R*0.35, cy - R*0.4, R*0.1, cx, cy, R);
+  g.addColorStop(0,'#fff6c0'); g.addColorStop(0.55,'#ffcc33'); g.addColorStop(1,'#b07800');
+  c.fillStyle = g; ell(c, cx, cy, R, R); c.fill();
+  c.strokeStyle = '#8a5c00'; c.lineWidth = Math.max(1, w*0.06); ell(c, cx, cy, R*0.78, R*0.78); c.stroke();
+  c.fillStyle = '#7a4f00'; c.font = 'bold ' + Math.round(w*0.36) + "px 'VT323', monospace";
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('JC', cx, cy + w*0.02);
+}
 function artClock(c,x,y,w,h){
   var cx = x + w/2, cy = y + h/2, R = w*0.42;
   c.fillStyle = 'rgba(0,255,65,0.12)'; ell(c, cx, cy, R, R); c.fill();
@@ -375,6 +385,7 @@ function makeIcon(type, size){
   else if(type === 'heart') artHeart(c, size*0.06, size*0.1, size*0.88, size*0.82, true);
   else if(type === 'heart0') artHeart(c, size*0.06, size*0.1, size*0.88, size*0.82, false);
   else if(type === 'star') artStar(c, 0, 0, size, size);
+  else if(type === 'coin') artCoin(c, 0, 0, size, size);
   else if(type === 'clock') artClock(c, 0, 0, size, size);
   return cv;
 }
@@ -808,13 +819,13 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 
 var Runner = {
   id:'runner', landscapeOnly:true, title:'Маленькая ведьма', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
-  rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай очки*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 очков</b><span>Тыква</span><b>10 очков</b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* JotunCoins (JC) — валюта реферальной программы Йотунхейм, 1 JC = 1 ₽. <a href="../index.html#referral">Подробнее о программе</a></div>',
+  rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай JC*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 JC</b><span>Тыква</span><b>10 JC</b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* JC (JotunCoins, ЙотунКоины) — валюта реферальной программы Йотунхейм, 1 JC = 1 ₽. В играх можно заработать до 500 JC в неделю и до 2 000 JC в месяц, игровые JC сгорают в конце месяца. JC можно оплатить до 50% заказа. <a href="../index.html#referral">Подробнее о программе</a></div>',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){
     var b = this.best(), rec = this.points > b;
     if(rec) lsSet(this.bestKey, String(this.points));
-    return 'Очки: <b>' + this.points + '</b>' + (rec ? ' — новый рекорд!' : ' · рекорд ' + b) +
+    return 'Заработано: <b>' + this.points + ' JC</b>' + (rec ? ' — новый рекорд!' : ' · рекорд ' + b + ' JC') +
       '<br>Конфет: <b>' + this.score + '</b> · ' + Math.floor(this.dist/10) + ' м';
   },
   winText:function(){ return this.summary(); },
@@ -845,7 +856,7 @@ var Runner = {
   },
   hud:function(){
     hudSlot(hudScore, 'score', 'candy', this.score + (this.unlocked ? ' \u2713' : '/' + this.GOAL));
-    hudSlot(hudMid, 'mid', 'star', String(this.points));
+    hudSlot(hudMid, 'mid', 'coin', String(this.points));
     setLives(this.lives, this.LIVES);
   },
   jump:function(){

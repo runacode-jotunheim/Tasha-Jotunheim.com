@@ -9,7 +9,7 @@
     {id:12,img:'glaz-odina.jpg',col:MB,name:'Глаз Одина',price:'16 490 ₽'},
     {id:16,img:'mother-teney-art.jpg',col:MB,name:'Мать Теней (кулон)',price:'14 490 ₽'},
     {id:13,img:'pechat-korolya.jpg',col:MB,name:'Печать Короля',price:'16 490 ₽'},
-    {id:34,img:'vremya-siyat.jpg',col:OZ,name:'Время сиять',price:'15 990 ₽'},
+    {id:34,img:'vremya-siyat.jpg',col:OZ,name:'Время сиять',price:'15 490 ₽'},
     {id:7,img:'vozvraschenie-k-zhizni.jpg',col:LT,name:'Возвращение к жизни',price:'9 490 ₽'},
     {id:26,img:'zolotoe-zerno.jpg',col:LM,name:'Золотое зерно',price:'12 490 ₽'},
     {id:14,img:'yablochny-pentakl.jpg',col:MB,name:'Яблочный Пентакль',price:'16 490 ₽'}

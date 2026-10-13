@@ -478,7 +478,12 @@ function tgGate(){
   btn.href = url; gate.classList.add('on');
   setTimeout(function(){ location.href = url; }, 700);
 }
-if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tgGate); else tgGate();
+// telegram-web-app.js грузится асинхронно (без VPN telegram.org может не открываться — страница не должна зависать)
+function tgWait(n){
+  if((window.Telegram && window.Telegram.WebApp) || n <= 0) return tgGate();
+  setTimeout(function(){ tgWait(n - 1); }, 100);
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ tgWait(15); }); else tgWait(15);
 
 /* ── Раннер на телефоне — только горизонтально ── */
 var rotateEl = $('sg-rotate'), rotatePaused = false;

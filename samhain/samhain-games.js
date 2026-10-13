@@ -808,7 +808,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 
 var Runner = {
   id:'runner', landscapeOnly:true, title:'Маленькая ведьма', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
-  rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай очки*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 очков</b><span>Тыква</span><b>10 очков</b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* Очки превращаются в JotunCoins (JC) — бонусную валюту реферальной программы Йотунхейм, 1 JC = 1 ₽. <a href="../index.html#referral">Подробнее о программе</a></div>',
+  rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай очки*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 очков</b><span>Тыква</span><b>10 очков</b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* JotunCoins (JC) — валюта реферальной программы Йотунхейм, 1 JC = 1 ₽. <a href="../index.html#referral">Подробнее о программе</a></div>',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){

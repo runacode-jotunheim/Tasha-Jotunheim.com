@@ -335,7 +335,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
       Таро<br><span style="font-size:11px;opacity:0.7">13 Старших Арканов</span>
     </button>
   </div>
-  <div style="margin-top:14px;font-size:12px;color:#888;letter-spacing:1px">1 000 ₽ за набор</div>
+  <div style="margin-top:14px;font-size:12px;color:#888;letter-spacing:1px">1 090 ₽ за набор</div>
 </div>
 
 <!-- Модалка быстрой покупки нейл-амулетов -->
@@ -348,7 +348,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
     <div id="nail-modal-desc" style="font-size:13px;color:#ccc;line-height:1.6;margin-bottom:14px"></div>
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid rgba(0,255,65,0.15)">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--accent);white-space:nowrap">1 000 ₽</span>
+    <span style="font-family:'Share Tech Mono',monospace;font-size:18px;color:var(--accent);white-space:nowrap">1 090 ₽</span>
     <button onclick="buyNailFromModal()" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:12px 20px;font-family:'Cinzel',serif;font-size:13px;cursor:pointer;font-weight:700;white-space:nowrap;letter-spacing:1px">► В корзину</button>
   </div>
 </div>
@@ -542,7 +542,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
   <button class="modal-close" onclick="closeAmuletSetModal()">✕</button>
   <div class="checkout-body">
     <div class="checkout-title">Хочу набор амулетов</div>
-    <div class="checkout-sub">Выбери количество — 1000 ₽ за набор</div>
+    <div class="checkout-sub">Выбери количество — 1 090 ₽ за набор</div>
 
     <div class="qty-row">
       <div class="qty-row-label">Старший Футарк<small>руны</small></div>
@@ -1249,6 +1249,11 @@ document.addEventListener('visibilitychange', function(){
 window.addEventListener('pagehide', markCartLeftNow);
 
 var cart = loadCartFromStorage();
+// миграция цен в сохранённых корзинах (октябрь 2026)
+(function(){ var MIG = {"5499": 5990, "7800": 8490, "7900": 8490, "8500": 8990, "8800": 9490, "9800": 10490, "10000": 10990, "10333": 10990, "11000": 11490, "11800": 12490, "12000": 12990, "13000": 13990, "13900": 14490, "15000": 15990, "15900": 16490, "19666": 20490, "20333": 20990, "29900": 30490, "1000": 1090};
+  cart.forEach(function(it){ if(it.pv !== 2){ if(MIG[String(it.price)]) it.price = MIG[String(it.price)]; it.pv = 2; } });
+  try{ localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({items: cart})); }catch(e){}
+})();
 
 var _scrollLockCount = 0;
 function lockBodyScroll(){
@@ -1313,7 +1318,7 @@ function renderCart(){
 }
 
 function addToCart(id, name, price, rune, qty){
-  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1});
+  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1, pv: 2});
   saveCartToStorage();
   renderCart();
   openCart();
@@ -1365,7 +1370,7 @@ function buyNailFromModal(){
   addToCart(
     isRune ? 'nail-set-rune' : 'nail-set-tarot',
     isRune ? 'Набор нейл-амулетов (Руны)' : 'Набор нейл-амулетов (Таро)',
-    1000, isRune ? '\u16A6' : '\uD83C\uDCCF', 1
+    1090, isRune ? '\u16A6' : '\uD83C\uDCCF', 1
   );
   closeNailModal();
 }
@@ -1399,7 +1404,7 @@ initQtyDrum('qtyDrumRune', 'rune');
 initQtyDrum('qtyDrumTarot', 'tarot');
 
 function updateAmuletTotal(){
-  var total = (amuletQty.rune + amuletQty.tarot) * 1000;
+  var total = (amuletQty.rune + amuletQty.tarot) * 1090;
   var totalEl = document.getElementById('buyAmuletTotal');
   var btn = document.getElementById('buyAmuletBtn');
   if(totalEl) totalEl.textContent = total.toLocaleString('ru-RU') + ' ₽';
@@ -1408,10 +1413,10 @@ function updateAmuletTotal(){
 
 function addAmuletSetToCart(){
   if(amuletQty.rune > 0){
-    addToCart('nail-set-rune', 'Набор нейл-амулетов (Руны)', 1000, 'ᚦ', amuletQty.rune);
+    addToCart('nail-set-rune', 'Набор нейл-амулетов (Руны)', 1090, 'ᚦ', amuletQty.rune);
   }
   if(amuletQty.tarot > 0){
-    addToCart('nail-set-tarot', 'Набор нейл-амулетов (Таро)', 1000, '🃏', amuletQty.tarot);
+    addToCart('nail-set-tarot', 'Набор нейл-амулетов (Таро)', 1090, '🃏', amuletQty.tarot);
   }
   amuletQty = {rune:0, tarot:0};
   var rd = document.getElementById('qtyDrumRune'), td = document.getElementById('qtyDrumTarot');

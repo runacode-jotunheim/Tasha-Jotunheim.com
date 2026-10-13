@@ -367,13 +367,48 @@ function showOv(title, html, btns){
 }
 function hideOv(){ ov.classList.remove('show'); }
 
+/* ── Раннер на телефоне — только горизонтально ── */
+var rotateEl = $('sg-rotate'), rotatePaused = false;
+var TOUCH = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+function needRotate(){ return !!current && current.landscapeOnly && TOUCH && window.innerHeight > window.innerWidth; }
+function tryLandscapeLock(){
+  // Android: полноэкранный режим + фиксация ориентации; iOS это не умеет — там выручает заставка
+  if(!TOUCH || !current || !current.landscapeOnly) return;
+  try{
+    var el = document.documentElement, p = el.requestFullscreen ? el.requestFullscreen() : null;
+    if(p && p.then) p.then(function(){ try{ screen.orientation.lock('landscape').catch(function(){}); }catch(e){} }).catch(function(){});
+  }catch(e){}
+}
+function exitLandscapeLock(){
+  try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+  try{ if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function(){}); }catch(e){}
+}
+function checkRotate(){
+  if(needRotate()){
+    rotateEl.classList.add('show');
+    if(running){ running = false; rotatePaused = true; }
+  } else {
+    rotateEl.classList.remove('show');
+    if(rotatePaused && current){
+      rotatePaused = false;
+      showOv('Пауза', 'Экран повернули — продолжаем?', [
+        {label:'\u25B6 Продолжить', fn:resumeGame},
+        {label:'К играм', ghost:true, fn:closeGame}
+      ]);
+    }
+  }
+}
+$('sg-rotate-back').addEventListener('click', function(){ closeGame(); });
+
 function openGame(g){
-  current = g; hudCache = {};
+  current = g; hudCache = {}; rotatePaused = false;
+  tryLandscapeLock();
   gameEl.classList.add('open');
   document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
   requestAnimationFrame(function(){
     g.setup(); g.reset(); g.draw();
+    checkRotate();
     showOv(g.title, g.rules, [
       {label:'▶ Играть', fn:startGame},
       {label:'К играм', ghost:true, fn:closeGame}
@@ -381,11 +416,13 @@ function openGame(g){
   });
 }
 function startGame(){
+  if(needRotate()){ checkRotate(); return; }
   hideOv(); current.reset(); running = true;
   last = performance.now();
   cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
 }
 function resumeGame(){
+  if(needRotate()){ checkRotate(); return; }
   hideOv(); running = true; last = performance.now();
   cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
 }
@@ -419,6 +456,7 @@ function pauseGame(){
 }
 function closeGame(){
   running = false; cancelAnimationFrame(raf); hideOv();
+  rotateEl.classList.remove('show'); rotatePaused = false; exitLandscapeLock();
   gameEl.classList.remove('open');
   document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
@@ -438,8 +476,9 @@ document.addEventListener('keydown', function(e){
   if(running && current.key && current.key(e)) e.preventDefault();
 });
 document.addEventListener('visibilitychange', function(){ if(document.hidden) pauseGame(); });
+window.addEventListener('orientationchange', function(){ setTimeout(function(){ if(current){ current.setup(); current.draw(); } checkRotate(); }, 250); });
 window.addEventListener('resize', function(){
-  if(current){ current.setup(); current.draw(); }
+  if(current){ current.setup(); current.draw(); checkRotate(); }
   drawPreviews();
 });
 $('sg-close').addEventListener('click', function(){ closeGame(); });
@@ -723,7 +762,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 }
 
 var Runner = {
-  id:'runner', title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
+  id:'runner', landscapeOnly:true, title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
   rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы или бок ворона — удар. Стена склепа не бьёт — упрёшься и встанешь, пока не перепрыгнешь.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
@@ -748,7 +787,7 @@ var Runner = {
       this.stars = []; this.starsW = this.LW;
       for(var i=0;i<46;i++) this.stars.push({x:Math.random()*this.LW, y:Math.random()*80, p:Math.random()*6, r:rand(0.25,0.6)});
     }
-    hint.textContent = window.innerHeight > window.innerWidth ? 'Поверни телефон — поле будет шире' : '';
+    hint.textContent = (!TOUCH && window.innerHeight > window.innerWidth) ? 'Окно узкое — разверни шире, поле будет больше' : '';
     if(!this.hero) this.reset();
   },
   reset:function(){

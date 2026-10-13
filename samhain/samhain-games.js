@@ -443,6 +443,25 @@ function showOv(title, html, btns){
 }
 function hideOv(){ ov.classList.remove('show'); }
 
+/* ── Telegram Mini App: на весь экран, кнопка «Назад», фиксация горизонтали ── */
+var TGA = null;
+function tgInit(){
+  var W = window.Telegram && window.Telegram.WebApp;
+  if(!W || !W.initData) return; // открыто не в Telegram
+  TGA = W;
+  document.documentElement.classList.add('in-tg');
+  try{ W.ready(); W.expand(); }catch(e){}
+  try{ if(W.isVersionAtLeast && W.isVersionAtLeast('8.0')) W.requestFullscreen(); }catch(e){}
+  try{ if(W.disableVerticalSwipes) W.disableVerticalSwipes(); }catch(e){}
+  try{ W.setHeaderColor && W.setHeaderColor('#000000'); W.setBackgroundColor && W.setBackgroundColor('#000000'); }catch(e){}
+  try{ W.BackButton.onClick(function(){ if(current) closeGame(); }); }catch(e){}
+}
+function tgOrientation(lock){
+  if(!TGA) return;
+  try{ if(TGA.isVersionAtLeast('8.0')){ if(lock) TGA.lockOrientation(); else TGA.unlockOrientation(); } }catch(e){}
+}
+if(document.readyState === 'complete') tgInit(); else window.addEventListener('load', tgInit);
+
 /* ── Раннер на телефоне — только горизонтально ── */
 var rotateEl = $('sg-rotate'), rotatePaused = false;
 var TOUCH = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
@@ -465,6 +484,7 @@ function checkRotate(){
     if(running){ running = false; rotatePaused = true; }
   } else {
     rotateEl.classList.remove('show');
+    if(current && current.landscapeOnly) tgOrientation(true);
     if(rotatePaused && current){
       rotatePaused = false;
       showOv('Пауза', 'Экран повернули — продолжаем?', [
@@ -478,6 +498,7 @@ $('sg-rotate-back').addEventListener('click', function(){ closeGame(); });
 
 function openGame(g){
   current = g; hudCache = {}; rotatePaused = false;
+  if(TGA){ try{ TGA.BackButton.show(); }catch(e){} }
   tryLandscapeLock();
   gameEl.classList.add('open');
   document.documentElement.style.overflow = 'hidden';
@@ -534,6 +555,7 @@ function closeGame(){
   running = false; cancelAnimationFrame(raf); hideOv();
   gameEl.classList.remove('sg-immersive');
   rotateEl.classList.remove('show'); rotatePaused = false; exitLandscapeLock();
+  if(TGA){ try{ TGA.BackButton.hide(); }catch(e){} tgOrientation(false); }
   gameEl.classList.remove('open');
   document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
@@ -781,7 +803,7 @@ var Grave = {
    ══════════════════════════════════════════════ */
 var GRAV = 900, JUMP1 = 265, JUMP2 = 235, BOUNCE = 230;
 
-function drawNightBg(c, LW, LH, G, scroll, t, stars){
+function drawNightBg(c, LW, LH, G, scroll, t, stars, moonY){
   var g = c.createLinearGradient(0,0,0,G);
   g.addColorStop(0,'#04020a'); g.addColorStop(1,'#1d0f2e');
   c.fillStyle = g; c.fillRect(0,0,LW,LH);
@@ -792,7 +814,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
     ell(c, st.x, st.y, st.r, st.r); c.fill();
   }
   c.globalAlpha = 1;
-  var mx = LW - 34, my = 28;
+  var mx = LW - 34, my = moonY || 28;
   glow(c, mx, my, 34, '215,255,205', 0.32);
   var mg = c.createRadialGradient(mx-3, my-3, 1, mx, my, 12);
   mg.addColorStop(0,'#f7ffee'); mg.addColorStop(1,'#bcdcb2');
@@ -866,8 +888,12 @@ var Runner = {
     var maxAsp = imm ? 3.0 : 2.2;
     if(dispW/dispH > maxAsp) dispW = dispH*maxAsp;
     this.dispW = Math.floor(dispW); this.dispH = Math.floor(dispH);
-    this.k = this.dispH / this.LH;
-    this.LW = Math.round(this.LH * this.dispW / this.dispH);
+    // полноэкранный режим: камера срезает верх неба (там только луна) — всё крупнее на ~18%
+    this.top = imm ? 24 : 0;
+    var viewH = this.LH - this.top - (imm ? 8 : 0); // и немного земли снизу
+    this.k = this.dispH / viewH;
+    this.LW = Math.round(viewH * this.dispW / this.dispH);
+    this.HOME = imm ? Math.max(30, Math.round(this.LW * 0.16)) : 30;
     this.spdK = Math.max(1, this.LW / 256) * (TOUCH ? 1.12 : 1);
     sizeCanvas(this.dispW, this.dispH);
     if(!this.stars || this.starsW !== this.LW){
@@ -878,7 +904,7 @@ var Runner = {
     if(!this.hero) this.reset();
   },
   reset:function(){
-    this.hero = {x:30, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0, dizzy:0, bump:0, ouch:0};
+    this.hero = {x:this.HOME, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0, dizzy:0, bump:0, ouch:0};
     this.t = 0; this.speed = 90 * (this.spdK || 1); this.dist = 0; this.scroll = 0;
     this.solids = []; this.foes = []; this.cand = []; this.fx = []; this.pops = [];
     this.next = 150; this.score = 0; this.points = 0; this.lives = this.LIVES; this.shake = 0;
@@ -1102,11 +1128,12 @@ var Runner = {
   },
   draw:function(){
     var c = ctx, k = this.k, LW = this.LW, LH = this.LH, G = this.G, h = this.hero, i, o;
-    c.setTransform(DPR*k,0,0,DPR*k,0,0);
+    var top = this.top || 0;
+    c.setTransform(DPR*k,0,0,DPR*k,0,-top*k*DPR);
     c.imageSmoothingEnabled = true;
     c.save();
     if(this.shake > 0) c.translate(rand(-1,1)*this.shake*8, rand(-1,1)*this.shake*8);
-    drawNightBg(c, LW, LH, G, this.scroll, this.t, this.stars);
+    drawNightBg(c, LW, LH, G, this.scroll, this.t, this.stars, top ? top + 34 : 28);
     for(i=0;i<this.solids.length;i++){
       o = this.solids[i];
       if(o.type === 'crypt') artCrypt(c, o.x, o.y, o.w, o.h + (G - o.y - o.h), o.rune);
@@ -1169,8 +1196,8 @@ var Runner = {
     if(this.banner > 0){
       c.globalAlpha = Math.min(1, this.banner*2);
       c.font = "12px 'VT323', monospace";
-      c.fillStyle = 'rgba(0,0,0,0.65)'; rrect(c, LW/2 - 62, 34, 124, 18, 4); c.fill();
-      c.fillStyle = '#ffd84a'; c.fillText('ПРОМОКОД ОТКРЫТ — БЕГИ ДАЛЬШЕ', LW/2, 43.5);
+      c.fillStyle = 'rgba(0,0,0,0.65)'; rrect(c, LW/2 - 62, 34 + top, 124, 18, 4); c.fill();
+      c.fillStyle = '#ffd84a'; c.fillText('ПРОМОКОД ОТКРЫТ — БЕГИ ДАЛЬШЕ', LW/2, 43.5 + top);
       c.globalAlpha = 1;
     }
     c.restore();

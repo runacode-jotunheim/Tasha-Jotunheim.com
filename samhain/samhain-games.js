@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   ИГРЫ САМАЙНА: хаб + «Тайны погоста» + «Маленькая ведьма»
+   ИГРЫ САМАЙНА: хаб + «Погост» + «Джек-бегун»
    Векторный HD-арт: рисуется в родном разрешении экрана
    ══════════════════════════════════════════════ */
 (function(){
@@ -26,10 +26,11 @@ function glow(c,x,y,r,col,a){
 }
 
 /* ══════════ АРТ ══════════ */
-function artPumpkin(c,x,y,w,h,gold,withGlow){
+function artPumpkin(c,x,y,w,h,kind,withGlow){
+  var gold = kind === true || kind === 'gold', rotten = kind === 'rotten';
   var cx = x + w/2, top = y + h*0.16, bh = h*0.84, cy = top + bh/2;
-  if(withGlow) glow(c, cx, cy, w*0.85, gold ? '255,215,60' : '255,130,20', 0.38);
-  var C = gold ? ['#fff6b8','#ffd84a','#c79400','#5c4100'] : ['#ffc173','#ff7a1a','#c44a00','#4a1a00'];
+  if(withGlow) glow(c, cx, cy, w*0.85, rotten ? '200,40,10' : (gold ? '255,215,60' : '255,130,20'), rotten ? 0.32 : 0.38);
+  var C = rotten ? ['#a8834e','#6f4a22','#3f2810','#1a0f05'] : (gold ? ['#fff6b8','#ffd84a','#c79400','#5c4100'] : ['#ffc173','#ff7a1a','#c44a00','#4a1a00']);
   var lobes = [[-0.27,0.25,0.46],[0.27,0.25,0.46],[-0.12,0.27,0.5],[0.12,0.27,0.5],[0,0.24,0.5]];
   for(var i=0;i<lobes.length;i++){
     var L = lobes[i], lx = cx + L[0]*w, rx = L[1]*w, ry = L[2]*bh;
@@ -38,7 +39,16 @@ function artPumpkin(c,x,y,w,h,gold,withGlow){
     c.fillStyle = g; ell(c,lx,cy,rx,ry); c.fill();
     c.strokeStyle = 'rgba(60,20,0,0.35)'; c.lineWidth = Math.max(0.3, w*0.015); c.stroke();
   }
-  c.fillStyle = '#4a7a22'; c.beginPath();
+  if(rotten){
+    // плесень и пятна гнили
+    c.fillStyle = 'rgba(110,140,70,0.55)';
+    ell(c, cx - w*0.3, cy + bh*0.18, w*0.07, bh*0.05); c.fill();
+    ell(c, cx + w*0.33, cy - bh*0.12, w*0.05, bh*0.04); c.fill();
+    c.fillStyle = 'rgba(25,12,4,0.55)';
+    ell(c, cx + w*0.2, cy + bh*0.3, w*0.05, bh*0.035); c.fill();
+    ell(c, cx - w*0.08, cy - bh*0.33, w*0.04, bh*0.03); c.fill();
+  }
+  c.fillStyle = rotten ? '#4a3a1c' : '#4a7a22'; c.beginPath();
   c.moveTo(cx - w*0.05, top + bh*0.06);
   c.quadraticCurveTo(cx - w*0.04, y + h*0.02, cx + w*0.08, y);
   c.lineTo(cx + w*0.12, y + h*0.06);
@@ -53,6 +63,17 @@ function artPumpkin(c,x,y,w,h,gold,withGlow){
     c.closePath(); c.fill();
   }
   var fg = c.createRadialGradient(cx, cy, 0, cx, cy, w*0.42);
+  if(rotten){
+    fg.addColorStop(0,'#ffd2a0'); fg.addColorStop(0.45,'#ff3a10'); fg.addColorStop(1,'#6a0000');
+    c.fillStyle = fg;
+    // злые скошенные глаза
+    poly([[-0.3,-0.2],[-0.06,-0.05],[-0.25,-0.01]]);
+    poly([[0.3,-0.2],[0.06,-0.05],[0.25,-0.01]]);
+    // пасть с клыками сверху и снизу
+    poly([[-0.34,0.08],[-0.25,0.2],[-0.17,0.1],[-0.09,0.23],[0,0.11],[0.09,0.23],[0.17,0.1],[0.25,0.2],[0.34,0.08],
+          [0.22,0.36],[0.15,0.27],[0.07,0.4],[0,0.3],[-0.07,0.4],[-0.15,0.27],[-0.22,0.36]]);
+    return;
+  }
   if(gold){ fg.addColorStop(0,'#fffdf0'); fg.addColorStop(0.5,'#ff9a00'); fg.addColorStop(1,'#c84400'); } else { fg.addColorStop(0,'#fffbd0'); fg.addColorStop(0.55,'#ffd640'); fg.addColorStop(1,'#ff9000'); }
   c.fillStyle = fg;
   poly([[-0.27,-0.02],[-0.07,-0.02],[-0.16,-0.25]]);
@@ -174,53 +195,59 @@ function artHole(c,hx,hy,rw,rh,rnd){
 }
 
 function artHero(c,x,y,ph,air,stand,hdx,reach){
-  var cx = x + 5, wv = Math.sin(ph*1.3)*1.2;
+  // мальчик в худи с капюшоном, в руке тыква-фонарь
+  var cx = x + 5;
   hdx = hdx || 0; reach = reach || 0;
-  glow(c, x+11.2, y+10, 13, '255,190,60', 0.42);
-  c.lineCap = 'round'; c.strokeStyle = '#140c20'; c.lineWidth = 1.7;
-  if(stand && !air){
-    c.beginPath(); c.moveTo(cx-1, y+10.5); c.lineTo(cx-1.6, y+13.8); c.moveTo(cx+1, y+10.5); c.lineTo(cx+1.6, y+13.8); c.stroke();
-  } else if(air){
-    c.beginPath(); c.moveTo(cx-1, y+10.5); c.lineTo(cx-2.5, y+13); c.moveTo(cx+1, y+10.5); c.lineTo(cx+2.8, y+12.4); c.stroke();
-  } else {
-    var a = Math.sin(ph)*0.75;
-    c.beginPath(); c.moveTo(cx, y+10.5); c.lineTo(cx + Math.sin(a)*3.6, y+13.8);
-    c.moveTo(cx, y+10.5); c.lineTo(cx - Math.sin(a)*3.6, y+13.8); c.stroke();
-  }
-  c.fillStyle = '#331d5c'; c.beginPath();
-  c.moveTo(cx-1, y+4); c.quadraticCurveTo(x-4, y+7.5+wv, x-3.2, y+12.2+wv); c.lineTo(cx, y+11.2); c.closePath(); c.fill();
+  glow(c, x+11.4, y+10, 13, '255,150,30', 0.45);
+  c.lineCap = 'round';
+  // ноги — джинсы, кеды
+  c.strokeStyle = '#2c3d66'; c.lineWidth = 1.9;
+  var fl, fr;
+  if(stand && !air){ fl = [cx-1.5, y+13.4]; fr = [cx+1.5, y+13.4]; }
+  else if(air){ fl = [cx-2.4, y+12.6]; fr = [cx+2.6, y+12]; }
+  else { var a = Math.sin(ph)*0.75; fl = [cx + Math.sin(a)*3.6, y+13.4]; fr = [cx - Math.sin(a)*3.6, y+13.4]; }
+  c.beginPath(); c.moveTo(cx-0.9, y+10.8); c.lineTo(fl[0], fl[1]); c.moveTo(cx+0.9, y+10.8); c.lineTo(fr[0], fr[1]); c.stroke();
+  c.fillStyle = '#e8e8ee';
+  [fl, fr].forEach(function(p){ rrect(c, p[0]-1.1, p[1]-0.4, 2.6, 1.1, 0.45); c.fill(); });
+  c.fillStyle = '#20202a'; [fl, fr].forEach(function(p){ c.fillRect(p[0]-1.1, p[1]+0.5, 2.6, 0.25); });
+  // худи
   var bg = c.createLinearGradient(x, y+4, x+10, y+12);
-  bg.addColorStop(0,'#9a6fe0'); bg.addColorStop(1,'#46277f');
-  c.fillStyle = bg; c.beginPath();
-  c.moveTo(cx-2.6, y+4.4); c.lineTo(cx+3, y+4.4); c.lineTo(cx+4.1, y+11.6); c.lineTo(cx-4.1, y+11.6); c.closePath(); c.fill();
-  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; c.stroke();
-  c.fillStyle = '#ffb000'; c.fillRect(cx-3.3, y+8.3, 6.8, 0.7);
-  c.strokeStyle = '#46277f'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(cx+1.5, y+6); c.lineTo(x+10.6, y+8.2); c.stroke();
-  c.fillStyle = '#2a1a10'; c.fillRect(x+10.2, y+8.1, 2.2, 0.6);
-  var lg = c.createLinearGradient(0, y+8.7, 0, y+11.6);
-  lg.addColorStop(0,'#fff6c0'); lg.addColorStop(1,'#ffa800');
-  c.fillStyle = lg; c.fillRect(x+10.2, y+8.7, 2.2, 2.9);
-  c.strokeStyle = '#2a1a10'; c.lineWidth = 0.3; c.strokeRect(x+10.2, y+8.7, 2.2, 2.9);
+  bg.addColorStop(0,'#5d6474'); bg.addColorStop(1,'#2a2e39');
+  c.fillStyle = bg;
+  c.beginPath();
+  c.moveTo(cx-2.9, y+4.6); c.lineTo(cx+3.1, y+4.6);
+  c.quadraticCurveTo(cx+3.9, y+7.5, cx+3.7, y+11.3); c.lineTo(cx-3.7, y+11.3);
+  c.quadraticCurveTo(cx-3.9, y+7.5, cx-2.9, y+4.6); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(200,255,216,0.5)'; c.lineWidth = 0.35; c.stroke();
+  c.fillStyle = '#1f222b'; c.fillRect(cx-3.7, y+10.6, 7.4, 0.7);
+  c.fillStyle = 'rgba(15,17,24,0.55)'; rrect(c, cx-2.3, y+8.1, 4.8, 1.9, 0.6); c.fill();
+  c.strokeStyle = '#e8e8ee'; c.lineWidth = 0.3;
+  c.beginPath(); c.moveTo(cx+0.4, y+5.2); c.lineTo(cx+0.2, y+7.1); c.moveTo(cx+1.9, y+5.2); c.lineTo(cx+2.1, y+7.1); c.stroke();
+  // рука с тыквой-фонарём
+  c.strokeStyle = '#3c414e'; c.lineWidth = 1.45;
+  c.beginPath(); c.moveTo(cx+1.6, y+6); c.lineTo(x+10.2, y+8.4); c.stroke();
+  c.fillStyle = '#f0d2b0'; ell(c, x+10.4, y+8.5, 0.7, 0.65); c.fill();
+  artPumpkin(c, x+9.3, y+8.6, 4.4, 3.9, 'normal', false);
+  // голова в капюшоне
   c.save(); c.translate(hdx, 0);
-  var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5);
-  hg.addColorStop(0,'#ad86ec'); hg.addColorStop(1,'#3b2170');
+  var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5.2);
+  hg.addColorStop(0,'#737b8d'); hg.addColorStop(1,'#2e323d');
   c.fillStyle = hg; c.beginPath();
-  c.moveTo(cx-3.7, y+5.3); c.quadraticCurveTo(cx-4.3, y-0.9, cx+0.5, y-0.7);
-  c.quadraticCurveTo(cx+4.7, y+0.3, cx+3.9, y+5.3); c.closePath(); c.fill();
-  c.beginPath(); c.moveTo(cx-2, y+0.2); c.lineTo(cx-5.8, y+2.4 + wv*0.3); c.lineTo(cx-2.9, y+2.9); c.closePath(); c.fill();
-  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35;
-  c.beginPath(); c.moveTo(cx-3.7, y+5.3); c.quadraticCurveTo(cx-4.3, y-0.9, cx+0.5, y-0.7); c.quadraticCurveTo(cx+4.7, y+0.3, cx+3.9, y+5.3); c.stroke();
-  c.fillStyle = '#f2d7b6'; ell(c, cx+1.4, y+3.1, 1.85, 1.95); c.fill();
-  c.fillStyle = 'rgba(40,20,70,0.45)'; ell(c, cx+0.4, y+2.4, 1.3, 1.1); c.fill();
-  glow(c, cx+1.8, y+2.9, 2.4, '0,255,65', 0.5);
-  c.fillStyle = '#00ff41'; c.fillRect(cx+0.7, y+2.55, 0.75, 0.75); c.fillRect(cx+2.15, y+2.55, 0.75, 0.75);
+  c.moveTo(cx-3.8, y+5.4); c.quadraticCurveTo(cx-4.5, y-0.8, cx+0.4, y-0.8);
+  c.quadraticCurveTo(cx+4.9, y-0.4, cx+4.1, y+5.4); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; c.stroke();
+  c.fillStyle = '#f0d2b0'; ell(c, cx+1.5, y+3.2, 1.9, 2); c.fill();
+  c.fillStyle = '#3a2414'; c.beginPath();
+  c.moveTo(cx-0.3, y+1.3); c.quadraticCurveTo(cx+1.6, y+0.6, cx+3.3, y+1.6); c.lineTo(cx+2.6, y+2.2); c.lineTo(cx+1.9, y+1.7); c.lineTo(cx+1.1, y+2.3); c.lineTo(cx+0.2, y+1.9); c.closePath(); c.fill();
+  c.fillStyle = 'rgba(30,30,40,0.35)'; ell(c, cx+0.2, y+2.8, 0.9, 1.4); c.fill();
+  c.fillStyle = '#16161c'; c.fillRect(cx+0.9, y+2.75, 0.55, 0.7); c.fillRect(cx+2.25, y+2.75, 0.55, 0.7);
+  c.strokeStyle = '#8a4a3a'; c.lineWidth = 0.25; c.beginPath(); c.moveTo(cx+1.3, y+4.3); c.quadraticCurveTo(cx+1.9, y+4.7, cx+2.5, y+4.2); c.stroke();
   c.restore();
   if(reach > 0){
-    // свободная рука тянется к голове и отпускает
     var hx = lerp(cx+0.6, cx+3.3+hdx, reach), hy = lerp(y+8.6, y+1.8, reach);
-    c.strokeStyle = '#5a35a0'; c.lineWidth = 1.3; c.lineCap = 'round';
+    c.strokeStyle = '#4a505e'; c.lineWidth = 1.3; c.lineCap = 'round';
     c.beginPath(); c.moveTo(cx-0.6, y+5.8); c.quadraticCurveTo(cx-1.2 + reach*1.5, y+4.5 - reach*1.5, hx, hy); c.stroke();
-    c.fillStyle = '#f2d7b6'; ell(c, hx, hy, 0.85, 0.8); c.fill();
+    c.fillStyle = '#f0d2b0'; ell(c, hx, hy, 0.85, 0.8); c.fill();
   }
 }
 function artCanary(c,x,y,s,dir,ph){
@@ -597,8 +624,8 @@ function graveEntityBox(type, k){
 }
 
 var Grave = {
-  id:'grave', title:'Тайны погоста', GOAL:30, TIME:40, LIVES:3,
-  rules:'<div class="sg-goal">Собери <b>30 тыкв за 40 секунд</b></div><div class="sg-rules"><span>Тыква</span><b>+1</b><span>Золотая тыква</span><b>+3</b><span>Зомби</span><i>−1 жизнь</i><span>Призрак</span><i>−3 сек</i></div>',
+  id:'grave', title:'Погост', GOAL:30, TIME:40, LIVES:3,
+  rules:'<div class="sg-goal">Собери <b>30 тыкв за 40 секунд</b></div><div class="sg-rules"><span>Тыква</span><b>+1</b><span>Гнилая зубастая тыква</span><i>−2 тыквы</i><span>Зомби</span><i>−1 жизнь</i><span>Призрак</span><i>−3 сек</i></div>',
   winText:function(){ return 'Собрано тыкв: <b>' + this.score + '</b> за ' + Math.round(this.TIME - this.time) + ' сек.'; },
   loseText:function(){ return this.lives <= 0 ? 'Зомби забрали все жизни. Тыкв: <b>' + this.score + '</b> из 30.' : 'Время вышло. Тыкв: <b>' + this.score + '</b> из 30.'; },
   setup:function(){
@@ -616,11 +643,11 @@ var Grave = {
     this.bg = bg;
     var k = this.k, self = this;
     this.art = {};
-    ['pumpkin','gold','zombie','ghost'].forEach(function(t){
+    ['pumpkin','rotten','zombie','ghost'].forEach(function(t){
       var b = graveEntityBox(t, k);
       self.art[t] = makeArt(b.w, b.h, function(c,x,y,w,h){
         if(t === 'pumpkin') artPumpkin(c,x,y,w,h,false,true);
-        else if(t === 'gold') artPumpkin(c,x,y,w,h,true,true);
+        else if(t === 'rotten') artPumpkin(c,x,y,w,h,'rotten',true);
         else if(t === 'zombie') artZombie(c,x,y,w,h);
         else artGhost(c,x,y,w,h);
       });
@@ -649,12 +676,13 @@ var Grave = {
     for(var t=0;t<24;t++){ var i = Math.floor(Math.random()*n); if(!this.cells[i]){ idx = i; break; } }
     if(idx < 0) return;
     var r = Math.random(), bad = lerp(0.22, 0.4, p), type;
-    if(r < 0.07) type = 'gold';
-    else if(r < 0.07 + bad) type = Math.random() < 0.6 ? 'zombie' : 'ghost';
+    var rot = lerp(0.14, 0.24, p);
+    if(r < rot) type = 'rotten';
+    else if(r < rot + bad) type = Math.random() < 0.6 ? 'zombie' : 'ghost';
     else type = 'pumpkin';
     var stay = lerp(1.15, 0.6, p) * rand(0.85, 1.15);
     if(type === 'zombie') stay *= 1.25;
-    if(type === 'gold') stay *= 0.8;
+    if(type === 'rotten') stay *= 1.1;
     this.cells[idx] = {type:type, age:0, stay:stay};
   },
   update:function(dt){
@@ -692,10 +720,11 @@ var Grave = {
       this.score += 1; burst(this.fx, cx, cy, '#ff8a2a', 12, k*2.2);
       this.txt.push({x:cx, y:cy - k*0.2, s:'+1', c:'#ffb35c', life:0.6});
       vibrate(15);
-    } else if(e.type === 'gold'){
-      this.score += 3; burst(this.fx, cx, cy, '#ffd84a', 20, k*2.6);
-      this.txt.push({x:cx, y:cy - k*0.2, s:'+3', c:'#ffd84a', life:0.8});
-      vibrate(25);
+    } else if(e.type === 'rotten'){
+      this.score = Math.max(0, this.score - 2); this.flash = 0.8; this.flashC = '140,70,20'; this.shake = 0.15;
+      burst(this.fx, cx, cy, '#6f4a22', 16, k*2.2);
+      this.txt.push({x:cx, y:cy - k*0.2, s:'\u22122', c:'#ff6b3b', life:0.8});
+      vibrate(70);
     } else if(e.type === 'zombie'){
       this.lives -= 1; this.shake = 0.3; this.flash = 1; this.flashC = '255,32,32';
       burst(this.fx, cx, cy, '#6db84a', 14, k*2);
@@ -818,7 +847,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 }
 
 var Runner = {
-  id:'runner', landscapeOnly:true, title:'Маленькая ведьма', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
+  id:'runner', landscapeOnly:true, title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
   rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай JC*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 JC</b><span>Тыква</span><b>10 JC</b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* JC (JotunCoins, ЙотунКоины) — валюта реферальной программы Йотунхейм, 1 JC = 1 ₽. В играх можно заработать до 500 JC в неделю и до 2 000 JC в месяц, игровые JC сгорают в конце месяца. JC можно оплатить до 50% заказа. <a href="../index.html#referral">Подробнее о программе</a></div>',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
@@ -838,6 +867,7 @@ var Runner = {
     this.dispW = Math.floor(dispW); this.dispH = Math.floor(dispH);
     this.k = this.dispH / this.LH;
     this.LW = Math.round(this.LH * this.dispW / this.dispH);
+    this.spdK = Math.max(1, this.LW / 256) * (TOUCH ? 1.12 : 1);
     sizeCanvas(this.dispW, this.dispH);
     if(!this.stars || this.starsW !== this.LW){
       this.stars = []; this.starsW = this.LW;
@@ -848,7 +878,7 @@ var Runner = {
   },
   reset:function(){
     this.hero = {x:30, y:this.G-14, vy:0, onGround:true, canDouble:true, coyote:0.1, inv:0, anim:0, combo:0, dizzy:0, bump:0, ouch:0};
-    this.t = 0; this.speed = 90; this.dist = 0; this.scroll = 0;
+    this.t = 0; this.speed = 90 * (this.spdK || 1); this.dist = 0; this.scroll = 0;
     this.solids = []; this.foes = []; this.cand = []; this.fx = []; this.pops = [];
     this.next = 150; this.score = 0; this.points = 0; this.lives = this.LIVES; this.shake = 0;
     this.unlocked = false; this.banner = 0; this.recent = []; this.stall = false;
@@ -982,7 +1012,8 @@ var Runner = {
   update:function(dt){
     var G = this.G, h = this.hero, i, o;
     this.t += dt;
-    this.speed = Math.min(230, 90 + this.t*2.2);
+    // на телефоне поле шире (больше обзор), поэтому скорость масштабируем, чтобы темп совпадал с ПК
+    this.speed = Math.min(230, 90 + this.t*2.2) * (this.spdK || 1);
     // упёрся в стену склепа — мир стоит, пока не перепрыгнешь
     var dx = this.stall ? 0 : this.speed*dt; this.dist += dx; this.scroll += dx;
     this.next -= dx; if(this.next <= 0) this.spawn();
@@ -1159,12 +1190,12 @@ function drawPreviews(){
       c.setTransform(DPR,0,0,DPR,0,0);
       paintGraveBoard(c, w, 2, w/2);
       var k = w/2;
-      [[0,0,'zombie',0.9],[1,1,'pumpkin',1],[1,0,'gold',0.7]].forEach(function(d){
+      [[0,0,'zombie',0.9],[1,1,'pumpkin',1],[1,0,'rotten',0.75]].forEach(function(d){
         var G = graveCellGeom(d[0]*k, d[1]*k, k), b = graveEntityBox(d[2], k);
         c.save(); c.beginPath(); c.rect(d[0]*k - k, d[1]*k - k, k*3, G.hy - d[1]*k + k); c.clip();
         var ey = G.hy - b.h*d[3];
         if(d[2] === 'zombie') artZombie(c, G.hx - b.w/2, ey, b.w, b.h);
-        else artPumpkin(c, G.hx - b.w/2, ey, b.w, b.h, d[2] === 'gold', true);
+        else artPumpkin(c, G.hx - b.w/2, ey, b.w, b.h, d[2] === 'rotten' ? 'rotten' : 'normal', true);
         c.restore();
       });
       var gb = graveEntityBox('ghost', k);

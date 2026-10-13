@@ -137,7 +137,8 @@ html.theme-red .calc-result-tarot-img,html.theme-red .chain-slot img{filter:hue-
 
 /* THEME TOGGLE */
 #theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
-.pill-trigger{width:54px;height:28px;border-radius:14px;background:linear-gradient(90deg,#00ff41 50%,#ff2020 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
+@media(max-width:520px){#theme-toggle{right:12px;bottom:14px}}
+.pill-trigger{width:28px;height:54px;border-radius:14px;background:linear-gradient(180deg,#00ff41 50%,#ff2020 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
 .pill-choices{display:flex;flex-direction:column;gap:8px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .3s,transform .3s}
 .pill-choices.open{opacity:1;pointer-events:auto;transform:translateY(0)}
 .pill-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);transition:transform .2s}

@@ -255,7 +255,12 @@ function mount(app) {
       return;
     }
     if (/^\/start/.test(text)) {
-      await tg.sendTo(msg.chat.id, `Привет! Это бот «Артефакты Йотунхейм».\nСайт: ${SITE_URL()}\nЧтобы получать сюда коды входа и бонусы, привяжи Telegram в личном кабинете на сайте.`);
+      await tg.sendTo(msg.chat.id,
+        '🎃 Йотун Игры · Самайн\n\nПогост и Маленькая Ведьма. Играй — получи промокод на скидку и JotunCoins (JC).\n\nЧтобы сюда приходили коды входа и бонусы, привяжи Telegram в личном кабинете на сайте.',
+        { reply_markup: { inline_keyboard: [
+          [{ text: '▶ Играть', web_app: { url: `${SITE_URL()}/samhain/` } }],
+          [{ text: 'Сайт Йотунхейм', url: SITE_URL() }],
+        ] } });
     }
   }));
 

@@ -532,6 +532,7 @@ function pauseGame(){
 }
 function closeGame(){
   running = false; cancelAnimationFrame(raf); hideOv();
+  gameEl.classList.remove('sg-immersive');
   rotateEl.classList.remove('show'); rotatePaused = false; exitLandscapeLock();
   gameEl.classList.remove('open');
   document.documentElement.style.overflow = '';
@@ -624,6 +625,7 @@ var Grave = {
   loseText:function(){ return this.lives <= 0 ? 'Зомби забрали все жизни. Тыкв: <b>' + this.score + '</b> из 30.' : 'Время вышло. Тыкв: <b>' + this.score + '</b> из 30.'; },
   setup:function(){
     var r = stage.getBoundingClientRect();
+    if(gameEl.classList.contains('sg-immersive')){ gameEl.classList.remove('sg-immersive'); r = stage.getBoundingClientRect(); }
     var n = r.width >= 640 ? 9 : 6;
     if(n !== this.N){ this.N = n; this.cells = null; }
     var s = Math.floor(Math.min(r.width - 16, r.height - 16));
@@ -854,10 +856,15 @@ var Runner = {
   winText:function(){ return this.summary(); },
   loseText:function(){ return this.summary() + '<br>Для промокода нужно 30 конфет.'; },
   setup:function(){
+    // телефон горизонтально: полноэкранный режим — счёт поверх поля, без рамок и отступов
+    var imm = TOUCH && window.innerWidth > window.innerHeight;
+    gameEl.classList.toggle('sg-immersive', imm);
     var r = stage.getBoundingClientRect();
-    var W = r.width - 16, H = r.height - 16;
+    var pad = imm ? 0 : 16;
+    var W = r.width - pad, H = r.height - pad;
     var dispW = W, dispH = Math.min(H, W/1.5);
-    if(dispW/dispH > 2.2) dispW = dispH*2.2;
+    var maxAsp = imm ? 3.0 : 2.2;
+    if(dispW/dispH > maxAsp) dispW = dispH*maxAsp;
     this.dispW = Math.floor(dispW); this.dispH = Math.floor(dispH);
     this.k = this.dispH / this.LH;
     this.LW = Math.round(this.LH * this.dispW / this.dispH);
@@ -1213,6 +1220,14 @@ for(var ti=0;ti<tiles.length;ti++){
 }
 drawPreviews();
 window.addEventListener('load', drawPreviews);
-if(location.search.indexOf('debug') >= 0) window.__sg = {Grave:Grave, Runner:Runner};
+(function(){
+  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var standalone = window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches);
+  var el = document.getElementById('sg-install');
+  if(!el || standalone) return;
+  if(ios) el.innerHTML = 'Хочешь играть на весь экран, как в приложении? Нажми <b>Поделиться</b> → <b>На экран «Домой»</b>.';
+  else if(TOUCH) el.innerHTML = 'Хочешь играть на весь экран, как в приложении? Меню браузера → <b>Добавить на главный экран</b>.';
+})();
+if(location.search.indexOf('debug') >= 0) window.__sg = {Grave:Grave, Runner:Runner, artPumpkin:artPumpkin};
 
 })();

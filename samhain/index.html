@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>Игры Самайна — Артефакты Йотунхейм</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Йотун Игры">
+<link rel="apple-touch-icon" href="icon-180.png">
 <style>
 @font-face{font-family:'VT323';src:url('../assets/fonts/vt323-latin-400-normal.woff2') format('woff2');font-display:swap}
 @font-face{font-family:'Share Tech Mono';src:url('../assets/fonts/share-tech-mono-latin-400-normal.woff2') format('woff2');font-display:swap}
@@ -62,6 +69,15 @@ body{padding:0 16px 40px;background:radial-gradient(ellipse at 50% -10%,rgba(255
 .sg-foot{margin-top:12px;font-size:10px;line-height:1.5;color:rgba(200,255,218,0.5);text-align:left}
 .sg-foot a{color:var(--acc)}
 .sg-jc{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:0.82em;letter-spacing:0.5px}
+.sg-install{font-size:11px;line-height:1.6;color:rgba(255,179,92,0.8);margin:-14px 0 20px}
+.sg-install:empty{display:none}
+.sg-install b{color:var(--pump);font-weight:normal}
+#sg-game.sg-immersive{padding:0}
+#sg-game.sg-immersive .sg-hud{position:absolute;top:0;left:0;right:0;z-index:3;padding:6px max(10px,env(safe-area-inset-right)) 14px max(10px,env(safe-area-inset-left));background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0));font-size:20px;pointer-events:none}
+#sg-game.sg-immersive .sg-x{pointer-events:auto;width:32px;height:32px}
+#sg-game.sg-immersive #sg-stage{padding:0}
+#sg-game.sg-immersive #sg-canvas{border:none;border-radius:0;box-shadow:none}
+#sg-game.sg-immersive .sg-hint{display:none}
 #sg-ov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.72);padding:16px}
 #sg-ov.show{display:flex}
 .sg-ov-card{width:100%;max-width:380px;max-height:calc(100% - 8px);overflow-y:auto;border:1px solid rgba(0,255,65,0.4);border-radius:16px;background:rgba(0,8,3,0.95);padding:24px 20px;text-align:center}
@@ -92,6 +108,7 @@ body{padding:0 16px 40px;background:radial-gradient(ellipse at 50% -10%,rgba(255
   <span class="sg-eye">&#9658; самайн 2026</span>
   <h1>Игры Самайна</h1>
   <p class="sg-sub">Выбери игру. Победа — промокод на скидку.</p>
+  <p class="sg-install" id="sg-install"></p>
   <div class="sg-tiles">
     <button class="sg-tile" data-game="grave">
       <canvas class="sg-prev" data-prev="grave"></canvas>
@@ -136,6 +153,6 @@ body{padding:0 16px 40px;background:radial-gradient(ellipse at 50% -10%,rgba(255
   </div>
 </div>
 
-<script src="samhain-games.js?v=16" charset="utf-8"></script>
+<script src="samhain-games.js?v=18" charset="utf-8"></script>
 </body>
 </html>

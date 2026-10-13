@@ -1,7 +1,7 @@
 /* Ссылка на игры в Telegram Mini App. Пока пусто — кнопки «Играть» скрыты.
    После /newapp в @BotFather вписать сюда ссылку вида https://t.me/<имя_бота>/games
    Кнопки на сайте ведут на страницу игр: она сама предложит Telegram (телефон) или сразу запустит игры (компьютер). */
-window.JOTUN_GAMES_TG = '';
+window.JOTUN_GAMES_TG = 'https://t.me/Jotunheimgame_bot/games';
 (function(){
   var u = window.JOTUN_GAMES_TG;
   if(!u) return;

@@ -120,7 +120,7 @@ function artGhost(c,x,y,w,h){
   ell(c, cx - w*0.25, y + h*0.5, w*0.06, h*0.035); c.fill(); ell(c, cx + w*0.25, y + h*0.5, w*0.06, h*0.035); c.fill();
 }
 
-function artStone(c,x,y,w,h){
+function artStone(c,x,y,w,h,rn){
   var r = w/2;
   var g = c.createLinearGradient(x,0,x+w,0);
   g.addColorStop(0,'#8e8ea2'); g.addColorStop(0.5,'#606072'); g.addColorStop(1,'#323240');
@@ -130,9 +130,17 @@ function artStone(c,x,y,w,h){
   c.beginPath(); c.moveTo(x+w*0.78, y+h*0.18); c.lineTo(x+w*0.7, y+h*0.32); c.lineTo(x+w*0.76, y+h*0.42); c.stroke();
   var tx = x + r;
   function rune(){
-    c.beginPath(); c.moveTo(tx, y+h*0.34); c.lineTo(tx, y+h*0.84);
-    c.moveTo(tx, y+h*0.54); c.lineTo(tx - w*0.2, y+h*0.32);
-    c.moveTo(tx, y+h*0.54); c.lineTo(tx + w*0.2, y+h*0.32); c.stroke();
+    c.beginPath();
+    if(rn === 'hagalaz'){
+      c.moveTo(tx - w*0.13, y+h*0.34); c.lineTo(tx - w*0.13, y+h*0.84);
+      c.moveTo(tx + w*0.13, y+h*0.34); c.lineTo(tx + w*0.13, y+h*0.84);
+      c.moveTo(tx - w*0.13, y+h*0.5); c.lineTo(tx + w*0.13, y+h*0.66);
+    } else {
+      c.moveTo(tx, y+h*0.34); c.lineTo(tx, y+h*0.84);
+      c.moveTo(tx, y+h*0.54); c.lineTo(tx - w*0.2, y+h*0.32);
+      c.moveTo(tx, y+h*0.54); c.lineTo(tx + w*0.2, y+h*0.32);
+    }
+    c.stroke();
   }
   c.lineCap = 'round';
   c.strokeStyle = 'rgba(0,255,65,0.22)'; c.lineWidth = w*0.14; rune();
@@ -228,7 +236,7 @@ function artCandy(c,x,y){
   c.fillStyle = 'rgba(255,255,255,0.75)'; ell(c, cx-1, cy-1, 0.8, 0.45, -0.4); c.fill();
 }
 
-function artCrypt(c,x,y,w,h){
+function artCrypt(c,x,y,w,h,rn){
   var g = c.createLinearGradient(0, y, 0, y+h);
   g.addColorStop(0,'#7e7e94'); g.addColorStop(1,'#353543');
   c.fillStyle = g; c.fillRect(x, y, w, h);
@@ -245,7 +253,12 @@ function artCrypt(c,x,y,w,h){
     c.lineCap = 'round';
     [[ 'rgba(0,255,65,0.25)', 2.2 ], [ '#3dff6e', 0.7 ]].forEach(function(s){
       c.strokeStyle = s[0]; c.lineWidth = s[1]; c.beginPath();
-      c.moveTo(tx, ty-4); c.lineTo(tx, ty+4); c.moveTo(tx, ty-1); c.lineTo(tx-2.5, ty-4); c.moveTo(tx, ty-1); c.lineTo(tx+2.5, ty-4); c.stroke();
+      if(rn === 'hagalaz'){
+        c.moveTo(tx-2, ty-4); c.lineTo(tx-2, ty+4); c.moveTo(tx+2, ty-4); c.lineTo(tx+2, ty+4); c.moveTo(tx-2, ty-1.5); c.lineTo(tx+2, ty+1.5);
+      } else {
+        c.moveTo(tx, ty-4); c.lineTo(tx, ty+4); c.moveTo(tx, ty-1); c.lineTo(tx-2.5, ty-4); c.moveTo(tx, ty-1); c.lineTo(tx+2.5, ty-4);
+      }
+      c.stroke();
     });
   }
   c.fillStyle = 'rgba(60,110,30,0.9)';
@@ -410,7 +423,7 @@ function paintGraveBoard(c, s, N, k){
   for(var r=0;r<N;r++) for(var cl=0;cl<N;cl++){
     var x0 = cl*k, y0 = r*k, G = graveCellGeom(x0, y0, k);
     c.fillStyle = 'rgba(70,110,40,0.06)'; rrect(c, x0 + k*0.04, y0 + k*0.04, k*0.92, k*0.92, k*0.1); c.fill();
-    artStone(c, G.sx, G.sy, G.sw, G.sh);
+    artStone(c, G.sx, G.sy, G.sw, G.sh, rnd() < 0.5 ? 'algiz' : 'hagalaz');
     artHole(c, G.hx, G.hy, G.rw, G.rh, rnd);
     c.strokeStyle = 'rgba(70,140,40,0.7)'; c.lineWidth = Math.max(0.6, k*0.012); c.lineCap = 'round';
     for(var t=0;t<4;t++){
@@ -648,7 +661,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 
 var Runner = {
   id:'runner', title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124,
-  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков, на <b>ворона</b> — 25. Серия без касания земли умножает очки.<br>Бок тыквы, ворон или стена склепа — удар.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
+  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы, бок ворона или стена склепа — удар.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){
@@ -680,7 +693,7 @@ var Runner = {
     this.t = 0; this.speed = 90; this.dist = 0; this.scroll = 0;
     this.solids = []; this.foes = []; this.cand = []; this.fx = []; this.pops = [];
     this.next = 150; this.score = 0; this.points = 0; this.lives = this.LIVES; this.shake = 0;
-    this.unlocked = false; this.banner = 0;
+    this.unlocked = false; this.banner = 0; this.recent = [];
     this.hud();
   },
   hud:function(){
@@ -703,49 +716,91 @@ var Runner = {
     if(e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW'){ if(!e.repeat) this.jump(); return true; }
     return false;
   },
-  candies:function(cx, y){
-    var n = Math.random() < 0.55 ? 1 : 2;
+  candies:function(cx, y, n){
+    n = n || (Math.random() < 0.55 ? 1 : 2);
     for(var i=0;i<n;i++) this.cand.push({x:cx - 4.5 - (n-1)*8 + i*16, y:y});
   },
+  maybeCandies:function(p, cx, y){ if(Math.random() < p) this.candies(cx, y); },
   pumpkin:function(x, groundY){ this.foes.push({type:'pump', x:x, y:groundY-12, w:14, h:12}); },
-  crow:function(x, y, vx){ this.foes.push({type:'crow', x:x, y:y, w:13, h:8, vx:vx, f:Math.random()}); },
-  spawn:function(){
-    var G = this.G, x = this.LW + 16, t = this.t, w = 14, type;
-    var pool = t < 5 ? ['pump','pump','crowLow'] : ['pump','pump','stack','crowLow','crowHigh','crypt','crypt','slab'];
-    type = pool[Math.floor(Math.random()*pool.length)];
-    if(type === 'pump'){
-      this.pumpkin(x, G);
-      if(Math.random() < 0.45) this.candies(x+7, G-38);
-    } else if(type === 'stack'){
-      this.pumpkin(x, G); this.pumpkin(x, G-12);
-      if(Math.random() < 0.45) this.candies(x+7, G-50);
-    } else if(type === 'crowLow'){
-      this.crow(x, G-16, 35); w = 13;
-      if(Math.random() < 0.4) this.candies(x+6, G-42);
-    } else if(type === 'crowHigh'){
-      this.crow(x, G-64, 25); w = 13;
-      if(Math.random() < 0.3) this.candies(x+6, G-84);
-    } else if(type === 'crypt'){
+  crow:function(x, y, dive){
+    // чем быстрее бег, тем медленнее ворон сам по себе — чтобы успевал появиться в кадре
+    var vx = 5 + 30*(1 - clamp01((this.speed - 90)/150));
+    var o = {type:'crow', x:x, y:y, w:13, h:8, vx:vx, f:Math.random()};
+    if(dive) o.dive = {base:y, amp:dive.amp, w:dive.w, t:Math.random()*6};
+    this.foes.push(o);
+  },
+  crypt:function(x, h, w){
+    this.solids.push({type:'crypt', x:x, y:this.G-h, w:w, h:h, rune:Math.random() < 0.5 ? 'algiz' : 'hagalaz'});
+  },
+  slab:function(x, y, w){ this.solids.push({type:'slab', x:x, y:y, w:w, h:5}); },
+  PATTERNS:[
+    {id:'pump', min:0, wt:function(){ return 3; }, make:function(R,x,G){
+      R.pumpkin(x,G); R.maybeCandies(0.45, x+7, G-38); return 14; }},
+    {id:'pumpRow', min:8, wt:function(){ return 2; }, make:function(R,x,G){
+      var n = Math.random() < 0.5 ? 2 : 3;
+      for(var i=0;i<n;i++) R.pumpkin(x + i*26, G);
+      R.maybeCandies(0.5, x + (n-1)*13 + 7, G-46); return (n-1)*26 + 14; }},
+    {id:'stack2', min:5, wt:function(){ return 2; }, make:function(R,x,G){
+      R.pumpkin(x,G); R.pumpkin(x,G-12); R.maybeCandies(0.45, x+7, G-50); return 14; }},
+    {id:'stack3', min:30, wt:function(){ return 1; }, make:function(R,x,G){
+      R.pumpkin(x,G); R.pumpkin(x,G-12); R.pumpkin(x,G-24); R.maybeCandies(0.5, x+7, G-62); return 14; }},
+    {id:'crowLow', min:0, wt:function(t){ return 1.5 + t/40; }, make:function(R,x,G){
+      R.crow(x, G-16); R.maybeCandies(0.4, x+6, G-42); return 13; }},
+    {id:'crowHigh', min:5, wt:function(t){ return 1 + t/60; }, make:function(R,x,G){
+      R.crow(x, G-64); R.maybeCandies(0.3, x+6, G-84); return 13; }},
+    {id:'crowPair', min:15, wt:function(t){ return 1 + t/60; }, make:function(R,x,G){
+      R.crow(x, G-16); R.crow(x+6, G-64); return 19; }},
+    {id:'flock', min:18, wt:function(t){ return 1 + t/60; }, make:function(R,x,G){
+      R.crow(x, G-28); R.crow(x+22, G-46); R.crow(x+44, G-62); return 57; }},
+    {id:'diver', min:20, wt:function(t){ return 1 + t/50; }, make:function(R,x,G){
+      R.crow(x, G-40, {amp:24, w:3.2}); return 13; }},
+    {id:'crypt', min:5, wt:function(){ return 2; }, make:function(R,x,G){
       var ch = Math.round(rand(14,24)), cw = Math.round(rand(26,48));
-      this.solids.push({type:'crypt', x:x, y:G-ch, w:cw, h:ch});
-      if(Math.random() < 0.45) this.pumpkin(x + cw/2 - 7, G-ch);
-      else this.candies(x + cw/2, G-ch-10);
-      w = cw;
-    } else {
+      R.crypt(x, ch, cw);
+      if(Math.random() < 0.45) R.pumpkin(x + cw/2 - 7, G-ch); else R.candies(x + cw/2, G-ch-10);
+      return cw; }},
+    {id:'stairs', min:12, wt:function(){ return 1.5; }, make:function(R,x,G){
+      var n = Math.random() < 0.5 ? 2 : 3;
+      for(var i=0;i<n;i++) R.crypt(x + i*22, 12 + i*8, 22);
+      var topY = G - (12 + (n-1)*8);
+      R.candies(x + (n-1)*22 + 11, topY - 10);
+      if(R.t > 25 && Math.random() < 0.5) R.crow(x + (n-1)*22 + 6, topY - 30);
+      return n*22; }},
+    {id:'cryptCrow', min:15, wt:function(){ return 1; }, make:function(R,x,G){
+      R.crypt(x, 16, 44); R.crow(x + 16, G-16-18); return 44; }},
+    {id:'slab', min:5, wt:function(){ return 1.5; }, make:function(R,x,G){
       var sy = G - Math.round(rand(34,44)), sw = Math.round(rand(30,50));
-      this.solids.push({type:'slab', x:x, y:sy, w:sw, h:5});
-      if(Math.random() < 0.6) this.pumpkin(x + sw/2 - 7, G);
-      this.candies(x + sw/2, sy-10);
-      w = sw;
-    }
+      R.slab(x, sy, sw);
+      if(Math.random() < 0.6) R.pumpkin(x + sw/2 - 7, G);
+      R.candies(x + sw/2, sy-10); return sw; }},
+    {id:'slabLadder', min:12, wt:function(){ return 1; }, make:function(R,x,G){
+      R.slab(x, G-34, 34); R.slab(x+44, G-60, 34); R.pumpkin(x+52, G);
+      R.candies(x+61, G-70); return 78; }},
+    {id:'trap', min:10, wt:function(){ return 1; }, make:function(R,x,G){
+      R.pumpkin(x, G); R.crow(x-4, G-66); return 14; }},
+    {id:'breather', min:10, wt:function(){ return 0.6; }, make:function(R,x,G){
+      R.candies(x+10, G-30, 1); R.candies(x+40, G-12, 2); return 56; }}
+  ],
+  spawn:function(){
+    var G = this.G, x = this.LW + 16, t = this.t, recent = this.recent || (this.recent = []);
+    var elig = this.PATTERNS.filter(function(p){ return p.min <= t; });
+    var pool = elig.filter(function(p){ return recent.indexOf(p.id) < 0; });
+    if(!pool.length) pool = elig.filter(function(p){ return p.id !== recent[recent.length-1]; });
+    if(!pool.length) pool = elig;
+    var sum = 0, i; for(i=0;i<pool.length;i++) sum += pool[i].wt(t);
+    var r = Math.random()*sum, pick = pool[0];
+    for(i=0;i<pool.length;i++){ r -= pool[i].wt(t); if(r <= 0){ pick = pool[i]; break; } }
+    recent.push(pick.id); if(recent.length > 2) recent.shift();
+    var w = pick.make(this, x, G);
     var gap = this.speed * rand(0.9, lerp(1.8, 1.3, t/60));
     this.next = w + gap;
-    if(Math.random() < 0.35) this.candies(x + w + gap*0.5, G-10);
+    if(Math.random() < 0.3) this.candies(x + w + gap*0.5, G-10);
   },
-  stomp:function(o){
+  stomp:function(o, belly){
     var h = this.hero;
-    o.dead = 0.0001; o.vy = -40;
-    h.vy = -BOUNCE; h.onGround = false; h.coyote = 0; h.canDouble = true;
+    o.dead = 0.0001; o.vy = belly ? -110 : -40;
+    if(belly) h.vy = 40; else h.vy = -BOUNCE;
+    h.onGround = false; h.coyote = 0; h.canDouble = true;
     h.combo += 1;
     var base = o.type === 'crow' ? 25 : 10, pts = base * h.combo;
     this.points += pts;
@@ -771,7 +826,7 @@ var Runner = {
     for(i=this.solids.length-1;i>=0;i--){ o = this.solids[i]; o.x -= dx; if(o.x + o.w < -20) this.solids.splice(i,1); }
     for(i=this.foes.length-1;i>=0;i--){
       o = this.foes[i]; o.x -= dx + (o.dead ? 0 : (o.vx || 0)*dt);
-      if(o.type === 'crow') o.f += dt;
+      if(o.type === 'crow'){ o.f += dt; if(o.dive && !o.dead){ o.dive.t += dt; o.y = o.dive.base + Math.sin(o.dive.t*o.dive.w)*o.dive.amp; } }
       if(o.dead){ o.dead += dt; o.vy += 500*dt; o.y += o.vy*dt; if(o.dead > 0.7) { this.foes.splice(i,1); continue; } }
       if(o.x < -30) this.foes.splice(i,1);
     }
@@ -794,13 +849,17 @@ var Runner = {
     for(i=0;i<this.solids.length;i++){
       o = this.solids[i];
       if(o.type !== 'crypt' || o.hit) continue;
-      if(hit(o, 1) && h.y + 14 > o.y + 2){ o.hit = true; if(h.inv <= 0) this.hurt(); }
+      if(hit(o, 1) && h.y + 14 > o.y + 2){
+        if(h.onGround && h.y + 14 - o.y <= 9){ h.y = o.y - 14; h.vy = 0; hb.y = h.y + 1; continue; }
+        o.hit = true; if(h.inv <= 0) this.hurt();
+      }
     }
     for(i=0;i<this.foes.length;i++){
       o = this.foes[i];
       if(o.dead || o.hit) continue;
       if(!hit(o, 1)) continue;
-      if(h.vy > 0 && pb <= o.y + 4){ this.stomp(o); pb = h.y + 14; }
+      if(h.vy > 0 && pb <= o.y + 4){ this.stomp(o, false); pb = h.y + 14; }
+      else if(o.type === 'crow' && h.vy < 0 && prevY + 1 >= o.y + o.h - 4){ this.stomp(o, true); }
       else { o.hit = true; if(h.inv <= 0) this.hurt(); }
     }
     for(i=this.cand.length-1;i>=0;i--){
@@ -830,7 +889,7 @@ var Runner = {
     drawNightBg(c, LW, LH, G, this.scroll, this.t, this.stars);
     for(i=0;i<this.solids.length;i++){
       o = this.solids[i];
-      if(o.type === 'crypt') artCrypt(c, o.x, o.y, o.w, o.h + (G - o.y - o.h));
+      if(o.type === 'crypt') artCrypt(c, o.x, o.y, o.w, o.h + (G - o.y - o.h), o.rune);
       else artSlab(c, o.x, o.y, o.w, o.h);
     }
     for(i=0;i<this.cand.length;i++){
@@ -902,7 +961,7 @@ function drawPreviews(){
       var LH = 72, kk = w/LH;
       c.setTransform(DPR*kk,0,0,DPR*kk,0,0);
       drawNightBg(c, LH, LH, 58, 40, 1, [{x:6,y:8,p:1,r:0.4},{x:20,y:20,p:2,r:0.5},{x:12,y:34,p:3,r:0.3},{x:30,y:6,p:4,r:0.4}]);
-      artCrypt(c, 44, 46, 22, 12);
+      artCrypt(c, 44, 46, 22, 12, 'hagalaz');
       artPumpkin(c, 26, 46, 14, 12, false, true);
       artHero(c, 24, 20, 0, true);
       artCrow(c, 50, 22, 0.05);

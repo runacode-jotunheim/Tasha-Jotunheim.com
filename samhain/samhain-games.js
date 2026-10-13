@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   ИГРЫ САМАЙНА: хаб + «Погост» + «Джек-бегун»
+   ИГРЫ САМАЙНА: хаб + «Тайны погоста» + «Маленькая ведьма»
    Векторный HD-арт: рисуется в родном разрешении экрана
    ══════════════════════════════════════════════ */
 (function(){
@@ -131,10 +131,20 @@ function artStone(c,x,y,w,h,rn){
   var tx = x + r;
   function rune(){
     c.beginPath();
+    var T = y+h*0.34, B = y+h*0.84, a = w*0.24;
     if(rn === 'hagalaz'){
-      c.moveTo(tx - w*0.13, y+h*0.34); c.lineTo(tx - w*0.13, y+h*0.84);
-      c.moveTo(tx + w*0.13, y+h*0.34); c.lineTo(tx + w*0.13, y+h*0.84);
+      c.moveTo(tx - w*0.13, T); c.lineTo(tx - w*0.13, B);
+      c.moveTo(tx + w*0.13, T); c.lineTo(tx + w*0.13, B);
       c.moveTo(tx - w*0.13, y+h*0.5); c.lineTo(tx + w*0.13, y+h*0.66);
+    } else if(rn === 'perthro'){
+      var L = tx - a*0.45;
+      c.moveTo(L, T); c.lineTo(L, B);
+      c.moveTo(L, T); c.lineTo(L + a*0.5, T + a*0.6); c.lineTo(L + a, T);
+      c.moveTo(L, B); c.lineTo(L + a*0.5, B - a*0.6); c.lineTo(L + a, B);
+    } else if(rn === 'eihwaz'){
+      c.moveTo(tx, T); c.lineTo(tx, B);
+      c.moveTo(tx, T); c.lineTo(tx + a*0.75, T + a*0.65);
+      c.moveTo(tx, B); c.lineTo(tx - a*0.75, B - a*0.65);
     } else {
       c.moveTo(tx, y+h*0.34); c.lineTo(tx, y+h*0.84);
       c.moveTo(tx, y+h*0.54); c.lineTo(tx - w*0.2, y+h*0.32);
@@ -559,7 +569,8 @@ function paintGraveBoard(c, s, N, k){
   for(var r=0;r<N;r++) for(var cl=0;cl<N;cl++){
     var x0 = cl*k, y0 = r*k, G = graveCellGeom(x0, y0, k);
     c.fillStyle = 'rgba(70,110,40,0.06)'; rrect(c, x0 + k*0.04, y0 + k*0.04, k*0.92, k*0.92, k*0.1); c.fill();
-    artStone(c, G.sx, G.sy, G.sw, G.sh, rnd() < 0.5 ? 'algiz' : 'hagalaz');
+    var RUNES = ['algiz','hagalaz','perthro','eihwaz'];
+    artStone(c, G.sx, G.sy, G.sw, G.sh, N === 2 ? RUNES[r*2 + cl] : RUNES[Math.floor(rnd()*4)]);
     artHole(c, G.hx, G.hy, G.rw, G.rh, rnd);
     c.strokeStyle = 'rgba(70,140,40,0.7)'; c.lineWidth = Math.max(0.6, k*0.012); c.lineCap = 'round';
     for(var t=0;t<4;t++){
@@ -575,8 +586,8 @@ function graveEntityBox(type, k){
 }
 
 var Grave = {
-  id:'grave', title:'Погост', GOAL:30, TIME:40, LIVES:3,
-  rules:'Из могил лезут тыквы — тапай и собирай.<br><b>Зомби</b> не трогай: −1 жизнь.<br><b>Призрак</b> крадёт 3 секунды.<br><b>Золотая тыква</b> — сразу +3 тыквы к счёту.<br><br>Собери <b>30 тыкв за 40 секунд</b>.',
+  id:'grave', title:'Тайны погоста', GOAL:30, TIME:40, LIVES:3,
+  rules:'<div class="sg-goal">Собери <b>30 тыкв за 40 секунд</b></div><div class="sg-rules"><span>Тыква</span><b>+1</b><span>Золотая тыква</span><b>+3</b><span>Зомби</span><i>−1 жизнь</i><span>Призрак</span><i>−3 сек</i></div>',
   winText:function(){ return 'Собрано тыкв: <b>' + this.score + '</b> за ' + Math.round(this.TIME - this.time) + ' сек.'; },
   loseText:function(){ return this.lives <= 0 ? 'Зомби забрали все жизни. Тыкв: <b>' + this.score + '</b> из 30.' : 'Время вышло. Тыкв: <b>' + this.score + '</b> из 30.'; },
   setup:function(){
@@ -796,8 +807,8 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 }
 
 var Runner = {
-  id:'runner', landscapeOnly:true, title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
-  rules:'Тап — прыжок. Ещё тап в воздухе — двойной прыжок: он один и восстанавливается, когда коснёшься земли, склепа или <b>прыгнешь врагу на голову</b>.<br>Прыжок сверху на <b>тыкву</b> — 10 очков. <b>Ворона</b> бей сверху или головой в брюхо снизу — 25. Серия без касания земли умножает очки.<br>Бок тыквы или бок ворона — удар. Стена склепа не бьёт — упрёшься, встанешь с головокружением, и 2 секунды двойной прыжок не работает.<br><br><b>30 конфет</b> открывают промокод, а очки идут в рекорд. Бег идёт, пока есть жизни.',
+  id:'runner', landscapeOnly:true, title:'Маленькая ведьма', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
+  rules:'<div class="sg-goal">Собирай конфеты, сбивай ворон и тыквы, копи очки</div><div class="sg-rules"><span>Тап</span><b>прыжок</b><span>Тап в воздухе</span><b>двойной прыжок</b><span>30 конфет</span><b>промокод</b><span>Тыква сверху</span><b>10 очков</b><span>Ворон сверху или снизу</span><b>25 очков</b><span>Серия без касания земли</span><b>×2, ×3…</b><span>Бок тыквы или ворона</span><i>−1 жизнь</i><span>Стена склепа</span><i>головокружение 2 сек</i><span>Очки</span><b>JotunCoins*</b></div><div class="sg-foot">* JotunCoins (JC) — бонусная валюта реферальной программы Йотунхейм, 1 JC = 1 ₽. <a href="../index.html#referral">Подробнее о программе</a></div>',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },
   summary:function(){

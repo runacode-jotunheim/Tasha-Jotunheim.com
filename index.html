@@ -81,7 +81,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 /* ══ THEME TOGGLE ══ */
 #theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
 @media(max-width:520px){#theme-toggle{right:12px;bottom:14px}}
-.pill-trigger{width:28px;height:54px;border-radius:14px;background:linear-gradient(180deg,#00ff41 50%,#ff2020 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:none;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
+.pill-trigger{width:28px;height:54px;border-radius:14px;background:linear-gradient(180deg,#ff2020 50%,#00ff41 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:none;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
 .pill-trigger:hover{box-shadow:0 0 22px rgba(0,255,65,0.4),0 0 22px rgba(255,32,32,0.3)}
 .pill-trigger::before{content:'';position:absolute;top:50%;left:2px;right:2px;height:1px;background:rgba(0,0,0,0.45);transform:translateY(-50%)}
 .pill-trigger::after{content:'';position:absolute;left:3px;top:5px;bottom:5px;width:38%;border-radius:8px;background:rgba(255,255,255,0.3);filter:blur(1px)}
@@ -120,6 +120,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 #scroll-top-btn{position:fixed;bottom:28px;left:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(0,255,65,0.35);color:var(--accent);font-size:18px;cursor:none;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);box-shadow:0 0 10px rgba(0,255,65,0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
 #scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
 #scroll-top-btn:hover{box-shadow:0 0 20px rgba(0,255,65,0.35)}
+@media(max-width:520px){#scroll-top-btn{bottom:62px}}
 .top-sales-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:10px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;user-select:none;-webkit-user-select:none}
 @media(min-width:481px){.top-sales-scroll{padding-right:60vw}}
 .top-sales-scroll::-webkit-scrollbar{height:4px}

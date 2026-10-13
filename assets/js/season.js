@@ -5,11 +5,11 @@
   var LM = 'Ламмас';
   var items = [
     {id:12,img:'glaz-odina.jpg',col:MB,name:'Глаз Одина',price:'15 900 ₽'},
+    {id:15,img:'mother-teney-art.jpg',col:MB,name:'Мать Теней (браслет)',price:'13 900 ₽'},
     {id:27,img:'hranitel-urozhaya.jpg',col:LM,name:'Хранитель урожая',price:'8 800 ₽'},
     {id:13,img:'pechat-korolya.jpg',col:MB,name:'Печать Короля',price:'15 900 ₽'},
-    {id:15,img:'mother-teney-art.jpg',col:MB,name:'Мать Теней',price:'13 900 ₽'},
-    {id:25,img:'plod-zemli.jpg',col:LM,name:'Плод земли',price:'7 800 ₽'},
     {id:26,img:'zolotoe-zerno.jpg',col:LM,name:'Золотое зерно',price:'11 800 ₽'},
+    {id:16,img:'mother-teney-art.jpg',col:MB,name:'Мать Теней (кулон)',price:'13 900 ₽'},
     {id:14,img:'yablochny-pentakl.jpg',col:MB,name:'Яблочный Пентакль',price:'15 900 ₽'}
   ];
   sub.textContent='Коллекция Мабона 2026';

@@ -217,20 +217,11 @@ function artHero(c,x,y,ph,air,stand,hdx,reach){
   c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; c.stroke();
   c.fillStyle = '#ffb000'; c.fillRect(cx-3.3, y+8.3, 6.8, 0.7);
   c.strokeStyle = '#46277f'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(cx+1.5, y+6); c.lineTo(x+10.6, y+8.2); c.stroke();
-  // фонарь: полукруглая металлическая ручка, крышка-домик, стекло, донце
-  var lx = x+10.1, ly = y+8.9, lw = 2.4, lh = 2.6, mcx = lx + lw/2;
-  c.strokeStyle = '#9aa0ac'; c.lineWidth = 0.35;
-  c.beginPath(); c.arc(mcx, ly - 0.55, 1.05, Math.PI, 0); c.stroke();
-  c.fillStyle = '#3a3d46';
-  c.beginPath(); c.moveTo(lx - 0.25, ly); c.lineTo(mcx, ly - 0.75); c.lineTo(lx + lw + 0.25, ly); c.closePath(); c.fill();
-  var lg = c.createLinearGradient(0, ly, 0, ly + lh);
+  c.fillStyle = '#2a1a10'; c.fillRect(x+10.2, y+8.1, 2.2, 0.6);
+  var lg = c.createLinearGradient(0, y+8.7, 0, y+11.6);
   lg.addColorStop(0,'#fff6c0'); lg.addColorStop(1,'#ffa800');
-  c.fillStyle = lg; c.fillRect(lx, ly, lw, lh);
-  c.fillStyle = 'rgba(255,255,255,0.85)'; ell(c, mcx, ly + lh*0.55, 0.38, 0.6); c.fill();
-  c.strokeStyle = '#3a3d46'; c.lineWidth = 0.28;
-  c.strokeRect(lx, ly, lw, lh);
-  c.beginPath(); c.moveTo(mcx, ly); c.lineTo(mcx, ly + lh); c.stroke();
-  c.fillStyle = '#3a3d46'; c.fillRect(lx - 0.3, ly + lh, lw + 0.6, 0.55);
+  c.fillStyle = lg; c.fillRect(x+10.2, y+8.7, 2.2, 2.9);
+  c.strokeStyle = '#2a1a10'; c.lineWidth = 0.3; c.strokeRect(x+10.2, y+8.7, 2.2, 2.9);
   c.save(); c.translate(hdx, 0);
   var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5);
   hg.addColorStop(0,'#ad86ec'); hg.addColorStop(1,'#3b2170');

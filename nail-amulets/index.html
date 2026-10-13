@@ -1250,8 +1250,13 @@ window.addEventListener('pagehide', markCartLeftNow);
 
 var cart = loadCartFromStorage();
 // миграция цен в сохранённых корзинах (октябрь 2026)
-(function(){ var MIG = {"5499": 5990, "7800": 8490, "7900": 8490, "8500": 8990, "8800": 9490, "9800": 10490, "10000": 10990, "10333": 10990, "11000": 11490, "11800": 12490, "12000": 12990, "13000": 13990, "13900": 14490, "15000": 15990, "15900": 16490, "19666": 20490, "20333": 20990, "29900": 30490, "1000": 1090};
-  cart.forEach(function(it){ if(it.pv !== 2){ if(MIG[String(it.price)]) it.price = MIG[String(it.price)]; it.pv = 2; } });
+(function(){ var MIG = {"5499": 5990, "7800": 8490, "7900": 8490, "8500": 8990, "8800": 9490, "9800": 10490, "10000": 10490, "10333": 10990, "11000": 11490, "11800": 12490, "12000": 12490, "13000": 13490, "13900": 14490, "15000": 15990, "15900": 16490, "19666": 20490, "20333": 20990, "29900": 30490, "1000": 1090};
+  var FIX3 = {"28":10490,"32":10490,"2":12490,"21":12490,"9":13490,"33":13490};
+  cart.forEach(function(it){
+    if(it.pv !== 2 && it.pv !== 3){ if(MIG[String(it.price)]) it.price = MIG[String(it.price)]; }
+    if(it.pv !== 3 && FIX3[String(it.id)]) it.price = FIX3[String(it.id)];
+    it.pv = 3;
+  });
   try{ localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({items: cart})); }catch(e){}
 })();
 
@@ -1318,7 +1323,7 @@ function renderCart(){
 }
 
 function addToCart(id, name, price, rune, qty){
-  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1, pv: 2});
+  cart.push({id:id, name:name, price:price, rune:rune, qty: qty || 1, pv: 3});
   saveCartToStorage();
   renderCart();
   openCart();

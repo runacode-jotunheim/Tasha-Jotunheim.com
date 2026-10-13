@@ -460,7 +460,25 @@ function tgOrientation(lock){
   if(!TGA) return;
   try{ if(TGA.isVersionAtLeast('8.0')){ if(lock) TGA.lockOrientation(); else TGA.unlockOrientation(); } }catch(e){}
 }
-if(document.readyState === 'complete') tgInit(); else window.addEventListener('load', tgInit);
+// Игры — только в Telegram: вне его отправляем в мини-приложение (если ссылка настроена).
+function tgGate(){
+  tgInit();
+  var url = window.JOTUN_GAMES_TG;
+  var testing = /debug/.test(location.search);
+  if(TGA){
+    // внутри Telegram ссылку «На сайт» открываем во внешнем браузере
+    var links = document.querySelectorAll('a[href="../index.html"]');
+    for(var i = 0; i < links.length; i++) links[i].addEventListener('click', function(ev){
+      ev.preventDefault(); try{ TGA.openLink(new URL(this.getAttribute('href'), location.href).href); }catch(e){}
+    });
+    return;
+  }
+  if(!url || testing) return;
+  var gate = $('sg-gate'), btn = $('sg-gate-btn');
+  btn.href = url; gate.classList.add('on');
+  setTimeout(function(){ location.href = url; }, 700);
+}
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tgGate); else tgGate();
 
 /* ── Раннер на телефоне — только горизонтально ── */
 var rotateEl = $('sg-rotate'), rotatePaused = false;
@@ -1247,14 +1265,7 @@ for(var ti=0;ti<tiles.length;ti++){
 }
 drawPreviews();
 window.addEventListener('load', drawPreviews);
-(function(){
-  var ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  var standalone = window.navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches);
-  var el = document.getElementById('sg-install');
-  if(!el || standalone) return;
-  if(ios) el.innerHTML = 'Хочешь играть на весь экран, как в приложении? Нажми <b>Поделиться</b> → <b>На экран «Домой»</b>.';
-  else if(TOUCH) el.innerHTML = 'Хочешь играть на весь экран, как в приложении? Меню браузера → <b>Добавить на главный экран</b>.';
-})();
+
 if(location.search.indexOf('debug') >= 0) window.__sg = {Grave:Grave, Runner:Runner, artPumpkin:artPumpkin};
 
 })();

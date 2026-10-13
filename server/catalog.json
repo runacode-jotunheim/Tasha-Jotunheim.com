@@ -1,0 +1,162 @@
+{
+ "1": {
+  "name": "Браслет Йотун Вайб",
+  "price": 8490,
+  "kind": "artifact"
+ },
+ "13": {
+  "name": "Печать Короля",
+  "price": 16490,
+  "kind": "artifact"
+ },
+ "12": {
+  "name": "Глаз Одина",
+  "price": 16490,
+  "kind": "artifact"
+ },
+ "5": {
+  "name": "Лотос души",
+  "price": 11490,
+  "kind": "artifact"
+ },
+ "8": {
+  "name": "Эльфийская защита",
+  "price": 8490,
+  "kind": "artifact"
+ },
+ "11": {
+  "name": "Алая ведьма",
+  "price": 9490,
+  "kind": "artifact"
+ },
+ "2": {
+  "name": "Твой Вечный Прайм",
+  "price": 12490,
+  "kind": "artifact"
+ },
+ "20": {
+  "name": "РСБ — Рунная Служба Безопасности",
+  "price": 20490,
+  "kind": "artifact"
+ },
+ "7": {
+  "name": "Возвращение к жизни",
+  "price": 9490,
+  "kind": "artifact"
+ },
+ "9": {
+  "name": "Осознанная удача",
+  "price": 13490,
+  "kind": "artifact"
+ },
+ "10": {
+  "name": "Лёгкий путь",
+  "price": 5990,
+  "kind": "artifact"
+ },
+ "14": {
+  "name": "Яблочный Пентакль",
+  "price": 16490,
+  "kind": "artifact"
+ },
+ "15": {
+  "name": "Мать Теней (браслет)",
+  "price": 14490,
+  "kind": "artifact"
+ },
+ "16": {
+  "name": "Мать Теней (кулон)",
+  "price": 14490,
+  "kind": "artifact"
+ },
+ "17": {
+  "name": "Весы Осириса",
+  "price": 30490,
+  "kind": "artifact"
+ },
+ "19": {
+  "name": "Аттаракс",
+  "price": 20990,
+  "kind": "artifact"
+ },
+ "21": {
+  "name": "Золотая Пирамида",
+  "price": 12490,
+  "kind": "artifact"
+ },
+ "22": {
+  "name": "Прорыв",
+  "price": 10990,
+  "kind": "artifact"
+ },
+ "23": {
+  "name": "Анти-Лариса",
+  "price": 10490,
+  "kind": "artifact"
+ },
+ "25": {
+  "name": "Плод земли",
+  "price": 8490,
+  "kind": "artifact"
+ },
+ "26": {
+  "name": "Золотое зерно",
+  "price": 12490,
+  "kind": "artifact"
+ },
+ "27": {
+  "name": "Хранитель урожая",
+  "price": 9490,
+  "kind": "artifact"
+ },
+ "28": {
+  "name": "Лев среди людей",
+  "price": 10490,
+  "kind": "artifact"
+ },
+ "29": {
+  "name": "Страж сердца",
+  "price": 15490,
+  "kind": "artifact"
+ },
+ "30": {
+  "name": "Путь Солнца",
+  "price": 9490,
+  "kind": "artifact"
+ },
+ "31": {
+  "name": "Огненная Жатва I — Огонь пробуждения",
+  "price": 8490,
+  "kind": "artifact"
+ },
+ "32": {
+  "name": "Огненная Жатва II — Путь силы",
+  "price": 10490,
+  "kind": "artifact"
+ },
+ "33": {
+  "name": "Огненная Жатва III — Огненный феникс",
+  "price": 13490,
+  "kind": "artifact"
+ },
+ "34": {
+  "name": "Огненная Жатва IV — Время сиять",
+  "price": 15490,
+  "kind": "artifact"
+ },
+ "4": {
+  "name": "Путь ясной мысли",
+  "price": 8990,
+  "kind": "artifact"
+ },
+ "nail-set-rune": {
+  "name": "Набор нейл-амулетов (Руны)",
+  "price": 1090,
+  "kind": "nail"
+ },
+ "nail-set-tarot": {
+  "name": "Набор нейл-амулетов (Таро)",
+  "price": 1090,
+  "kind": "nail"
+ }
+}

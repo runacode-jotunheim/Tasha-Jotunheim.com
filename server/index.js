@@ -9,6 +9,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
+const db = require('./lib/db');
 
 const {
   ROBOKASSA_LOGIN,
@@ -42,7 +43,11 @@ const activePassword1 = (isTest ? ROBOKASSA_TEST_PASSWORD_1 : ROBOKASSA_PASSWORD
 const activePassword2 = (isTest ? ROBOKASSA_TEST_PASSWORD_2 : ROBOKASSA_PASSWORD_2).trim();
 
 const app = express();
-app.use(cors({ origin: ALLOWED_ORIGIN || '*' }));
+// Несколько доменов можно перечислить через запятую. credentials нужны для cookie кабинета.
+const allowedOrigins = String(ALLOWED_ORIGIN || '').split(',').map((s) => s.trim()).filter(Boolean);
+app.use(cors(allowedOrigins.length
+  ? { origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins, credentials: true }
+  : { origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -60,6 +65,7 @@ function generateInvId() {
  * -> { action, fields, invId, sum }
  */
 app.post('/api/create-payment', async (req, res) => {
+  if (db.enabled()) return createPaymentWithDb(req, res);
   try {
     const { items, customer } = req.body || {};
 
@@ -181,6 +187,11 @@ app.post('/api/robokassa/result', async (req, res) => {
 
   console.log(`[robokassa/result] Оплачен заказ InvId=${InvId} на сумму ${OutSum} ₽`);
 
+  if (db.enabled()) {
+    try { await require('./lib/routes').markPaid(Number(InvId)); }
+    catch (e) { console.error('[robokassa/result] не удалось отметить оплату в БД:', e.message); }
+  }
+
   await notifyTelegram(`✅ Заказ №${InvId} ОПЛАЧЕН — ${OutSum} ₽. Можно приступать к изготовлению/отправке.`);
 
   res.send(`OK${InvId}`);
@@ -222,9 +233,70 @@ async function notifyTelegram(text) {
   }
 }
 
-app.get('/api/health', (req, res) => res.json({ ok: true, test_mode: isTest }));
+/**
+ * Режим с базой: цены из серверного каталога, скидки программы лояльности, номер заказа из БД.
+ * body: { items: [{id?, name, price, qty}], customer: {...}, createAccount?, ref?, useJC? }
+ */
+async function createPaymentWithDb(req, res) {
+  const { customer } = req.body || {};
+  if (!customer || !customer.name || !customer.phone || !customer.address) {
+    return res.status(400).json({ error: 'Не заполнены обязательные поля покупателя (имя, телефон, адрес)' });
+  }
+  try {
+    const { createOrder } = require('./lib/routes');
+    const { receiptItems } = require('./lib/checkout');
+    const { invId, quote, isNew } = await createOrder(req, req.body);
+    const outSumStr = quote.total.toFixed(2);
+    const receipt = { sno: ROBOKASSA_TAX_SYSTEM || 'usn_income', items: receiptItems(quote) };
+    const receiptEncodedOnce = encodeURIComponent(JSON.stringify(receipt));
+    const signature = md5(`${ROBOKASSA_LOGIN}:${outSumStr}:${invId}:${receiptEncodedOnce}:${activePassword1}`);
+    const fields = {
+      MerchantLogin: ROBOKASSA_LOGIN,
+      OutSum: outSumStr,
+      InvId: String(invId),
+      Description: `Заказ №${invId} — Артефакты Йотунхейм`,
+      SignatureValue: signature,
+      Receipt: receiptEncodedOnce,
+      Culture: 'ru',
+      Email: customer.email || '',
+    };
+    if (isTest) fields.IsTest = '1';
 
-const port = PORT || 3000;
-app.listen(port, () => {
-  console.log(`Сервер запущен на порту ${port}. Тестовый режим Робокассы: ${isTest ? 'ДА' : 'нет (боевой)'}`);
-});
+    const kinds = { rank: 'скидка ранга', ref: 'скидка друга (реф-ссылка)', promo: 'промокод' };
+    await notifyTelegram(
+      `🛒 Новый заказ №${invId} оформляется (ожидает оплаты)\n` +
+      `Сумма к оплате: ${quote.total} ₽` +
+      (quote.discount ? `\nСкидка: −${quote.discount} ₽ (${kinds[quote.discountKind] || quote.discountKind})` : '') +
+      (quote.jcUse ? `\nОплачено JC: −${quote.jcUse}` : '') +
+      (isNew ? '\n🆕 Создан личный кабинет' : '') +
+      `\nПокупатель: ${customer.name}, ${customer.phone}${customer.email ? ', ' + customer.email : ''}\n` +
+      `Адрес: ${customer.address}\n` +
+      `Товары:\n` + quote.lines.map((l) => `— ${l.name} × ${l.qty} = ${l.price * l.qty} ₽`).join('\n')
+    );
+    res.json({ action: 'https://auth.robokassa.ru/Merchant/Index.aspx', fields, invId, sum: quote.total });
+  } catch (err) {
+    if (err.code === 'empty') return res.status(400).json({ error: 'Корзина пуста' });
+    if (err.message === 'unknown_items') return res.status(400).json({ error: 'В корзине есть товар, которого нет в каталоге. Обновите страницу.' });
+    console.error('[create-payment/db] error:', err.message);
+    res.status(500).json({ error: 'Не удалось создать платёж' });
+  }
+}
+
+app.get('/api/health', (req, res) => res.json({ ok: true, test_mode: isTest, db: db.enabled() }));
+
+async function boot() {
+  if (db.enabled()) {
+    await db.migrate();
+    require('./lib/routes').mount(app);
+    require('./lib/loyalty').startJobs();
+    require('./lib/telegram').setupWebhook().catch((e) => console.error('[telegram] webhook:', e.message));
+    console.log('Программа лояльности: ВКЛЮЧЕНА (база подключена)');
+  } else {
+    console.log('Программа лояльности: выключена (DATABASE_URL не задан) — работает только оплата');
+  }
+  const port = PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Сервер запущен на порту ${port}. Тестовый режим Робокассы: ${isTest ? 'ДА' : 'нет (боевой)'}`);
+  });
+}
+boot().catch((e) => { console.error('[FATAL] старт сервера:', e.message); process.exit(1); });

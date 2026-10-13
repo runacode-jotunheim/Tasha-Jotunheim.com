@@ -103,3 +103,14 @@
   крупно текущий ранг, прогресс до следующего («до Ёрмунганда: 3 друга или 18 000 ₽ покупок»),
   реф-ссылка + «Поделиться», баланс JC, таблица всех рангов с подсветкой текущего.
 - Баннер согласия на cookie; согласие запоминается на 1 год, реф-код в cookie — на 24 часа.
+
+## 9. Реализация (ветка backend-referral)
+
+- Код: `server/lib/*` (db, schema.sql, ranks, jc, loyalty, checkout, routes, mailer, telegram), каталог цен `server/catalog.json`.
+- Включается переменной `DATABASE_URL`; без неё сервер работает в старом режиме.
+- «Друг купил от X» = сумма зачтённых оплат друга за всё время ≥ X.
+- Номер заказа (InvId) берётся из базы, начиная с 10001.
+- Тесты: `npm test` (нужна локальная PostgreSQL, см. `test/e2e.js`).
+- API: `POST /api/auth/request-code`, `POST /api/auth/verify`, `POST /api/auth/logout`, `GET /api/me`,
+  `GET /api/ref/link`, `GET /api/ref/check?code=`, `POST /api/tg/link`, `POST /api/tg/webhook`,
+  `POST /api/game/start`, `POST /api/game/finish`, `POST /api/checkout/quote`, `POST /api/create-payment` (расширен).

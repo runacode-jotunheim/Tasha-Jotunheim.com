@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════
-   ИГРЫ САМАЙНА: хаб + «Погост» + «Джек-бегун»
+   ИГРЫ САМАЙНА: хаб + «Погост» + «Маленькая ведьма»
    Векторный HD-арт: рисуется в родном разрешении экрана
    ══════════════════════════════════════════════ */
 (function(){
@@ -195,38 +195,28 @@ function artHole(c,hx,hy,rw,rh,rnd){
 }
 
 function artHero(c,x,y,ph,air,stand,hdx,reach){
-  // мальчик в худи с капюшоном, в руке тыква-фонарь
-  var cx = x + 5;
+  var cx = x + 5, wv = Math.sin(ph*1.3)*1.2;
   hdx = hdx || 0; reach = reach || 0;
-  glow(c, x+11.2, y+10, 13, '255,190,60', 0.45);
-  c.lineCap = 'round';
-  // ноги — джинсы, кеды
-  c.strokeStyle = '#2c3d66'; c.lineWidth = 1.9;
-  var fl, fr;
-  if(stand && !air){ fl = [cx-1.5, y+13.4]; fr = [cx+1.5, y+13.4]; }
-  else if(air){ fl = [cx-2.4, y+12.6]; fr = [cx+2.6, y+12]; }
-  else { var a = Math.sin(ph)*0.75; fl = [cx + Math.sin(a)*3.6, y+13.4]; fr = [cx - Math.sin(a)*3.6, y+13.4]; }
-  c.beginPath(); c.moveTo(cx-0.9, y+10.8); c.lineTo(fl[0], fl[1]); c.moveTo(cx+0.9, y+10.8); c.lineTo(fr[0], fr[1]); c.stroke();
-  c.fillStyle = '#e8e8ee';
-  [fl, fr].forEach(function(p){ rrect(c, p[0]-1.1, p[1]-0.4, 2.6, 1.1, 0.45); c.fill(); });
-  c.fillStyle = '#20202a'; [fl, fr].forEach(function(p){ c.fillRect(p[0]-1.1, p[1]+0.5, 2.6, 0.25); });
-  // худи
+  glow(c, x+11.2, y+10, 13, '255,190,60', 0.42);
+  c.lineCap = 'round'; c.strokeStyle = '#140c20'; c.lineWidth = 1.7;
+  if(stand && !air){
+    c.beginPath(); c.moveTo(cx-1, y+10.5); c.lineTo(cx-1.6, y+13.8); c.moveTo(cx+1, y+10.5); c.lineTo(cx+1.6, y+13.8); c.stroke();
+  } else if(air){
+    c.beginPath(); c.moveTo(cx-1, y+10.5); c.lineTo(cx-2.5, y+13); c.moveTo(cx+1, y+10.5); c.lineTo(cx+2.8, y+12.4); c.stroke();
+  } else {
+    var a = Math.sin(ph)*0.75;
+    c.beginPath(); c.moveTo(cx, y+10.5); c.lineTo(cx + Math.sin(a)*3.6, y+13.8);
+    c.moveTo(cx, y+10.5); c.lineTo(cx - Math.sin(a)*3.6, y+13.8); c.stroke();
+  }
+  c.fillStyle = '#331d5c'; c.beginPath();
+  c.moveTo(cx-1, y+4); c.quadraticCurveTo(x-4, y+7.5+wv, x-3.2, y+12.2+wv); c.lineTo(cx, y+11.2); c.closePath(); c.fill();
   var bg = c.createLinearGradient(x, y+4, x+10, y+12);
-  bg.addColorStop(0,'#5d6474'); bg.addColorStop(1,'#2a2e39');
-  c.fillStyle = bg;
-  c.beginPath();
-  c.moveTo(cx-2.9, y+4.6); c.lineTo(cx+3.1, y+4.6);
-  c.quadraticCurveTo(cx+3.9, y+7.5, cx+3.7, y+11.3); c.lineTo(cx-3.7, y+11.3);
-  c.quadraticCurveTo(cx-3.9, y+7.5, cx-2.9, y+4.6); c.closePath(); c.fill();
-  c.strokeStyle = 'rgba(200,255,216,0.5)'; c.lineWidth = 0.35; c.stroke();
-  c.fillStyle = '#1f222b'; c.fillRect(cx-3.7, y+10.6, 7.4, 0.7);
-  c.fillStyle = 'rgba(15,17,24,0.55)'; rrect(c, cx-2.3, y+8.1, 4.8, 1.9, 0.6); c.fill();
-  c.strokeStyle = '#e8e8ee'; c.lineWidth = 0.3;
-  c.beginPath(); c.moveTo(cx+0.4, y+5.2); c.lineTo(cx+0.2, y+7.1); c.moveTo(cx+1.9, y+5.2); c.lineTo(cx+2.1, y+7.1); c.stroke();
-  // рука с фонарём
-  c.strokeStyle = '#3c414e'; c.lineWidth = 1.45;
-  c.beginPath(); c.moveTo(cx+1.6, y+6); c.lineTo(x+10.4, y+8.1); c.stroke();
-  c.fillStyle = '#f0d2b0'; ell(c, x+10.6, y+8.1, 0.65, 0.6); c.fill();
+  bg.addColorStop(0,'#9a6fe0'); bg.addColorStop(1,'#46277f');
+  c.fillStyle = bg; c.beginPath();
+  c.moveTo(cx-2.6, y+4.4); c.lineTo(cx+3, y+4.4); c.lineTo(cx+4.1, y+11.6); c.lineTo(cx-4.1, y+11.6); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; c.stroke();
+  c.fillStyle = '#ffb000'; c.fillRect(cx-3.3, y+8.3, 6.8, 0.7);
+  c.strokeStyle = '#46277f'; c.lineWidth = 1.4; c.beginPath(); c.moveTo(cx+1.5, y+6); c.lineTo(x+10.6, y+8.2); c.stroke();
   // фонарь: полукруглая металлическая ручка, крышка-домик, стекло, донце
   var lx = x+10.1, ly = y+8.9, lw = 2.4, lh = 2.6, mcx = lx + lw/2;
   c.strokeStyle = '#9aa0ac'; c.lineWidth = 0.35;
@@ -241,38 +231,26 @@ function artHero(c,x,y,ph,air,stand,hdx,reach){
   c.strokeRect(lx, ly, lw, lh);
   c.beginPath(); c.moveTo(mcx, ly); c.lineTo(mcx, ly + lh); c.stroke();
   c.fillStyle = '#3a3d46'; c.fillRect(lx - 0.3, ly + lh, lw + 0.6, 0.55);
-  // голова в капюшоне
   c.save(); c.translate(hdx, 0);
-  var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5.2);
-  hg.addColorStop(0,'#737b8d'); hg.addColorStop(1,'#2e323d');
-  // капюшон с заломом: кончик уходит назад и чуть вниз
-  function hood(){
-    c.beginPath();
-    c.moveTo(cx-3.6, y+5.4);
-    c.quadraticCurveTo(cx-4.6, y+3, cx-5.6, y+1.6);
-    c.lineTo(cx-4.9, y+0.9);
-    c.quadraticCurveTo(cx-3.2, y-1.3, cx+0.6, y-0.9);
-    c.quadraticCurveTo(cx+4.7, y-0.3, cx+4.1, y+5.4);
-    c.closePath();
-  }
-  c.fillStyle = hg; hood(); c.fill();
-  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35; hood(); c.stroke();
-  c.strokeStyle = 'rgba(15,17,24,0.6)'; c.lineWidth = 0.4;
-  c.beginPath(); c.moveTo(cx-4.9, y+0.9); c.quadraticCurveTo(cx-3.3, y+0.7, cx-2.2, y+1.9); c.stroke();
-  c.strokeStyle = 'rgba(15,17,24,0.45)'; c.lineWidth = 0.55;
-  c.beginPath(); c.moveTo(cx-0.6, y+0.4); c.quadraticCurveTo(cx+2.2, y-0.2, cx+3.6, y+1.6); c.stroke();
-  c.fillStyle = '#f0d2b0'; ell(c, cx+1.5, y+3.2, 1.9, 2); c.fill();
-  c.fillStyle = '#3a2414'; c.beginPath();
-  c.moveTo(cx-0.3, y+1.3); c.quadraticCurveTo(cx+1.6, y+0.6, cx+3.3, y+1.6); c.lineTo(cx+2.6, y+2.2); c.lineTo(cx+1.9, y+1.7); c.lineTo(cx+1.1, y+2.3); c.lineTo(cx+0.2, y+1.9); c.closePath(); c.fill();
-  c.fillStyle = 'rgba(30,30,40,0.35)'; ell(c, cx+0.2, y+2.8, 0.9, 1.4); c.fill();
-  c.fillStyle = '#16161c'; c.fillRect(cx+0.9, y+2.75, 0.55, 0.7); c.fillRect(cx+2.25, y+2.75, 0.55, 0.7);
-  c.strokeStyle = '#8a4a3a'; c.lineWidth = 0.25; c.beginPath(); c.moveTo(cx+1.3, y+4.3); c.quadraticCurveTo(cx+1.9, y+4.7, cx+2.5, y+4.2); c.stroke();
+  var hg = c.createRadialGradient(cx-1, y+1.2, 0.3, cx, y+3, 5);
+  hg.addColorStop(0,'#ad86ec'); hg.addColorStop(1,'#3b2170');
+  c.fillStyle = hg; c.beginPath();
+  c.moveTo(cx-3.7, y+5.3); c.quadraticCurveTo(cx-4.3, y-0.9, cx+0.5, y-0.7);
+  c.quadraticCurveTo(cx+4.7, y+0.3, cx+3.9, y+5.3); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(cx-2, y+0.2); c.lineTo(cx-5.8, y+2.4 + wv*0.3); c.lineTo(cx-2.9, y+2.9); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(200,255,216,0.55)'; c.lineWidth = 0.35;
+  c.beginPath(); c.moveTo(cx-3.7, y+5.3); c.quadraticCurveTo(cx-4.3, y-0.9, cx+0.5, y-0.7); c.quadraticCurveTo(cx+4.7, y+0.3, cx+3.9, y+5.3); c.stroke();
+  c.fillStyle = '#f2d7b6'; ell(c, cx+1.4, y+3.1, 1.85, 1.95); c.fill();
+  c.fillStyle = 'rgba(40,20,70,0.45)'; ell(c, cx+0.4, y+2.4, 1.3, 1.1); c.fill();
+  glow(c, cx+1.8, y+2.9, 2.4, '0,255,65', 0.5);
+  c.fillStyle = '#00ff41'; c.fillRect(cx+0.7, y+2.55, 0.75, 0.75); c.fillRect(cx+2.15, y+2.55, 0.75, 0.75);
   c.restore();
   if(reach > 0){
+    // свободная рука тянется к голове и отпускает
     var hx = lerp(cx+0.6, cx+3.3+hdx, reach), hy = lerp(y+8.6, y+1.8, reach);
-    c.strokeStyle = '#4a505e'; c.lineWidth = 1.3; c.lineCap = 'round';
+    c.strokeStyle = '#5a35a0'; c.lineWidth = 1.3; c.lineCap = 'round';
     c.beginPath(); c.moveTo(cx-0.6, y+5.8); c.quadraticCurveTo(cx-1.2 + reach*1.5, y+4.5 - reach*1.5, hx, hy); c.stroke();
-    c.fillStyle = '#f0d2b0'; ell(c, hx, hy, 0.85, 0.8); c.fill();
+    c.fillStyle = '#f2d7b6'; ell(c, hx, hy, 0.85, 0.8); c.fill();
   }
 }
 function artCanary(c,x,y,s,dir,ph){
@@ -872,7 +850,7 @@ function drawNightBg(c, LW, LH, G, scroll, t, stars){
 }
 
 var Runner = {
-  id:'runner', landscapeOnly:true, title:'Джек-бегун', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
+  id:'runner', landscapeOnly:true, title:'Маленькая ведьма', GOAL:30, LIVES:3, LH:144, G:124, HOME:30,
   rules:'<div class="sg-goal">Собирай конфеты, уклоняйся или сбивай воронов и тыквы, получай <span class="sg-jc">JC</span>*</div><div class="sg-rules"><span>30 конфет</span><b>промокод</b><span>Ворон</span><b>25 <span class="sg-jc">JC</span></b><span>Тыква</span><b>10 <span class="sg-jc">JC</span></b><span>Серия без касания пола</span><b>×2</b><span>Врезаться в стену</span><i>головокружение 2 сек</i><span>Врезаться в тыкву / ворона</span><i>−1 жизнь</i></div><div class="sg-foot">* <span class="sg-jc">JC</span> — валюта реферальной программы, 1 <span class="sg-jc">JC</span> = 1 ₽. Максимум 500 <span class="sg-jc">JC</span> в неделю и 2 000 <span class="sg-jc">JC</span> в месяц. Подробнее — на <a href="../index.html#referral">странице программы</a>.</div>',
   bestKey:'sg_runner_best',
   best:function(){ return parseInt(lsGet(this.bestKey) || '0', 10) || 0; },

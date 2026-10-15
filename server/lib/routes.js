@@ -10,7 +10,8 @@ const U = require('./util');
 
 const SESSION_DAYS = 10;
 const CODE_TTL_MIN = 10;
-const REF_LINK_HOURS = 24;
+const REF_LINK_HOURS = 48;        // ссылка живёт 48 часов (абсолютное время сервера, часовой пояс не влияет)
+const REF_LINK_MIN_LEFT_HOURS = 47; // показываем ссылку, у которой осталось не меньше 47 ч, иначе выдаём новую
 const REF_DISCOUNT_DAYS = 7;
 const GAME_WEEK_CAP = 500;
 const GAME_MONTH_CAP = 2000;
@@ -204,17 +205,17 @@ function mount(app) {
   /* ---------- история покупок участника ---------- */
   app.get('/api/me/orders', requireUser(async (req, res, user) => {
     const r = await db.q(
-      `SELECT id, items, total, paid_at, matured FROM orders
+      `SELECT id, items, total, paid_at, matures_at, matured FROM orders
         WHERE user_id = $1 AND status = 'paid' ORDER BY paid_at DESC LIMIT 100`, [user.id]);
     res.json({ orders: r.rows.map((o) => ({
-      id: Number(o.id), paidAt: o.paid_at, total: Number(o.total), counted: o.matured,
+      id: Number(o.id), paidAt: o.paid_at, countsAt: o.matures_at, total: Number(o.total), counted: o.matured,
       items: (o.items || []).map((it) => ({ name: it.name, qty: it.qty || 1, price: Number(it.price) || 0 })),
     })) });
   }));
 
   /* ---------- реф-ссылка: новая раз в 24 часа ---------- */
   app.get('/api/ref/link', requireUser(async (req, res, user) => {
-    let link = (await db.q(`SELECT code, expires_at FROM ref_links WHERE user_id = $1 AND expires_at > now() ORDER BY created_at DESC LIMIT 1`, [user.id])).rows[0];
+    let link = (await db.q(`SELECT code, expires_at FROM ref_links WHERE user_id = $1 AND expires_at > now() + interval '${REF_LINK_MIN_LEFT_HOURS} hours' ORDER BY created_at DESC LIMIT 1`, [user.id])).rows[0];
     if (!link) {
       for (let i = 0; i < 5 && !link; i++) {
         const code = newRefCode();

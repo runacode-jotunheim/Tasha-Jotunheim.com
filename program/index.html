@@ -16,7 +16,7 @@
   --tint:0,255,65;           /* цвет ранга: меняется по рангу посетителя */
   --acc:#00ff41;--accent:#00ff41;--gold:#ffd84a;
   --txt:#c8ffda;--dim:rgba(200,255,218,0.66);--faint:rgba(200,255,218,0.4);
-  --line:rgba(var(--tint),0.24);--panel:rgba(0,7,3,0.82)
+  --line:rgba(var(--tint),0.24);--panel:rgba(0,5,2,0.9)
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
@@ -93,7 +93,7 @@ h2{font-family:'Cinzel',Georgia,serif;font-weight:900;font-size:clamp(24px,6vw,3
 @keyframes spin{0%,70%,100%{transform:rotateY(0)}85%{transform:rotateY(180deg)}}
 .coin p{font-size:13px;color:var(--dim)}
 .coin p b{color:#fff;font-weight:normal}
-.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
 .fact{padding:14px;font-size:12px;color:var(--dim)}
 .fact b{display:block;font-family:'VT323',monospace;font-weight:normal;font-size:27px;color:var(--gold);line-height:1.1;margin-bottom:2px}
 .games{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;padding:13px 16px;font-size:12px;color:var(--dim);border-style:dashed}
@@ -173,47 +173,47 @@ h2{font-family:'Cinzel',Georgia,serif;font-weight:900;font-size:clamp(24px,6vw,3
   </header>
 
   <div class="stats">
-    <div class="stat panel rv"><b data-count="15" data-pre="до " data-suf="%">до 15%</b><span>скидка ранга на всё — навсегда</span></div>
-    <div class="stat panel rv"><b class="gold" data-count="1000">1 000</b><span>ЙотунКоинов (<span class="jc">JC</span>) за каждого друга с покупкой</span></div>
-    <div class="stat panel rv"><b data-count="15" data-suf="%">15%</b><span>другу на первый артефакт</span></div>
-    <div class="stat panel rv"><b data-count="8">8</b><span>рангов — от Мини-Йотуна до Бергельмира</span></div>
+    <div class="stat panel rv"><b data-count="15" data-pre="до " data-suf="%">до 15%</b><span>скидка навсегда</span></div>
+    <div class="stat panel rv"><b class="gold" data-count="1000">1 000</b><span>ЙотунКоинов (<span class="jc">JC</span>) за каждого нового друга</span></div>
+    <div class="stat panel rv"><b data-count="15" data-suf="%">15%</b><span>скидка другу на первый артефакт</span></div>
+    <div class="stat panel rv"><b data-count="8">8</b><span>ступеней развития — от Мини-Йотуна до Бергельмира</span></div>
   </div>
 
   <section id="how">
     <div class="sec-eye rv">Три шага</div>
     <h2 class="rv">Как войти в клуб</h2>
-    <p class="h-sub rv">Ранг Мини-Йотун и 3% на всю продукцию и ритуалы — в ту же минуту.</p>
+    <p class="h-sub rv">Ранг Мини-Йотун и 3% на всю продукцию — при входе.</p>
     <div class="steps">
-      <div class="step panel rv"><span class="rune">ᚨ</span><div class="n">ШАГ 1</div><h3>Войди</h3><p>Почта и код из письма — без паролей. Или поставь галочку «Создать кабинет», когда оформляешь заказ.</p></div>
-      <div class="step panel rv"><span class="rune">ᚷ</span><div class="n">ШАГ 2</div><h3>Позови своих</h3><p>В кабинете — твоя личная ссылка. Она живёт 24 часа, на следующий день появляется новая.</p></div>
-      <div class="step panel rv"><span class="rune">ᛏ</span><div class="n">ШАГ 3</div><h3>Поднимайся</h3><p>Каждая покупка друга приносит тебе ЙотунКоины и ведёт к следующему рангу.</p></div>
+      <div class="step panel rv"><span class="rune">ᚨ</span><div class="n">ШАГ 1</div><h3>Войди</h3><p>Купи любой артефакт, ритуал или консультацию и поставь галочку «Создать кабинет» при оформлении заказа.</p></div>
+      <div class="step panel rv"><span class="rune">ᚷ</span><div class="n">ШАГ 2</div><h3>Зови своих</h3><p>В личном кабинете — твоя ссылка. Она живёт сутки, на следующий день создаётся новая.</p></div>
+      <div class="step panel rv"><span class="rune">ᛏ</span><div class="n">ШАГ 3</div><h3>Развивайся</h3><p>Каждая оплата твоего друга приносит тебе ЙотунКоины и поднимает тебя вверх по ступеням развития.</p></div>
     </div>
   </section>
 
   <section>
-    <div class="sec-eye rv">Приведи друга</div>
-    <h2 class="rv">Подарок — обоим</h2>
-    <p class="h-sub rv">Одна покупка друга — и подарок ему, и бонус тебе.</p>
+    <div class="sec-eye rv">Сила в своих</div>
+    <h2 class="rv">Приведи друга —<br>получи подарок</h2>
+    <p class="h-sub rv">Одна покупка — подарок ему и бонус тебе.</p>
     <div class="duo">
       <div class="card panel rv">
         <div class="tag">Другу</div>
-        <div class="big">15% на артефакт</div>
+        <div class="big">−15% на любой артефакт</div>
         <div class="or">или</div>
         <div class="big">5 000 ₽ на консультацию</div>
         <ul>
-          <li>на первый заказ, артефакт — от 10 000 ₽</li>
-          <li>скидка ждёт его в кабинете 7 дней</li>
+          <li>на первый заказ от 10 000 ₽</li>
+          <li>скидка сохраняется в личном кабинете 7 дней</li>
           <li>одна реф-скидка на человека</li>
         </ul>
       </div>
       <div class="card panel rv">
         <div class="tag">Тебе</div>
-        <div class="big gold">+1 000 <span class="jc">JC</span></div>
-        <div class="or">за каждого друга</div>
+        <div class="big gold">+1 000 – 3 000 <span class="jc">JC</span></div>
+        <div class="or">за каждого нового друга — в зависимости от ранга</div>
         <ul>
-          <li>если друг оплатил заказ от 10 000 ₽</li>
-          <li><span class="jc">JC</span> приходят через 14 дней после его оплаты</li>
-          <li>друг засчитывается в твой ранг</li>
+          <li>единоразово, если друг оплатил заказ от 10 000 ₽</li>
+          <li>ЙотунКоины приходят через 14 дней после его оплаты</li>
+          <li>каждый друг — ещё одна ступень на твоём пути развития</li>
         </ul>
       </div>
     </div>
@@ -222,18 +222,17 @@ h2{font-family:'Cinzel',Georgia,serif;font-weight:900;font-size:clamp(24px,6vw,3
   <section>
     <div class="sec-eye rv">Валюта Йотунхейма</div>
     <h2 class="rv">ЙотунКоины (<span class="jc">JC</span>)</h2>
-    <p class="h-sub rv">Копятся в кабинете и оплачивают часть следующего заказа.</p>
+    <p class="h-sub rv">Накапливаются в личном кабинете. Ими можно оплатить до 50% следующего заказа.</p>
     <div class="coin panel rv">
       <div class="coin-ico">JC</div>
-      <p><b>1 <span class="jc">JC</span> = 1 ₽.</b> Начисляются за друзей, за ранги начиная с Йотун Хель и за игры Йотунхейма.</p>
+      <p><b>1 ЙотунКоин = 1 ₽.</b> Начисляются за новых друзей, за новые ступени развития и за игры Йотунхейма.</p>
     </div>
     <div class="facts">
-      <div class="fact panel rv"><b>до 50%</b>суммы заказа можно оплатить <span class="jc">JC</span></div>
-      <div class="fact panel rv"><b>12 месяцев</b>живут <span class="jc">JC</span> за друзей и ранги</div>
-      <div class="fact panel rv"><b>500 / 2 000</b><span class="jc">JC</span> в неделю / в месяц можно выиграть в играх</div>
+      <div class="fact panel rv"><b>до 50%</b>суммы заказа можно оплатить ЙотунКоинами</div>
+      <div class="fact panel rv"><b>12 месяцев</b>живут ЙотунКоины</div>
     </div>
     <div class="games panel rv">
-      <span>Играй в «Погост» и «Маленькую Ведьму» — собирай <span class="jc">JC</span> и промокоды.</span>
+      <span>Играй в «Погост» и «Маленькую Ведьму» — собирай ЙотунКоины: до 500 в неделю и 2 000 в месяц.</span>
       <a href="../samhain/">Играть ▶</a>
     </div>
   </section>
@@ -243,10 +242,10 @@ h2{font-family:'Cinzel',Georgia,serif;font-weight:900;font-size:clamp(24px,6vw,3
   <section>
     <div class="sec-eye rv">Восемь ступеней</div>
     <h2 class="rv">Ранги клуба</h2>
-    <p class="h-sub rv">Каждый ранг — всё, что было раньше, и новое сверху. Достаточно одного из двух путей: через друзей или через свои покупки. Ранг не сгорает.</p>
+    <p class="h-sub rv">Каждый ранг — следующая ступень развития. Достаточно одного из двух путей: через друзей или через свои покупки. Ранг остаётся навсегда.</p>
     <div class="tbl-wrap rv"><table class="tbl" id="tbl"></table></div>
     <div class="tbl-hint">← листай таблицу вбок →</div>
-    <p class="tbl-note">«Друг» — приглашённый по твоей ссылке, который оплатил заказ не меньше указанной суммы. 🎁 — подарок при получении ранга.</p>
+    <p class="tbl-note">«Друг» — приглашённый по твоей ссылке, который оплатил заказ не меньше указанной суммы. 🎁 — подарок на новой ступени.</p>
   </section>
 </div>
 
@@ -254,25 +253,25 @@ h2{font-family:'Cinzel',Georgia,serif;font-weight:900;font-size:clamp(24px,6vw,3
   <div class="final panel rv">
     <div class="sec-eye">Первый шаг</div>
     <h2>Твой путь начинается<br>с Мини-Йотуна</h2>
-    <p>3% на всю продукцию и ритуалы — сразу после входа в клуб.</p>
+    <p>3% на всю продукцию — с первой покупки.</p>
     <button class="cta wait" type="button" data-cab-main>Клуб откроется скоро</button>
   </div>
 
   <div class="fine">
     <h4>Правила клуба</h4>
     <ol>
-      <li>Скидка ранга и оплата ЙотунКоинами (<span class="jc">JC</span>) складываются между собой, но не суммируются с промокодом из игр: промокод — для тех, у кого нет кабинета.</li>
+      <li>Вход в клуб — с первой покупки. Скидка ранга и оплата ЙотунКоинами (<span class="jc">JC</span>) складываются между собой, но не суммируются с промокодом из игр: промокод — для тех, кто не в клубе.</li>
       <li>Реф-скидка друга действует один раз — на его первый оплаченный заказ, 7 дней с момента регистрации по ссылке.</li>
       <li>Пользоваться своей ссылкой нельзя: совпадения почты, телефона и Telegram проверяются.</li>
       <li>Покупки и друзья засчитываются через 14 дней после оплаты (срок возврата).</li>
-      <li>JC оплачивают не больше 50% заказа. JC за друзей и ранги действуют 12 месяцев, JC из игр — до конца календарного месяца; лимит из игр — 500 JC в неделю и 2 000 JC в месяц.</li>
-      <li>Ранг не сгорает. Вход в кабинет — по коду на почту (дублируется в привязанный Telegram), сессия хранится 10 дней.</li>
+      <li>ЙотунКоины оплачивают не больше 50% заказа и действуют 12 месяцев; ЙотунКоины из игр — до конца календарного месяца, не больше 500 в неделю и 2 000 в месяц.</li>
+      <li>Ранг остаётся навсегда.</li>
     </ol>
   </div>
   <div class="foot"><a href="../">tasha-jotunheim.com</a> · <a href="../legal/oferta.html">Оферта</a> · <a href="../legal/privacy.html">Конфиденциальность</a></div>
 </div>
 
-<script src="program.js?v=2" charset="utf-8"></script>
-<script src="../assets/js/account.js?v=2" charset="utf-8"></script>
+<script src="program.js?v=3" charset="utf-8"></script>
+<script src="../assets/js/account.js?v=3" charset="utf-8"></script>
 </body>
 </html>

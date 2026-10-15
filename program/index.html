@@ -137,6 +137,19 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
 .ms:not(:nth-child(3n+1)){padding-left:16px;border-left:1px solid var(--line)}
 .ms b{display:block;font-family:'VT323',monospace;font-weight:normal;font-size:clamp(28px,3.6vw,38px);line-height:1.05;color:rgb(var(--tint))}
 .ms b.gold{color:#ffd84a}
+.ms-btn{all:unset;box-sizing:border-box;cursor:pointer;display:block;padding:18px 16px 16px 16px;border-bottom:1px solid var(--line);border-left:1px solid var(--line)}
+.ms-btn:hover b{text-shadow:0 0 10px rgba(var(--tint),0.5)}
+.ms-btn:focus-visible{outline:1px solid rgb(var(--tint));outline-offset:-1px}
+.hist-ico{font-style:normal;margin-left:6px;font-size:11px;letter-spacing:1px;color:rgb(var(--tint))}
+.hist{border-bottom:1px solid var(--line);padding:6px 0 10px}
+.hist .h-row{display:grid;grid-template-columns:170px 1fr auto;gap:14px;padding:10px 0;border-top:1px solid rgba(var(--tint),0.08);font-size:13px;color:var(--dim)}
+.hist .h-row:first-child{border-top:none}
+.hist .h-date{color:var(--faint);white-space:nowrap}
+.hist .h-items{color:var(--txt)}
+.hist .h-items small{display:block;color:var(--faint);font-size:11.5px;margin-top:2px}
+.hist .h-sum{text-align:right;white-space:nowrap;color:var(--txt)}
+.hist .h-msg{padding:12px 0;font-size:13px;color:var(--dim)}
+
 .ms span{display:block;margin-top:6px;font-size:12.5px;color:var(--dim)}
 .me-note{margin-top:10px;font-size:12px;color:var(--faint)}
 .me-next{margin-top:26px;max-width:560px}
@@ -152,8 +165,9 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
   .me-stats{grid-template-columns:1fr 1fr}
   .ms:not(:nth-child(3n+1)){padding-left:0;border-left:none}
   .ms:nth-child(even){padding-left:14px;border-left:1px solid var(--line)}
+  .ms-btn:nth-child(odd){padding-left:0;border-left:none}
 }
-@media(max-width:480px){.ref-row{flex-direction:column;align-items:stretch}.ref-row .btn{width:100%}}
+@media(max-width:480px){.ref-row{flex-direction:column;align-items:stretch}.ref-row .btn{width:100%}.hist .h-row{grid-template-columns:1fr auto}.hist .h-date{grid-column:1/-1}}
 
 @media(max-width:860px){
   .hero{grid-template-columns:1fr;gap:10px}
@@ -214,11 +228,12 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
     <div class="me-stats">
       <div class="ms"><b id="ms-inv">—</b><span>приглашено друзей</span></div>
       <div class="ms"><b id="ms-fb">—</b><span>из них совершили покупку</span></div>
-      <div class="ms"><b id="ms-art">—</b><span>твоих артефактов куплено</span></div>
+      <button class="ms ms-btn" type="button" id="ms-art-btn" aria-expanded="false" aria-controls="hist"><b id="ms-art">—</b><span>артефактов куплено <i class="hist-ico">История ▾</i></span></button>
       <div class="ms"><b id="ms-sum">—</b><span>общая сумма покупок</span></div>
       <div class="ms"><b id="ms-pct">—</b><span>текущая скидка</span></div>
       <div class="ms"><b id="ms-jc" class="gold">—</b><span>баланс ЙотунКоинов</span></div>
     </div>
+    <div class="hist" id="hist" hidden></div>
     <p class="me-note">Покупки засчитываются через 14 дней после оплаты.</p>
     <div class="me-next" id="me-next"></div>
     <div class="me-ref">
@@ -333,7 +348,7 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
   <footer class="foot"><span>Jotunheim / Клуб Йотунов</span><a href="../">tasha-jotunheim.com</a></footer>
 </div>
 
-<script src="program.js?v=6" charset="utf-8"></script>
+<script src="program.js?v=7" charset="utf-8"></script>
 <script src="../assets/js/account.js?v=4" charset="utf-8"></script>
 </body>
 </html>

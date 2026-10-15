@@ -231,8 +231,40 @@ function showMember(me){
     nx.innerHTML = '<h4>Следующий ранг</h4><div class="nm">' + RANKS[me.next.rank].name + '</div>' + progress(me.next.rank, me);
   } else nx.innerHTML = '<h4>Ранг</h4><div class="nm">Высший ранг клуба</div>';
   document.getElementById('me-open').onclick = window.JotunAccount.open;
+  wireHistory();
   loadRef();
 }
+
+/* ── история покупок (раскрывается по нажатию на «артефактов куплено») ── */
+function fmtDate(d){ try{ return new Date(d).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }); }catch(e){ return ''; } }
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function wireHistory(){
+  var btn = document.getElementById('ms-art-btn'), box = document.getElementById('hist'); if(!btn || !box) return;
+  var loaded = false;
+  btn.onclick = function(){
+    var open = box.hidden; box.hidden = !open; btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.querySelector('.hist-ico').textContent = open ? 'История ▴' : 'История ▾';
+    if(open && !loaded) loadHistory();
+  };
+  function loadHistory(){
+    var A = window.JotunAccount;
+    box.innerHTML = '<div class="h-msg">Загружаем историю…</div>';
+    fetch(A.apiBase + '/api/me/orders', { credentials:'include' }).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+      loaded = true;
+      var list = (j && j.orders) || [];
+      if(!list.length){ box.innerHTML = '<div class="h-msg">Покупок пока нет.</div>'; return; }
+      box.innerHTML = list.map(function(o){
+        var names = o.items.map(function(it){ return esc(it.name) + (it.qty > 1 ? ' × ' + it.qty : ''); }).join(', ');
+        return '<div class="h-row"><span class="h-date">' + fmtDate(o.paidAt) + '</span><span class="h-items">' + names +
+          '<small>' + (o.counted ? 'Засчитана в ранг' : 'Будет засчитана через 14 дней после оплаты') + '</small></span><span class="h-sum">' + fmtRub(o.total) + '</span></div>';
+      }).join('');
+    }).catch(function(){
+      box.innerHTML = '<div class="h-msg">Не удалось загрузить историю. <button class="link-btn" type="button">Повторить</button></div>';
+      box.querySelector('button').onclick = loadHistory;
+    });
+  }
+}
+
 function loadRef(){
   var row = document.getElementById('ref-row'), A = window.JotunAccount; if(!row || !A) return;
   row.innerHTML = '<span class="ref-state">Обновляем ссылку…</span>';

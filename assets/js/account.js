@@ -78,7 +78,7 @@ function cookieBar(){
   if(cookieOk()) return;
   var b = document.createElement('div');
   b.id = 'cookie-bar';
-  b.innerHTML = '<span>Мы используем cookie, чтобы помнить вход в кабинет и приглашение друга. Оставаясь на сайте, вы соглашаетесь с <a href="legal/consent.html" target="_blank">обработкой данных</a>.</span><button type="button">Принять</button>';
+  b.innerHTML = '<span>Мы используем cookie, чтобы помнить вход в кабинет и приглашение друга. Оставаясь на сайте, вы соглашаетесь с <a href="/legal/consent.html" target="_blank">обработкой данных</a>.</span><button type="button">Принять</button>';
   document.body.appendChild(b);
   b.classList.add('on');
   b.querySelector('button').onclick = function(){

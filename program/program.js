@@ -238,6 +238,14 @@ function showMember(me){
 /* ── история покупок (раскрывается по нажатию на «артефактов куплено») ── */
 function fmtDate(d){ try{ return new Date(d).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }); }catch(e){ return ''; } }
 function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function plural(n, a, b, c){ var m = n % 10, h = n % 100; return (m === 1 && h !== 11) ? a : (m >= 2 && m <= 4 && (h < 12 || h > 14)) ? b : c; }
+function countText(o){
+  if(o.counted) return 'Зачислена в общую сумму покупок';
+  var left = o.countsAt ? Math.ceil((new Date(o.countsAt) - Date.now()) / 864e5) : null;
+  if(left == null || isNaN(left)) return 'Будет зачислена в общую сумму после 14 дней с оплаты';
+  if(left <= 0) return 'Зачисляется в общую сумму сегодня';
+  return 'Будет зачислена в общую сумму через ' + left + ' ' + plural(left, 'день', 'дня', 'дней');
+}
 function wireHistory(){
   var btn = document.getElementById('ms-art-btn'), box = document.getElementById('hist'); if(!btn || !box) return;
   var loaded = false;
@@ -256,7 +264,7 @@ function wireHistory(){
       box.innerHTML = list.map(function(o){
         var names = o.items.map(function(it){ return esc(it.name) + (it.qty > 1 ? ' × ' + it.qty : ''); }).join(', ');
         return '<div class="h-row"><span class="h-date">' + fmtDate(o.paidAt) + '</span><span class="h-items">' + names +
-          '<small>' + (o.counted ? 'Засчитана в ранг' : 'Будет засчитана через 14 дней после оплаты') + '</small></span><span class="h-sum">' + fmtRub(o.total) + '</span></div>';
+          '<small>' + countText(o) + '</small></span><span class="h-sum">' + fmtRub(o.total) + '</span></div>';
       }).join('');
     }).catch(function(){
       box.innerHTML = '<div class="h-msg">Не удалось загрузить историю. <button class="link-btn" type="button">Повторить</button></div>';

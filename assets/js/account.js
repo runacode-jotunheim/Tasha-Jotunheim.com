@@ -13,7 +13,7 @@ try{
 }catch(e){}
 
 var COOKIE_OK_KEY = 'jv_cookie_ok';     // согласие на cookie, помним 1 год
-var REF_KEY = 'jv_ref';                 // реф-код друга, живёт 24 часа
+var REF_KEY = 'jv_ref';                 // реф-код друга, живёт 48 часов
 var YEAR = 365 * 864e5, DAY = 864e5;
 
 var RANK_BONUS = [
@@ -54,7 +54,7 @@ function api(method, path, body){
 function cookieOk(){ var t = parseInt(lsGet(COOKIE_OK_KEY) || '0', 10); return t && Date.now() - t < YEAR; }
 function saveRef(code){
   ssSet(REF_KEY, code);
-  if(cookieOk()) lsSet(REF_KEY, JSON.stringify({code: code, exp: Date.now() + DAY}));
+  if(cookieOk()) lsSet(REF_KEY, JSON.stringify({code: code, exp: Date.now() + 2 * DAY}));
 }
 function getRef(){
   var s = ssGet(REF_KEY); if(s) return s;
@@ -238,7 +238,7 @@ function showAccount(){
     var inp = $('acc-ref'); if(!inp) return;
     inp.value = l.url;
     var h = Math.max(1, Math.round((new Date(l.expiresAt) - Date.now()) / 36e5));
-    $('acc-ref-t').innerHTML = 'Ссылка действует ещё ' + h + ' ч, потом появится новая. Друг получит 15% на первый заказ, ты — 1 000 ' + JC + ' после его покупки.';
+    $('acc-ref-t').innerHTML = 'Ссылка действует ' + h + ' ч с момента копирования. Друг получит скидку на первый заказ, ты — от 1 000 до 3 000 ' + JC + ' после его покупки.';
     $('acc-share').onclick = function(){
       var text = 'Артефакты Йотунхейм — скидка 15% на первый заказ по моей ссылке:';
       if(navigator.share) navigator.share({title: 'Артефакты Йотунхейм', text: text, url: l.url}).catch(function(){});

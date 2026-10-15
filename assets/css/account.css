@@ -27,14 +27,11 @@
 .acc-hero{position:relative;padding:26px 20px 20px;border-radius:18px 18px 0 0;overflow:hidden;min-height:150px}
 .acc-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15),rgba(3,8,5,0.95))}
 .acc-hero>*{position:relative;z-index:1}
-.acc-hero[data-rank="0"]{background:radial-gradient(circle at 70% 20%,#1c4a2a,#03100a 70%)}
-.acc-hero[data-rank="1"]{background:radial-gradient(circle at 70% 20%,#2f5a1e,#0a1405 70%)}
-.acc-hero[data-rank="2"]{background:radial-gradient(circle at 70% 20%,#5a4a1e,#140f05 70%)}
-.acc-hero[data-rank="3"]{background:radial-gradient(circle at 70% 20%,#1e4a5a,#05101a 70%)}
-.acc-hero[data-rank="4"]{background:radial-gradient(circle at 70% 20%,#3a3a4a,#06060c 70%)}
-.acc-hero[data-rank="5"]{background:radial-gradient(circle at 70% 20%,#6a2a12,#140603 70%)}
-.acc-hero[data-rank="6"]{background:radial-gradient(circle at 70% 20%,#5a6a7a,#0a0e14 70%)}
-.acc-hero[data-rank="7"]{background:radial-gradient(circle at 70% 20%,#7a5a12,#140c02 70%)}
+/* персональная тема по рангу: начальные — тихий зелёный, средние — выраженнее, высшие — зелёный + бордо */
+.acc-hero[data-rank="0"],.acc-hero[data-rank="1"]{background:radial-gradient(circle at 80% 0%,rgba(120,152,115,0.14),transparent 60%),#0B0F0D}
+.acc-hero[data-rank="2"],.acc-hero[data-rank="3"],.acc-hero[data-rank="4"]{background:radial-gradient(circle at 80% 0%,rgba(120,152,115,0.28),transparent 62%),#0E1411;box-shadow:inset 0 -2px 0 rgba(120,152,115,0.6)}
+.acc-hero[data-rank="5"],.acc-hero[data-rank="6"],.acc-hero[data-rank="7"]{background:radial-gradient(circle at 85% 0%,rgba(122,61,61,0.32),transparent 55%),radial-gradient(circle at 15% 0%,rgba(120,152,115,0.30),transparent 60%),#0E1411;box-shadow:inset 0 -2px 0 rgba(122,61,61,0.75)}
+.acc-hero[data-rank="5"]::before,.acc-hero[data-rank="6"]::before,.acc-hero[data-rank="7"]::before{content:'ᛟ';position:absolute;right:18px;top:6px;font-size:96px;line-height:1;color:rgba(241,242,236,0.06);z-index:0}
 .acc-hero.has-img{background-size:cover;background-position:center}
 .acc-eye{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:rgba(200,255,218,0.6)}
 .acc-rank{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(26px,7vw,36px);letter-spacing:2px;text-transform:uppercase;color:#ffb35c;margin:6px 0 4px;text-shadow:0 0 18px rgba(255,179,92,0.35)}

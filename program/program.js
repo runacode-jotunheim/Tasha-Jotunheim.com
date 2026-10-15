@@ -1,219 +1,190 @@
-/* Клуб Йотунов: матрица, эффекты, таблица рангов, кабинет */
+/* Клуб Йотунов: аккордеон рангов, тихая матрица, кабинет */
 (function(){
 'use strict';
 
-/* ── цвет фона по рангу посетителя (гость — зелёный) ── */
-var TINTS = [
-  [0,255,65],    // Мини-Йотун
-  [0,235,150],   // Йотун
-  [0,215,210],   // Старший Йотун
-  [60,170,255],  // Ёрмунганд
-  [175,140,255], // Йотун Хель
-  [255,120,40],  // Йотун Локи
-  [185,230,255], // Йотун Имир
-  [255,210,60]   // Бергельмир
+/* ── Данные программы (актуальная таблица) ── */
+var RANKS = [
+  { name:'Мини-Йотун', pct:3, main:'Скидка 3% на всю продукцию', first:true,
+    perks:[], gifts:[], friendJC:1000 },
+  { name:'Йотун', pct:3, main:'5 000 ₽ на консультацию',
+    friends:[5,7000], own:'24 000 ₽', ownNote:'не меньше 3 артефактов',
+    perks:[], gifts:['500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1000 },
+  { name:'Старший Йотун', pct:5, main:'Скидка 5%',
+    friends:[10,7000], own:'50 000 ₽',
+    perks:['Привилегии при брони места на обучение'], gifts:['1 000 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1500 },
+  { name:'Ёрмунганд', pct:5, main:'Приоритет на закрытые ритуалы',
+    friends:[15,10000], own:'75 000 ₽',
+    perks:['Приоритет на закрытые ритуалы'], gifts:['1 500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1500 },
+  { name:'Йотун Хель', pct:7, main:'Скидка 7% и закрытый канал',
+    friends:[20,15000], own:'100 000 ₽',
+    perks:['Закрытый канал «Настоящие Йотуны»'], gifts:['2 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽'], friendJC:2000 },
+  { name:'Йотун Локи', pct:7, main:'Индивидуальное обучение рунам',
+    friends:[25,15000], own:'150 000 ₽', ownPlus:[3,10000],
+    perks:['Индивидуальное обучение рунам на особых условиях'], gifts:['3 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно'], friendJC:2000 },
+  { name:'Йотун Имир', pct:10, main:'Скидка 10%',
+    friends:[30,20000], own:'250 000 ₽', ownPlus:[5,15000],
+    perks:[], gifts:['3 500 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно','Индивидуальный ритуал открытия дорог на 1 год'], friendJC:2500 },
+  { name:'Бергельмир', pct:15, main:'Скидка 15%',
+    friends:[40,25000], own:'300 000 ₽', ownPlus:[15,20000],
+    perks:['Скидка 15% на обучение'], gifts:['5 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно','Ритуал открытия дорог','Персональный артефакт'], friendJC:3000 }
 ];
-var tint = TINTS[0];
-function setRank(i){
-  i = Math.max(0, Math.min(7, i|0));
-  tint = TINTS[i];
-  document.documentElement.style.setProperty('--tint', tint.join(','));
-  markMe(i);
+
+function rub(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
+function num(n){ return n.toLocaleString('ru-RU'); }
+function li(t){ return '<li>' + t + '</li>'; }
+
+/* постоянные привилегии рангом выше включают всё, что было раньше */
+function allPerks(i){
+  var out = ['<b>Скидка ' + RANKS[i].pct + '%</b> на всю продукцию — артефакты, ритуалы, консультации'];
+  for(var k = 0; k <= i; k++) RANKS[k].perks.forEach(function(p){ out.push(p); });
+  return out;
 }
 
-/* ── матрица из рун, как на главной ── */
-function matrix(){
-  var c = document.getElementById('mx'); if(!c) return;
-  var ctx = c.getContext('2d');
-  var ABC = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ';
-  var SECRET = ['JOTUNHEIM','CLUB','JOTUN'];
-  var mob, cellH, step, fs, drops = [];
-  function setup(){
-    mob = innerWidth < 768; cellH = mob ? 18 : 24; step = mob ? 14 : 20; fs = mob ? 14 : 22;
-    c.width = innerWidth; c.height = innerHeight;
-    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height);
-    var n = Math.ceil(c.width / step); drops = [];
-    for(var i = 0; i < n; i++){
-      var z = Math.random();
-      drops.push({ x:i*step, y:-Math.random()*60, size:Math.floor(z*4)+fs, wait:Math.floor(Math.random()*5)+1, w:0,
-        op:z*0.8+0.2, hist:[], secret:'', si:0 });
+function body(i, me){
+  var r = RANKS[i], h = '';
+  // условие
+  h += '<div class="r-blk"><h4>Условие получения</h4><ul>';
+  if(r.first) h += li('Первая оплаченная покупка с личным кабинетом');
+  else {
+    h += li('<b>Через приглашения:</b> ' + r.friends[0] + ' друзей, каждый оплатил заказ от ' + rub(r.friends[1]));
+    h += '<li class="or">или</li>';
+    h += li('<b>Через покупки:</b> ' + r.own + ' на общую сумму' + (r.ownNote ? ', ' + r.ownNote : '') +
+      (r.ownPlus ? ' + ' + r.ownPlus[0] + ' ' + (r.ownPlus[0] < 5 ? 'друга' : 'друзей') + ', каждый от ' + rub(r.ownPlus[1]) : ''));
+  }
+  h += '</ul>' + progress(i, me) + '</div>';
+  // привилегии
+  h += '<div class="r-blk"><h4>Постоянные привилегии</h4><ul>' + allPerks(i).map(li).join('') + '</ul></div>';
+  // подарок (только если есть)
+  if(r.gifts.length) h += '<div class="r-blk"><h4>Подарок за ранг</h4><ul>' + r.gifts.map(li).join('') + '</ul><div class="note">Выдаётся один раз при получении ранга.</div></div>';
+  // ЙотунКоины за друзей
+  h += '<div class="r-blk"><h4>ЙотунКоины</h4><ul>' + li('<b>+' + num(r.friendJC) + ' JC</b> за каждого нового друга с первой покупкой от 10 000 ₽') + '</ul><div class="note">Начисляются через 14 дней после оплаты друга.</div></div>';
+  return '<div class="r-in">' + h + '</div>';
+}
+
+/* прогресс к следующему рангу — только по реальным данным кабинета */
+function progress(i, me){
+  if(!me || !me.next || me.next.rank !== i) return '';
+  var r = RANKS[i], n = me.next, h = '';
+  if(r.friends){
+    var have = Math.max(0, r.friends[0] - n.friendsLeft);
+    h += '<div class="prog">Через приглашения: ' + have + ' из ' + r.friends[0] + '<div class="bar"><i style="width:' + Math.min(100, have / r.friends[0] * 100) + '%"></i></div></div>';
+  }
+  if(n.own){
+    var need = parseInt(String(r.own).replace(/\D/g, ''), 10) || 0, got = Math.max(0, need - n.own.sumLeft);
+    h += '<div class="prog">Через покупки: ' + rub(got) + ' из ' + rub(need) + '<div class="bar"><i style="width:' + (need ? Math.min(100, got / need * 100) : 0) + '%"></i></div></div>';
+  }
+  return h;
+}
+
+var list = document.getElementById('ranks-list');
+var openIdx = -1, meData = null;
+
+function render(){
+  if(!list) return;
+  var cur = meData && meData.rank ? meData.rank.index : -1;
+  list.innerHTML = RANKS.map(function(r, i){
+    var tag = '';
+    if(cur === i) tag = '<span class="r-tag">Твой ранг</span>';
+    else if(cur > i) tag = '<span class="r-tag done">Достигнут</span>';
+    else if(cur >= 0 && i === cur + 1) tag = '<span class="r-tag">Следующий</span>';
+    return '<li class="rank' + (cur === i ? ' cur' : '') + '" data-i="' + i + '">' +
+      '<button class="r-btn" type="button" aria-expanded="false" aria-controls="rb' + i + '">' +
+      '<span class="r-num">' + String(i + 1).padStart(2, '0') + '</span>' +
+      '<span class="r-name">' + r.name + '<span class="r-main">' + r.main + '</span></span>' +
+      (tag || '<span></span>') + '<span class="r-ico"></span></button>' +
+      '<div class="r-body" id="rb' + i + '" role="region">' + body(i, meData) + '</div></li>';
+  }).join('');
+  if(openIdx >= 0) setOpen(openIdx, true);
+}
+
+function setOpen(i, instant){
+  var items = list.querySelectorAll('.rank');
+  [].forEach.call(items, function(li, k){
+    var b = li.querySelector('.r-body'), btn = li.querySelector('.r-btn');
+    var want = (k === i);
+    if(want === li.classList.contains('open') && !instant) return;
+    li.classList.toggle('open', want);
+    btn.setAttribute('aria-expanded', want ? 'true' : 'false');
+    if(instant){ b.style.height = want ? 'auto' : '0px'; return; }
+    if(want){
+      b.style.height = b.scrollHeight + 'px';
+      b.addEventListener('transitionend', function te(){ if(li.classList.contains('open')) b.style.height = 'auto'; b.removeEventListener('transitionend', te); });
+    } else {
+      b.style.height = b.scrollHeight + 'px';
+      b.offsetHeight; // зафиксировать высоту перед сворачиванием
+      b.style.height = '0px';
     }
+  });
+  openIdx = i;
+}
+
+if(list){
+  list.addEventListener('click', function(e){
+    var btn = e.target.closest('.r-btn'); if(!btn) return;
+    var i = +btn.parentNode.getAttribute('data-i');
+    var top = btn.getBoundingClientRect().top;
+    setOpen(openIdx === i ? -1 : i);
+    // не дать странице «прыгнуть»: держим нажатую строку на месте
+    requestAnimationFrame(function(){ var d = btn.getBoundingClientRect().top - top; if(Math.abs(d) > 2) window.scrollBy(0, d); });
+  });
+  render();
+}
+
+/* ── тихая руническая матрица в приглушённом зелёном ── */
+(function(){
+  var c = document.getElementById('mx'); if(!c || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  var ctx = c.getContext('2d'), ABC = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ', drops = [], cellH, step, fs;
+  function setup(){
+    var mob = innerWidth < 768; cellH = mob ? 18 : 24; step = mob ? 22 : 30; fs = mob ? 14 : 20;
+    c.width = innerWidth; c.height = innerHeight; ctx.fillStyle = '#0B0F0D'; ctx.fillRect(0, 0, c.width, c.height);
+    drops = []; for(var i = 0, n = Math.ceil(c.width / step); i < n; i++) drops.push({ x:i*step, y:-Math.random()*80, wait:Math.floor(Math.random()*6)+3, w:0, h:[] });
   }
   setup(); addEventListener('resize', setup);
-  function col(idx){
-    if(idx === 0) return 'rgb(' + Math.round(tint[0]*0.133+136) + ',' + Math.round(tint[1]*0.133+136) + ',' + Math.round(tint[2]*0.133+136) + ')';
-    var k = idx < 6 ? 0.56 : Math.max(0, 0.78 - idx*0.05);
-    return 'rgb(' + Math.round(tint[0]*k) + ',' + Math.round(tint[1]*k) + ',' + Math.round(tint[2]*k) + ')';
-  }
-  function draw(){
+  setInterval(function(){
     if(document.hidden) return;
-    ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(0, 0, c.width, c.height);
-    for(var i = 0; i < drops.length; i++){
-      var d = drops[i];
+    ctx.fillStyle = 'rgba(11,15,13,0.25)'; ctx.fillRect(0, 0, c.width, c.height);
+    drops.forEach(function(d){
       if(d.y > 0){
-        var cy = Math.floor(d.y);
-        for(var j = 0; j < d.hist.length; j++){
-          var ch = d.hist[j]; if(!ch) continue;
-          var yp = (cy - j) * cellH; if(yp < 0) break;
-          ctx.save(); ctx.translate(d.x, 0);
-          ctx.scale(/[A-Z]/.test(ch) ? 0.85 : 1.2, 1);
-          ctx.font = d.size + "px 'VT323'"; ctx.globalAlpha = d.op;
-          if(j === 0){ ctx.shadowBlur = 5; ctx.shadowColor = 'rgb(' + Math.round(tint[0]*0.4) + ',' + Math.round(tint[1]*0.4) + ',' + Math.round(tint[2]*0.4) + ')'; } else ctx.shadowBlur = 0;
-          ctx.fillStyle = col(j); ctx.fillText(ch, 0, yp); ctx.restore();
+        for(var j = 0; j < d.h.length; j++){
+          var yp = (Math.floor(d.y) - j) * cellH; if(yp < 0) break;
+          ctx.save(); ctx.translate(d.x, 0); ctx.scale(1.2, 1);
+          ctx.font = fs + "px 'VT323'";
+          ctx.fillStyle = j === 0 ? '#c9d6c6' : 'rgba(120,152,115,' + Math.max(0, 0.9 - j*0.05) + ')';
+          ctx.fillText(d.h[j], 0, yp); ctx.restore();
         }
-        ctx.globalAlpha = 1;
       }
-      if(++d.w >= d.wait){
-        d.w = 0; d.y += 1;
-        if(!d.secret && Math.random() < 0.0012){ d.secret = SECRET[Math.floor(Math.random()*SECRET.length)]; d.si = 0; }
-        var nc;
-        if(d.secret){ nc = d.secret[d.si++]; if(d.si >= d.secret.length) d.secret = ''; }
-        else nc = ABC.charAt(Math.floor(Math.random()*ABC.length));
-        d.hist.unshift(nc); if(d.hist.length > 40) d.hist.pop();
-      }
-      if(d.y*cellH > c.height + 600){ d.y = -Math.random()*20; d.hist = []; d.secret = ''; }
-    }
-  }
-  setInterval(draw, 1000/24);
-}
-
-/* ── заголовок проявляется рунами ── */
-function scramble(){
-  var CH = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛞᛟ';
-  [].forEach.call(document.querySelectorAll('#h1 span'), function(line, li){
-    var fin = line.textContent, len = fin.length, f = 0, max = 20;
-    line.textContent = fin.replace(/\S/g, function(){ return CH[Math.floor(Math.random()*CH.length)]; });
-    setTimeout(function(){
-      var iv = setInterval(function(){
-        f++; var r = Math.floor(f / max * len), out = '';
-        for(var i = 0; i < len; i++) out += (i < r || fin[i] === ' ') ? fin[i] : CH[Math.floor(Math.random()*CH.length)];
-        line.textContent = out;
-        if(r >= len){ line.textContent = fin; clearInterval(iv); }
-      }, 40);
-    }, 250 + li * 280);
-  });
-}
-
-/* ── появление блоков и счётчики ── */
-function countUp(el){
-  var to = +el.getAttribute('data-count'), pre = el.getAttribute('data-pre') || '', suf = el.getAttribute('data-suf') || '';
-  var t0 = performance.now(), dur = 1100;
-  (function tick(t){
-    var k = Math.min(1, (t - t0) / dur); k = 1 - Math.pow(1 - k, 3);
-    el.textContent = pre + Math.round(to * k).toLocaleString('ru-RU') + suf;
-    if(k < 1) requestAnimationFrame(tick);
-  })(t0);
-}
-function reveal(){
-  var els = document.querySelectorAll('.rv');
-  if(!('IntersectionObserver' in window)){ [].forEach.call(els, function(e){ e.classList.add('in'); }); return; }
-  var io = new IntersectionObserver(function(list){
-    list.forEach(function(en){
-      if(!en.isIntersecting) return;
-      var el = en.target; io.unobserve(el);
-      var sib = el.parentNode ? [].indexOf.call(el.parentNode.children, el) : 0;
-      el.style.transitionDelay = Math.min(sib, 4) * 90 + 'ms';
-      el.classList.add('in');
-      var n = el.querySelector('[data-count]'); if(n) countUp(n);
+      if(++d.w >= d.wait){ d.w = 0; d.y += 1; d.h.unshift(ABC.charAt(Math.floor(Math.random()*ABC.length))); if(d.h.length > 24) d.h.pop(); }
+      if(d.y * cellH > c.height + 500){ d.y = -Math.random()*30; d.h = []; }
     });
-  }, { threshold:0.12, rootMargin:'0px 0px -30px 0px' });
+  }, 1000/18);
+})();
+
+/* ── плавное появление разделов ── */
+(function(){
+  var els = document.querySelectorAll('.fade');
+  if(!('IntersectionObserver' in window)){ [].forEach.call(els, function(e){ e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(list){ list.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }); }, { threshold:0.08 });
   [].forEach.call(els, function(e){ io.observe(e); });
-}
+})();
 
-/* ── таблица рангов ── */
-var RANKS = [
-  ['Мини-Йотун',3],['Йотун',3],['Старший Йотун',5],['Ёрмунганд',5],
-  ['Йотун Хель',7],['Йотун Локи',7],['Йотун Имир',10],['Бергельмир',15]
-];
-var JC = '<span class="jc">JC</span>';
-var G = '🎁';
-function from(i, v){ var a = []; for(var k = 0; k < 8; k++) a.push(k >= i ? (v || '✓') : '—'); return a; }
-function only(map){ var a = []; for(var k = 0; k < 8; k++) a.push(map[k] || '—'); return a; }
-var ROWS = [
-  { g:'Как получить' },
-  { n:'Через друзей', v:[{t:'первая покупка'},{t:'5 друзей',s:'каждый от 7 000 ₽'},{t:'10 друзей',s:'каждый от 7 000 ₽'},{t:'15 друзей',s:'каждый от 10 000 ₽'},{t:'20 друзей',s:'каждый от 15 000 ₽'},{t:'25 друзей',s:'каждый от 15 000 ₽'},{t:'30 друзей',s:'каждый от 20 000 ₽'},{t:'40 друзей',s:'каждый от 25 000 ₽'}] },
-  { n:'Через свои покупки', s:'на общую сумму', v:[{t:'первая покупка'},{t:'24 000 ₽',s:'от 3 артефактов'},{t:'50 000 ₽'},{t:'75 000 ₽'},{t:'100 000 ₽'},{t:'150 000 ₽',s:'+ 3 друга, каждый от 10 000 ₽'},{t:'250 000 ₽',s:'+ 5 друзей, каждый от 15 000 ₽'},{t:'300 000 ₽',s:'+ 15 друзей, каждый от 20 000 ₽'}] },
-  { g:'Скидка навсегда' },
-  { n:'На всю продукцию', s:'артефакты, ритуалы, консультации', v:['3%','3%','5%','5%','7%','7%','10%','15%'], cls:'pct' },
-  { n:'На обучение', v:only({7:{t:'15%',c:'new'}}) },
-  { g:'ЙотунКоины' },
-  { n:'За каждого нового друга', s:'единоразово, покупка от 10 000 ₽', v:[{t:'+1 000',c:'g'},{t:'+1 000',c:'g'},{t:'+1 500',c:'g'},{t:'+1 500',c:'g'},{t:'+2 000',c:'g'},{t:'+2 000',c:'g'},{t:'+2 500',c:'g'},{t:'+3 000',c:'g'}] },
-  { g:'Привилегии' },
-  { n:'Привилегии при брони места на обучение', v:from(2) },
-  { n:'Приоритет на закрытые ритуалы', v:from(3) },
-  { n:'Закрытый канал «Настоящие Йотуны»', v:from(4) },
-  { n:'Индивидуальное обучение рунам', s:'на особых условиях', v:from(5) },
-  { g:'Подарки на новой ступени' },
-  { n:'ЙотунКоины (' + JC + ')', v:only({1:{t:'+500',c:'g'},2:{t:'+1 000',c:'g'},3:{t:'+1 500',c:'g'},4:{t:'+2 000',c:'g'},5:{t:'+3 000',c:'g'},6:{t:'+3 500',c:'g'},7:{t:'+5 000',c:'g'}}) },
-  { n:'5 000 ₽ на консультацию', v:only({1:G,2:G,3:G}) },
-  { n:'Артефакт из коллекции до 15 000 ₽', v:only({4:G,5:G,6:G,7:G}) },
-  { n:'Консультация 60 мин бесплатно', v:only({5:G,6:G,7:G}) },
-  { n:'Индивидуальный ритуал открытия дорог', v:only({6:G,7:G}) },
-  { n:'Персональный артефакт', v:only({7:G}) }
-];
-function cell(v, prev, cls){
-  if(v === '—') return '<td class="no">—</td>';
-  if(v === '✓') return '<td class="y">✓</td>';
-  if(typeof v === 'string'){
-    var c = (cls === 'pct' && v !== prev) ? 'new' : '';
-    return '<td class="' + c + '">' + v + '</td>';
-  }
-  return '<td class="' + (v.c || 'new') + '">' + v.t + (v.s ? '<small>' + v.s + '</small>' : '') + '</td>';
-}
-function table(){
-  var t = document.getElementById('tbl'); if(!t) return;
-  var h = '<thead><tr><th>Ранг</th>' + RANKS.map(function(r, i){
-    return '<th data-i="' + i + '"><span class="rk-step">' + String(i+1).padStart(2,'0') + '</span><span class="rk-name">' + r[0] + '</span><span class="rk-pct">' + r[1] + '%</span></th>';
-  }).join('') + '</tr></thead><tbody>';
-  ROWS.forEach(function(row){
-    if(row.g){ h += '<tr class="grp"><td>' + row.g + '</td><td colspan="8"></td></tr>'; return; }
-    h += '<tr><td>' + row.n + (row.s ? '<small style="display:block;color:var(--faint);font-size:10px">' + row.s + '</small>' : '') + '</td>';
-    row.v.forEach(function(v, i){ h += cell(v, i ? row.v[i-1] : null, row.cls); });
-    h += '</tr>';
-  });
-  t.innerHTML = h + '</tbody>';
-}
-function markMe(i){
-  var t = document.getElementById('tbl'); if(!t) return;
-  [].forEach.call(t.querySelectorAll('.me'), function(e){ e.classList.remove('me'); });
-  if(i == null) return;
-  [].forEach.call(t.rows, function(r){
-    if(r.classList.contains('grp')) return;
-    var c = r.cells[i + 1]; if(c) c.classList.add('me');
-  });
-}
+/* ── FAQ: открыт один вопрос ── */
+[].forEach.call(document.querySelectorAll('.faq details'), function(d, _, all){
+  d.addEventListener('toggle', function(){ if(d.open) [].forEach.call(document.querySelectorAll('.faq details'), function(o){ if(o !== d) o.open = false; }); });
+});
 
-/* ── кабинет и счётчик участников (оживают после запуска сервера программы) ── */
-var MIN_MEMBERS = 30; // меньше — счётчик не показываем
-var tries = 0, statsDone = false;
+/* ── кабинет: кнопки появляются, когда программа запущена на сервере ── */
+var tries = 0;
 function wire(){
   var A = window.JotunAccount;
   if(A && A.enabled){
-    [].forEach.call(document.querySelectorAll('[data-cab-main]'), function(b){
-      b.classList.remove('wait'); b.textContent = A.me ? 'Открыть кабинет' : 'Вступить в клуб'; b.onclick = A.open;
+    [].forEach.call(document.querySelectorAll('[data-cab]'), function(b){
+      b.hidden = false; b.textContent = A.me ? 'Открыть кабинет' : 'Войти в кабинет'; b.onclick = A.open;
     });
-    var tb = document.querySelector('[data-cab]'); if(tb){ tb.hidden = false; tb.onclick = A.open; }
-    if(A.me && A.me.rank && !preview) setRank(A.me.rank.index);
-    if(!statsDone){ statsDone = true; fetch(A.apiBase + '/api/club/stats').then(function(r){ return r.json(); }).then(function(s){
-      if(s && s.members >= MIN_MEMBERS){
-        document.getElementById('members-n').textContent = s.members.toLocaleString('ru-RU');
-        document.getElementById('members').hidden = false;
-      }
-    }).catch(function(){}); }
-    if(!A.me && tries < 30){ tries++; setTimeout(wire, 700); } // ждём, пока подгрузится профиль
+    if(A.me && A.me !== meData){ meData = A.me; render(); }
+    if(!A.me && tries < 30){ tries++; setTimeout(wire, 700); }
     return;
   }
   if(++tries < 20) setTimeout(wire, 500);
 }
-
-/* предпросмотр цвета ранга: /program/?rank=0..7 */
-var preview = null;
-try{ var q = new URLSearchParams(location.search).get('rank'); if(q !== null && q !== '') preview = +q; }catch(e){}
-
-table();
-if(preview !== null) setRank(preview);
-matrix();
-scramble();
-reveal();
 wire();
 })();

@@ -8,20 +8,20 @@ var RANKS = [
     perks:[], gifts:[], friendJC:1000 },
   { name:'Йотун', pct:3, main:'5 000 ₽ на консультацию',
     friends:[5,7000], own:'24 000 ₽', ownNote:'не меньше 3 артефактов',
-    perks:[], gifts:['500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1000 },
+    perks:[], gifts:['500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1250 },
   { name:'Старший Йотун', pct:5, main:'Скидка 5%',
     friends:[10,7000], own:'50 000 ₽',
     perks:['Привилегии при брони места на обучение'], gifts:['1 000 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1500 },
   { name:'Ёрмунганд', pct:5, main:'Приоритет на закрытые ритуалы',
     friends:[15,10000], own:'75 000 ₽',
-    perks:['Приоритет на закрытые ритуалы'], gifts:['1 500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1500 },
-  { name:'Йотун Хель', pct:7, main:'Скидка 7% и закрытый канал',
+    perks:['Приоритет на закрытые ритуалы'], gifts:['1 500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1750 },
+  { name:'Хель', pct:7, main:'Скидка 7% и закрытый канал',
     friends:[20,15000], own:'100 000 ₽',
     perks:['Закрытый канал «Настоящие Йотуны»'], gifts:['2 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽'], friendJC:2000 },
-  { name:'Йотун Локи', pct:7, main:'Индивидуальное обучение рунам',
+  { name:'Локи', pct:7, main:'Индивидуальное обучение рунам',
     friends:[25,15000], own:'150 000 ₽', ownPlus:[3,10000],
-    perks:['Индивидуальное обучение рунам на особых условиях'], gifts:['3 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно'], friendJC:2000 },
-  { name:'Йотун Имир', pct:10, main:'Скидка 10%',
+    perks:['Индивидуальное обучение рунам на особых условиях'], gifts:['3 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно'], friendJC:2250 },
+  { name:'Имир', pct:10, main:'Скидка 10%',
     friends:[30,20000], own:'250 000 ₽', ownPlus:[5,15000],
     perks:[], gifts:['3 500 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно','Индивидуальный ритуал открытия дорог на 1 год'], friendJC:2500 },
   { name:'Бергельмир', pct:15, main:'Скидка 15%',
@@ -89,7 +89,6 @@ function render(){
     else if(cur >= 0 && i === cur + 1) tag = '<span class="r-tag">Следующий</span>';
     return '<li class="rank' + (cur === i ? ' cur' : '') + '" data-i="' + i + '">' +
       '<button class="r-btn" type="button" aria-expanded="false" aria-controls="rb' + i + '">' +
-      '<span class="r-num">' + String(i + 1).padStart(2, '0') + '</span>' +
       '<span class="r-name">' + r.name + '<span class="r-main">' + r.main + '</span></span>' +
       (tag || '<span></span>') + '<span class="r-ico"></span></button>' +
       '<div class="r-body" id="rb' + i + '" role="region">' + body(i, meData) + '</div></li>';
@@ -130,34 +129,74 @@ if(list){
   render();
 }
 
-/* ── тихая руническая матрица в приглушённом зелёном ── */
+/* ── матрица как на главной: те же руны и шрифт, цвет — по рангу, яркость приглушена ── */
+var TINTS = [
+  [0,255,65],   // Мини-Йотун
+  [0,255,65],   // Йотун
+  [40,255,120], // Старший Йотун
+  [0,235,175],  // Ёрмунганд
+  [170,140,255],// Хель
+  [255,120,40], // Локи
+  [255,60,60],  // Имир
+  [255,200,60]  // Бергельмир
+];
+var tint = TINTS[0];
+function applyRank(i){
+  i = Math.max(0, Math.min(7, i|0)); tint = TINTS[i];
+  document.documentElement.style.setProperty('--tint', tint.join(','));
+  var f = document.getElementById('frame');
+  if(f) f.className = 'frame' + (i === 7 ? ' f-gold' : i >= 4 ? ' f-hi' : '');
+}
 (function(){
-  var c = document.getElementById('mx'); if(!c || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-  var ctx = c.getContext('2d'), ABC = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ', drops = [], cellH, step, fs;
+  var c = document.getElementById('mx'); if(!c) return;
+  var ctx = c.getContext('2d');
+  var ABC = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛋᛏᛒᛖᛗᛚᛜᛟᛞ', SECRET = ['JOTUNHEIM','JOTUN','CLUB'];
+  var cellH, colStep, baseFS, drops = [];
   function setup(){
-    var mob = innerWidth < 768; cellH = mob ? 18 : 24; step = mob ? 22 : 30; fs = mob ? 14 : 20;
-    c.width = innerWidth; c.height = innerHeight; ctx.fillStyle = '#0B0F0D'; ctx.fillRect(0, 0, c.width, c.height);
-    drops = []; for(var i = 0, n = Math.ceil(c.width / step); i < n; i++) drops.push({ x:i*step, y:-Math.random()*80, wait:Math.floor(Math.random()*6)+3, w:0, h:[] });
+    var mob = innerWidth < 768; cellH = mob ? 18 : 24; colStep = mob ? 14 : 20; baseFS = mob ? 14 : 22;
+    c.width = innerWidth; c.height = innerHeight; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height);
+    drops = [];
+    for(var i = 0, n = Math.floor(c.width / colStep); i < n; i++){
+      var z = Math.random();
+      drops.push({ x:i*colStep, y:-Math.random()*50, size:Math.floor(z*4)+baseFS, wait:Math.floor(Math.random()*5)+1, w:0, op:z*.8+.2, h:[], secret:'', si:0 });
+    }
   }
   setup(); addEventListener('resize', setup);
+  function col(j){
+    var k = j === 0 ? 0 : (j < 6 ? 0.56 : Math.max(0, (200 - j*13) / 255));
+    if(j === 0) return 'rgb(' + Math.round(tint[0]*.133+136) + ',' + Math.round(tint[1]*.133+136) + ',' + Math.round(tint[2]*.133+136) + ')';
+    return 'rgb(' + Math.round(tint[0]*k) + ',' + Math.round(tint[1]*k) + ',' + Math.round(tint[2]*k) + ')';
+  }
   setInterval(function(){
     if(document.hidden) return;
-    ctx.fillStyle = 'rgba(11,15,13,0.25)'; ctx.fillRect(0, 0, c.width, c.height);
-    drops.forEach(function(d){
+    ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(0, 0, c.width, c.height);
+    for(var i = 0; i < drops.length; i++){
+      var d = drops[i];
       if(d.y > 0){
+        var cy = Math.floor(d.y);
         for(var j = 0; j < d.h.length; j++){
-          var yp = (Math.floor(d.y) - j) * cellH; if(yp < 0) break;
-          ctx.save(); ctx.translate(d.x, 0); ctx.scale(1.2, 1);
-          ctx.font = fs + "px 'VT323'";
-          ctx.fillStyle = j === 0 ? '#c9d6c6' : 'rgba(120,152,115,' + Math.max(0, 0.9 - j*0.05) + ')';
-          ctx.fillText(d.h[j], 0, yp); ctx.restore();
+          var ch = d.h[j]; if(!ch) continue;
+          var yp = (cy - j) * cellH; if(yp < 0) break;
+          ctx.save(); ctx.translate(d.x, 0); ctx.scale(/[A-Z]/.test(ch) ? 0.85 : 1.2, 1);
+          ctx.font = d.size + "px 'VT323'"; ctx.globalAlpha = d.op;
+          if(j === 0){ ctx.shadowBlur = 5; ctx.shadowColor = 'rgb(' + Math.round(tint[0]*.4) + ',' + Math.round(tint[1]*.4) + ',' + Math.round(tint[2]*.4) + ')'; } else ctx.shadowBlur = 0;
+          ctx.fillStyle = col(j); ctx.fillText(ch, 0, yp); ctx.restore();
         }
+        ctx.globalAlpha = 1;
       }
-      if(++d.w >= d.wait){ d.w = 0; d.y += 1; d.h.unshift(ABC.charAt(Math.floor(Math.random()*ABC.length))); if(d.h.length > 24) d.h.pop(); }
-      if(d.y * cellH > c.height + 500){ d.y = -Math.random()*30; d.h = []; }
-    });
-  }, 1000/18);
+      if(++d.w >= d.wait){
+        d.w = 0; d.y += 1;
+        if(!d.secret && Math.random() < .0015){ d.secret = SECRET[Math.floor(Math.random()*SECRET.length)]; d.si = 0; }
+        var nc; if(d.secret){ nc = d.secret[d.si++]; if(d.si >= d.secret.length) d.secret = ''; } else nc = ABC.charAt(Math.floor(Math.random()*ABC.length));
+        d.h.unshift(nc); if(d.h.length > 80) d.h.pop();
+      }
+      if(d.y*cellH > c.height + 400){ d.y = -Math.random()*19; d.h = []; d.secret = ''; }
+    }
+  }, 1000/24);
 })();
+var preview = null;
+try{ var q = new URLSearchParams(location.search).get('rank'); if(q !== null && q !== '') preview = +q; }catch(e){}
+if(preview !== null) applyRank(preview);
 
 /* ── плавное появление разделов ── */
 (function(){
@@ -180,7 +219,7 @@ function wire(){
     [].forEach.call(document.querySelectorAll('[data-cab]'), function(b){
       b.hidden = false; b.textContent = A.me ? 'Открыть кабинет' : 'Войти в кабинет'; b.onclick = A.open;
     });
-    if(A.me && A.me !== meData){ meData = A.me; render(); }
+    if(A.me && A.me !== meData){ meData = A.me; render(); if(preview === null && A.me.rank) applyRank(A.me.rank.index); }
     if(!A.me && tries < 30){ tries++; setTimeout(wire, 700); }
     return;
   }

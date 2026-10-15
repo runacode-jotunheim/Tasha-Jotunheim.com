@@ -201,6 +201,17 @@ function mount(app) {
     });
   }));
 
+  /* ---------- история покупок участника ---------- */
+  app.get('/api/me/orders', requireUser(async (req, res, user) => {
+    const r = await db.q(
+      `SELECT id, items, total, paid_at, matured FROM orders
+        WHERE user_id = $1 AND status = 'paid' ORDER BY paid_at DESC LIMIT 100`, [user.id]);
+    res.json({ orders: r.rows.map((o) => ({
+      id: Number(o.id), paidAt: o.paid_at, total: Number(o.total), counted: o.matured,
+      items: (o.items || []).map((it) => ({ name: it.name, qty: it.qty || 1, price: Number(it.price) || 0 })),
+    })) });
+  }));
+
   /* ---------- реф-ссылка: новая раз в 24 часа ---------- */
   app.get('/api/ref/link', requireUser(async (req, res, user) => {
     let link = (await db.q(`SELECT code, expires_at FROM ref_links WHERE user_id = $1 AND expires_at > now() ORDER BY created_at DESC LIMIT 1`, [user.id])).rows[0];

@@ -81,6 +81,9 @@ const cust = (email) => ({ name: 'Тест', phone: '+7 900 000-00-' + String(Ma
     assert.strictEqual(me.jc.balance, 1000); assert.strictEqual(me.stats.friendsBought, 1);
     me = (await call('GET', '/api/me', null, B)).json;
     assert.strictEqual(me.stats.ownSum, 28033); assert.strictEqual(me.rank.index, 0, '2 артефакта < 3 — ещё не Йотун');
+    const hist = (await call('GET', '/api/me/orders', null, B)).json;
+    assert.ok(hist.orders.length >= 1 && hist.orders[0].items.length >= 1 && hist.orders[0].items[0].name, 'история покупок');
+    assert.strictEqual(hist.orders[0].counted, true);
 
     // 5. A платит JC: не больше 50%, при неоплате — возврат
     const qA = (await call('POST', '/api/checkout/quote', { items: [{ id: 12, qty: 1 }], useJC: 99999 }, A)).json;

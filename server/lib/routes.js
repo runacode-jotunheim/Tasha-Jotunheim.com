@@ -215,6 +215,16 @@ function mount(app) {
     res.json({ code: link.code, url: `${SITE_URL()}/?ref=${link.code}`, expiresAt: link.expires_at });
   }));
 
+  /* ---------- сколько людей в клубе (для лендинга) ---------- */
+  let clubCache = { t: 0, members: 0 };
+  app.get('/api/club/stats', safe(async (req, res) => {
+    if (Date.now() - clubCache.t > 10 * 60 * 1000) {
+      const r = await db.q('SELECT count(*)::int AS n FROM users');
+      clubCache = { t: Date.now(), members: r.rows[0].n };
+    }
+    res.json({ members: clubCache.members });
+  }));
+
   app.get('/api/ref/check', safe(async (req, res) => {
     const inv = await validRef(db.getPool(), req.query.code);
     if (!inv) return res.json({ valid: false });

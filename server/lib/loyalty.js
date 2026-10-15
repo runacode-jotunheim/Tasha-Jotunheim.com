@@ -6,7 +6,7 @@ const { RANKS, computeRank } = require('./ranks');
 const { rub } = require('./util');
 
 const MATURE_DAYS = Number(process.env.MATURE_DAYS || 14);
-const FRIEND_BONUS_JC = 1000;
+const FRIEND_BONUS_JC = 1000; // базовый; фактическая сумма — RANKS[ранг пригласившего].friendJC
 const FRIEND_BONUS_MIN = 10000;
 
 async function stats(conn, userId) {
@@ -63,10 +63,12 @@ async function matureOrders() {
         if (ch && ch.to > ch.from) out.push(ch);
         if (buyer && buyer.referred_by) {
           if (!buyer.ref_bonus_paid && Number(o.total) >= FRIEND_BONUS_MIN) {
-            await jc.grant(c, buyer.referred_by, FRIEND_BONUS_JC, 'referral', { orderId: id, meta: { friend: buyer.id } });
+            const inv = (await c.query('SELECT rank FROM users WHERE id = $1', [buyer.referred_by])).rows[0];
+            const amount = (RANKS[(inv && inv.rank) || 0] || RANKS[0]).friendJC || FRIEND_BONUS_JC;
+            await jc.grant(c, buyer.referred_by, amount, 'referral', { orderId: id, meta: { friend: buyer.id, rank: inv && inv.rank } });
             await c.query('UPDATE users SET ref_bonus_paid = TRUE WHERE id = $1', [buyer.id]);
             const ref = (await c.query('SELECT tg_id FROM users WHERE id = $1', [buyer.referred_by])).rows[0];
-            out.push({ friendBonus: FRIEND_BONUS_JC, tgId: ref && ref.tg_id });
+            out.push({ friendBonus: amount, tgId: ref && ref.tg_id });
           }
           const ch2 = await recalcRank(c, buyer.referred_by);
           if (ch2 && ch2.to > ch2.from) out.push(ch2);

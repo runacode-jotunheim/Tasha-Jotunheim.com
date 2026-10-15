@@ -1,14 +1,14 @@
 // Ранги программы Йотунхейм (см. server/REFERRAL.md, раздел 5).
 // «Друг» = приглашённый, у которого сумма зачтённых (через 14 дней) оплат >= minFriendSum.
 const RANKS = [
-  { name: 'Мини-Йотун',    pct: 3 },
-  { name: 'Йотун',         pct: 3,  friends: { n: 5,  min: 7000 },  own: { sum: 24000, artifacts: 3 },                bonusJC: 500 },
-  { name: 'Старший Йотун', pct: 5,  friends: { n: 10, min: 7000 },  own: { sum: 50000 },                                 bonusJC: 1000 },
-  { name: 'Ёрмунганд',     pct: 5,  friends: { n: 15, min: 10000 }, own: { sum: 75000 },                                 bonusJC: 1500 },
-  { name: 'Йотун Хель',    pct: 7,  friends: { n: 20, min: 15000 }, own: { sum: 100000 },                                bonusJC: 2000 },
-  { name: 'Йотун Локи',    pct: 7,  friends: { n: 25, min: 15000 }, own: { sum: 150000, plus: { n: 3,  min: 10000 } }, bonusJC: 3000 },
-  { name: 'Йотун Имир',    pct: 10, friends: { n: 30, min: 20000 }, own: { sum: 250000, plus: { n: 5,  min: 15000 } }, bonusJC: 3500 },
-  { name: 'Бергельмир',    pct: 15, friends: { n: 40, min: 25000 }, own: { sum: 300000, plus: { n: 15, min: 20000 } }, bonusJC: 5000 },
+  { name: 'Мини-Йотун',    pct: 3, friendJC: 1000 },
+  { name: 'Йотун',         pct: 3,  friends: { n: 5,  min: 7000 },  own: { sum: 24000, artifacts: 3 },                bonusJC: 500, friendJC: 1250 },
+  { name: 'Старший Йотун', pct: 5,  friends: { n: 10, min: 7000 },  own: { sum: 50000 },                                 bonusJC: 1000, friendJC: 1500 },
+  { name: 'Ёрмунганд',     pct: 5,  friends: { n: 15, min: 10000 }, own: { sum: 75000 },                                 bonusJC: 1500, friendJC: 1750 },
+  { name: 'Хель',          pct: 7,  friends: { n: 20, min: 15000 }, own: { sum: 100000 },                                bonusJC: 2000, friendJC: 2000 },
+  { name: 'Локи',          pct: 7,  friends: { n: 25, min: 15000 }, own: { sum: 150000, plus: { n: 3,  min: 10000 } }, bonusJC: 3000, friendJC: 2250 },
+  { name: 'Имир',          pct: 10, friends: { n: 30, min: 20000 }, own: { sum: 250000, plus: { n: 5,  min: 15000 } }, bonusJC: 3500, friendJC: 2500 },
+  { name: 'Бергельмир',    pct: 15, friends: { n: 40, min: 25000 }, own: { sum: 300000, plus: { n: 15, min: 20000 } }, bonusJC: 5000, friendJC: 3000 },
 ];
 
 // stats: { ownSum, ownArtifacts, friendSums: [сумма зачтённых покупок каждого друга] }

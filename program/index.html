@@ -59,7 +59,8 @@ h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,7.4vw,80px);lin
 .meta{margin-top:24px;display:flex;gap:16px;flex-wrap:wrap;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--faint)}
 .meta b{font-weight:normal;color:rgb(var(--tint))}
 .sigil-box{justify-self:center;width:100%;max-width:340px}
-.motto{text-align:right;white-space:nowrap;font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(var(--tint),0.8);text-shadow:0 0 8px rgba(var(--tint),0.35);margin-bottom:10px}
+.motto{text-align:center;white-space:nowrap;font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgb(var(--tint));text-shadow:0 0 10px rgba(var(--tint),0.6);margin-bottom:12px}
+.motto-m{display:none;font-family:var(--mono);font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgb(var(--tint));text-shadow:0 0 10px rgba(var(--tint),0.6);margin:-6px 0 18px}
 .sigil{width:100%;max-width:340px;stroke:rgb(var(--tint));opacity:.85}
 .sigil g{stroke-opacity:.75}
 .sigil .bind{stroke-opacity:1;filter:drop-shadow(0 0 4px rgba(var(--tint),0.55))}
@@ -174,6 +175,8 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
 @media(max-width:860px){
   .hero{grid-template-columns:1fr;gap:10px}
   .sigil-box{display:none}
+  .hero-lbl{display:none}
+  .motto-m{display:block}
   .sec-head{grid-template-columns:1fr;gap:8px}
   .steps{grid-template-columns:1fr}
   .step,.step+.step{padding:22px 0;border-left:none}
@@ -209,8 +212,9 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
   <!-- 1. Первый экран -->
   <div class="hero" id="guest-hero">
     <div>
-      <div class="lbl">Jotunheim / Member club</div>
+      <div class="lbl hero-lbl">Jotunheim / Member club</div>
       <h1>Клуб Йотунов</h1>
+      <div class="motto-m">Йотуны не ходят поодиночке</div>
       <p class="sub">Привилегии, которые открываются с ростом ранга.</p>
       <p class="desc">Постоянные скидки, специальные преимущества и новые возможности на каждом следующем уровне клуба.</p>
       <div class="actions">

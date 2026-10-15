@@ -211,6 +211,48 @@ if(preview !== null) applyRank(preview);
   d.addEventListener('toggle', function(){ if(d.open) [].forEach.call(document.querySelectorAll('.faq details'), function(o){ if(o !== d) o.open = false; }); });
 });
 
+
+/* ── экран участника: статус и статистика (только по реальным данным кабинета) ── */
+function fmtRub(n){ return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
+function showMember(me){
+  var g = document.getElementById('guest-hero'), m = document.getElementById('me'); if(!m) return;
+  if(g) g.hidden = true; m.hidden = false;
+  var st = me.stats || {}, pct = me.rank ? me.rank.pct : 0;
+  document.getElementById('me-rank').textContent = me.rank ? me.rank.name : '—';
+  document.getElementById('me-pct').textContent = 'Скидка ' + pct + '% на всю продукцию — постоянно.';
+  document.getElementById('ms-inv').textContent = num(st.invited || 0);
+  document.getElementById('ms-fb').textContent = num(st.friendsBought || 0);
+  document.getElementById('ms-art').textContent = num(st.ownArtifacts || 0);
+  document.getElementById('ms-sum').textContent = fmtRub(st.ownSum);
+  document.getElementById('ms-pct').textContent = pct + '%';
+  document.getElementById('ms-jc').textContent = num((me.jc && me.jc.balance) || 0) + ' JC';
+  var nx = document.getElementById('me-next');
+  if(me.next && RANKS[me.next.rank]){
+    nx.innerHTML = '<h4>Следующий ранг</h4><div class="nm">' + RANKS[me.next.rank].name + '</div>' + progress(me.next.rank, me);
+  } else nx.innerHTML = '<h4>Ранг</h4><div class="nm">Высший ранг клуба</div>';
+  document.getElementById('me-open').onclick = window.JotunAccount.open;
+  loadRef();
+}
+function loadRef(){
+  var row = document.getElementById('ref-row'), A = window.JotunAccount; if(!row || !A) return;
+  row.innerHTML = '<span class="ref-state">Обновляем ссылку…</span>';
+  fetch(A.apiBase + '/api/ref/link', { credentials:'include' }).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
+    if(!j || !j.url) throw 0;
+    row.innerHTML = '<input type="text" readonly aria-label="Реферальная ссылка"><button class="btn" type="button">Скопировать ссылку</button>';
+    var inp = row.querySelector('input'), b = row.querySelector('button');
+    inp.value = j.url;
+    b.onclick = function(){
+      var done = function(){ b.textContent = 'Скопировано'; setTimeout(function(){ b.textContent = 'Скопировать ссылку'; }, 1800); };
+      if(navigator.clipboard) navigator.clipboard.writeText(j.url).then(done, function(){ inp.select(); try{ document.execCommand('copy'); done(); }catch(e){} });
+      else { inp.select(); try{ document.execCommand('copy'); done(); }catch(e){} }
+    };
+    if(j.expiresAt){ var ms = new Date(j.expiresAt) - Date.now(); if(ms > 0 && ms < 864e5) setTimeout(loadRef, ms + 2000); }
+  }).catch(function(){
+    row.innerHTML = '<span class="ref-state">Не удалось обновить ссылку</span><button class="link-btn" type="button">Повторить</button>';
+    row.querySelector('button').onclick = loadRef;
+  });
+}
+
 /* ── кабинет: кнопки появляются, когда программа запущена на сервере ── */
 var tries = 0;
 function wire(){
@@ -219,7 +261,7 @@ function wire(){
     [].forEach.call(document.querySelectorAll('[data-cab]'), function(b){
       b.hidden = false; b.textContent = A.me ? 'Открыть кабинет' : 'Войти в кабинет'; b.onclick = A.open;
     });
-    if(A.me && A.me !== meData){ meData = A.me; render(); if(preview === null && A.me.rank) applyRank(A.me.rank.index); }
+    if(A.me && A.me !== meData){ meData = A.me; render(); if(preview === null && A.me.rank) applyRank(A.me.rank.index); showMember(A.me); }
     if(!A.me && tries < 30){ tries++; setTimeout(wire, 700); }
     return;
   }

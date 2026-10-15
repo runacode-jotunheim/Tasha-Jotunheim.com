@@ -28,7 +28,7 @@ button{font:inherit;color:inherit}
 #mx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .shade{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 30%,rgba(0,0,0,0.62),rgba(0,0,0,0.8) 70%)}
 .wm{position:fixed;left:50%;top:50%;height:min(92vh,150vw);width:auto;transform:translate(-50%,-50%);z-index:0;pointer-events:none}
-.wm-gl{stroke:rgb(var(--tint));stroke-width:21px;opacity:.09}
+.wm-gl{stroke:rgb(0,70,22);stroke:color-mix(in srgb,rgb(var(--tint)) 32%,#000);stroke-width:21px;opacity:.10}
 .wm-sh{stroke:#000;opacity:.4}
 .wm-hi{stroke:rgba(var(--tint),0.10)}
 .wm-base{stroke:#070908;opacity:.15}
@@ -129,6 +129,32 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
 .foot a{color:var(--faint);text-decoration:none}
 .foot a:hover{color:rgb(var(--tint))}
 
+/* экран участника */
+.me{padding:clamp(48px,8vw,96px) 0 clamp(40px,6vw,72px)}
+.me .sub{font-size:clamp(16px,2.2vw,19px);color:var(--txt)}
+.me-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:30px;border-top:1px solid var(--line)}
+.ms{padding:18px 16px 16px 0;border-bottom:1px solid var(--line)}
+.ms:not(:nth-child(3n+1)){padding-left:16px;border-left:1px solid var(--line)}
+.ms b{display:block;font-family:'VT323',monospace;font-weight:normal;font-size:clamp(28px,3.6vw,38px);line-height:1.05;color:rgb(var(--tint))}
+.ms b.gold{color:#ffd84a}
+.ms span{display:block;margin-top:6px;font-size:12.5px;color:var(--dim)}
+.me-note{margin-top:10px;font-size:12px;color:var(--faint)}
+.me-next{margin-top:26px;max-width:560px}
+.me-next h4{font-weight:normal;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(var(--tint),0.75);margin-bottom:6px}
+.me-next .nm{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:1px;text-transform:uppercase;color:var(--txt)}
+.me-ref{margin-top:30px;max-width:560px}
+.ref-row{display:flex;gap:10px;margin-top:10px;align-items:center;min-height:48px}
+.ref-row input{flex:1;min-width:0;height:48px;padding:0 12px;border:1px solid var(--line);border-radius:6px;background:rgba(0,0,0,0.5);color:var(--txt);font-family:var(--mono);font-size:13px}
+.ref-row .btn{min-height:48px;padding:0 18px;white-space:nowrap}
+.ref-state{font-size:13px;color:var(--dim)}
+.ref-hint{margin-top:8px;font-size:12px;color:var(--faint)}
+@media(max-width:860px){
+  .me-stats{grid-template-columns:1fr 1fr}
+  .ms:not(:nth-child(3n+1)){padding-left:0;border-left:none}
+  .ms:nth-child(even){padding-left:14px;border-left:1px solid var(--line)}
+}
+@media(max-width:480px){.ref-row{flex-direction:column;align-items:stretch}.ref-row .btn{width:100%}}
+
 @media(max-width:860px){
   .hero{grid-template-columns:1fr;gap:10px}
   .sigil{display:none}
@@ -165,7 +191,7 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
   </header>
 
   <!-- 1. Первый экран -->
-  <div class="hero">
+  <div class="hero" id="guest-hero">
     <div>
       <div class="lbl">Jotunheim / Member club</div>
       <h1>Клуб Йотунов</h1>
@@ -178,6 +204,32 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
       <div class="meta"><span><b>8</b> рангов клуба</span><span class="dot">·</span><span>до <b>15%</b> скидки по рангу</span></div>
     </div>
     <svg class="sigil" viewBox="0 0 300 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"><circle cx="150" cy="150" r="146" stroke-opacity=".55"/><circle cx="150" cy="150" r="118" stroke-opacity=".55"/><g transform="translate(150.00 18.00) rotate(0.0)"><polyline points="-3.40,8.50 -3.40,-8.50"/><polyline points="-3.40,-1.70 3.40,-6.80"/><polyline points="-3.40,3.40 3.40,-1.70"/></g><g transform="translate(184.16 22.50) rotate(15.0)"><polyline points="-3.40,8.50 -3.40,-8.50 3.40,-1.70 3.40,8.50"/></g><g transform="translate(216.00 35.68) rotate(30.0)"><polyline points="-2.55,-8.50 -2.55,8.50"/><polyline points="-2.55,-3.40 2.55,0.00 -2.55,3.40"/></g><g transform="translate(243.34 56.66) rotate(45.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="-3.40,-8.50 3.40,-3.40"/><polyline points="-3.40,-3.40 3.40,1.70"/></g><g transform="translate(264.32 84.00) rotate(60.0)"><polyline points="-3.40,8.50 -3.40,-8.50 3.40,-4.25 -3.40,0.00 3.40,8.50"/></g><g transform="translate(277.50 115.84) rotate(75.0)"><polyline points="3.40,-5.10 -3.40,0.00 3.40,5.10"/></g><g transform="translate(282.00 150.00) rotate(90.0)"><polyline points="-4.25,-8.50 4.25,8.50"/><polyline points="4.25,-8.50 -4.25,8.50"/></g><g transform="translate(277.50 184.16) rotate(105.0)"><polyline points="-3.40,8.50 -3.40,-8.50 3.40,-4.25 -3.40,0.00"/></g><g transform="translate(264.32 216.00) rotate(120.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="3.40,-8.50 3.40,8.50"/><polyline points="-3.40,-3.40 3.40,3.40"/></g><g transform="translate(243.34 243.34) rotate(135.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="-3.40,-3.40 3.40,3.40"/></g><g transform="translate(216.00 264.32) rotate(150.0)"><polyline points="0.00,-8.50 0.00,8.50"/></g><g transform="translate(184.16 277.50) rotate(165.0)"><polyline points="0.85,-6.80 -3.40,-2.55 0.85,1.70"/><polyline points="-0.85,-1.70 3.40,2.55 -0.85,6.80"/></g><g transform="translate(150.00 282.00) rotate(180.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="0.00,-8.50 3.40,-5.10"/><polyline points="0.00,8.50 -3.40,5.10"/></g><g transform="translate(115.84 277.50) rotate(195.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="-3.40,-8.50 1.70,-3.40 3.40,-6.80"/><polyline points="-3.40,8.50 1.70,3.40 3.40,6.80"/></g><g transform="translate(84.00 264.32) rotate(210.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="-3.40,-6.80 0.00,-1.70 3.40,-6.80"/></g><g transform="translate(56.66 243.34) rotate(225.0)"><polyline points="1.70,-8.50 -3.40,-3.40 3.40,3.40 -1.70,8.50"/></g><g transform="translate(35.68 216.00) rotate(240.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="-3.40,-3.40 0.00,-8.50 3.40,-3.40"/></g><g transform="translate(22.50 184.16) rotate(255.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="-3.40,-8.50 3.40,-4.25 -3.40,0.00 3.40,4.25 -3.40,8.50"/></g><g transform="translate(18.00 150.00) rotate(270.0)"><polyline points="-3.40,8.50 -3.40,-8.50 0.00,-3.40 3.40,-8.50 3.40,8.50"/></g><g transform="translate(22.50 115.84) rotate(285.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="3.40,-8.50 3.40,8.50"/><polyline points="-3.40,-8.50 3.40,-1.70"/><polyline points="3.40,-8.50 -3.40,-1.70"/></g><g transform="translate(35.68 84.00) rotate(300.0)"><polyline points="-2.55,8.50 -2.55,-8.50 2.55,-3.40"/></g><g transform="translate(56.66 56.66) rotate(315.0)"><polyline points="0.00,-5.10 3.40,0.00 0.00,5.10 -3.40,0.00 0.00,-5.10"/></g><g transform="translate(84.00 35.68) rotate(330.0)"><polyline points="-3.40,8.50 3.40,0.85 0.00,-4.25 -3.40,0.85 3.40,8.50"/></g><g transform="translate(115.84 22.50) rotate(345.0)"><polyline points="-3.40,-8.50 3.40,8.50 3.40,-8.50 -3.40,8.50 -3.40,-8.50"/></g><g class="bind" stroke-width="2.2"><line x1="150.00" y1="75.00" x2="98.28" y2="126.72"/><line x1="150.00" y1="75.00" x2="201.72" y2="126.72"/><line x1="98.28" y1="126.72" x2="177.93" y2="206.38"/><line x1="201.72" y1="126.72" x2="122.07" y2="206.38"/><line x1="150.00" y1="75.00" x2="150.00" y2="225.00"/><line x1="110.84" y1="114.16" x2="150.00" y2="153.31"/><line x1="150.00" y1="122.59" x2="177.93" y2="150.52"/><line x1="122.07" y1="150.52" x2="122.07" y2="206.38"/><line x1="177.93" y1="150.52" x2="177.93" y2="206.38"/></g></svg>
+  </div>
+
+  <!-- 1b. Экран участника (вместо первого экрана) -->
+  <div class="me" id="me" hidden>
+    <div class="lbl">Твой статус в клубе</div>
+    <h1 id="me-rank">—</h1>
+    <p class="sub" id="me-pct"></p>
+    <div class="me-stats">
+      <div class="ms"><b id="ms-inv">—</b><span>приглашено друзей</span></div>
+      <div class="ms"><b id="ms-fb">—</b><span>из них совершили покупку</span></div>
+      <div class="ms"><b id="ms-art">—</b><span>твоих артефактов куплено</span></div>
+      <div class="ms"><b id="ms-sum">—</b><span>общая сумма покупок</span></div>
+      <div class="ms"><b id="ms-pct">—</b><span>текущая скидка</span></div>
+      <div class="ms"><b id="ms-jc" class="gold">—</b><span>баланс ЙотунКоинов</span></div>
+    </div>
+    <p class="me-note">Покупки засчитываются через 14 дней после оплаты.</p>
+    <div class="me-next" id="me-next"></div>
+    <div class="me-ref">
+      <div class="lbl">Твоя ссылка для друзей</div>
+      <div class="ref-row" id="ref-row"><span class="ref-state">Обновляем ссылку…</span></div>
+      <div class="ref-hint">Ссылка действует 24 часа и обновляется каждый день. Другу — скидка 15% на первый артефакт от 10 000 ₽ или 5 000 ₽ на консультацию.</div>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="me-open">▶ Открыть кабинет</button>
+      <a class="link-btn" href="#ranks">Посмотреть привилегии</a>
+    </div>
   </div>
 
   <!-- 2. Как это работает -->
@@ -281,7 +333,7 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
   <footer class="foot"><span>Jotunheim / Клуб Йотунов</span><a href="../">tasha-jotunheim.com</a></footer>
 </div>
 
-<script src="program.js?v=5" charset="utf-8"></script>
+<script src="program.js?v=6" charset="utf-8"></script>
 <script src="../assets/js/account.js?v=4" charset="utf-8"></script>
 </body>
 </html>

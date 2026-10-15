@@ -4,60 +4,61 @@
 
 /* ── Данные программы (актуальная таблица) ── */
 var RANKS = [
-  { name:'Мини-Йотун', pct:3, main:'Скидка 3% на всю продукцию', first:true,
+  { name:'Мини-Йотун', pct:3, main:'Вход в клуб и скидка 3% навсегда', first:true,
     perks:[], gifts:[], friendJC:1000 },
-  { name:'Йотун', pct:3, main:'5 000 ₽ на консультацию',
-    friends:[5,7000], own:'24 000 ₽', ownNote:'не меньше 3 артефактов',
-    perks:[], gifts:['500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1250 },
-  { name:'Старший Йотун', pct:5, main:'Скидка 5%',
-    friends:[10,7000], own:'50 000 ₽',
-    perks:['Привилегии при брони места на обучение'], gifts:['1 000 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1500 },
-  { name:'Ёрмунганд', pct:5, main:'Приоритет на закрытые ритуалы',
-    friends:[15,10000], own:'75 000 ₽',
-    perks:['Приоритет на закрытые ритуалы'], gifts:['1 500 ЙотунКоинов','5 000 ₽ на консультацию'], friendJC:1750 },
-  { name:'Хель', pct:7, main:'Скидка 7% и закрытый канал',
-    friends:[20,15000], own:'100 000 ₽',
-    perks:['Закрытый канал «Настоящие Йотуны»'], gifts:['2 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽'], friendJC:2000 },
-  { name:'Локи', pct:7, main:'Индивидуальное обучение рунам',
-    friends:[25,15000], own:'150 000 ₽', ownPlus:[3,10000],
-    perks:['Индивидуальное обучение рунам на особых условиях'], gifts:['3 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно'], friendJC:2250 },
-  { name:'Имир', pct:10, main:'Скидка 10%',
-    friends:[30,20000], own:'250 000 ₽', ownPlus:[5,15000],
-    perks:[], gifts:['3 500 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно','Индивидуальный ритуал открытия дорог на 1 год'], friendJC:2500 },
-  { name:'Бергельмир', pct:15, main:'Скидка 15%',
-    friends:[40,25000], own:'300 000 ₽', ownPlus:[15,20000],
-    perks:['Скидка 15% на обучение'], gifts:['5 000 ЙотунКоинов','Артефакт из коллекции до 15 000 ₽','Консультация 60 минут бесплатно','Ритуал открытия дорог','Персональный артефакт'], friendJC:3000 }
+  { name:'Йотун', pct:3, main:'5 000 ₽ на консультацию и 500 JC в подарок',
+    friends:[5,7000], own:24000, ownNote:'от 3 артефактов',
+    perks:[], gifts:['500 ЙотунКоинов на счёт','5 000 ₽ на консультацию'], friendJC:1250 },
+  { name:'Старший Йотун', pct:5, main:'Скидка 5% и особые условия на обучении',
+    friends:[10,7000], own:50000,
+    perks:['Особые условия при бронировании места на обучении'], gifts:['1 000 ЙотунКоинов на счёт','5 000 ₽ на консультацию'], friendJC:1500 },
+  { name:'Ёрмунганд', pct:5, main:'Приоритетная запись на закрытые ритуалы',
+    friends:[15,10000], own:75000,
+    perks:['Приоритетная запись на закрытые ритуалы'], gifts:['1 500 ЙотунКоинов на счёт','5 000 ₽ на консультацию'], friendJC:1750 },
+  { name:'Хель', pct:7, main:'Артефакт в подарок и закрытый канал',
+    friends:[20,15000], own:100000,
+    perks:['Доступ в закрытый канал «Настоящие Йотуны»'], gifts:['2 000 ЙотунКоинов на счёт','Артефакт из коллекции стоимостью до 15 000 ₽'], friendJC:2000 },
+  { name:'Локи', pct:7, main:'Личное обучение рунам у мастера',
+    friends:[25,15000], own:150000, ownPlus:[3,10000],
+    perks:['Личное обучение рунам на особых условиях'], gifts:['3 000 ЙотунКоинов на счёт','Артефакт из коллекции стоимостью до 15 000 ₽','Бесплатная консультация на 60 минут'], friendJC:2250 },
+  { name:'Имир', pct:10, main:'Скидка 10% и личный ритуал открытия дорог',
+    friends:[30,20000], own:250000, ownPlus:[5,15000],
+    perks:[], gifts:['3 500 ЙотунКоинов на счёт','Артефакт из коллекции стоимостью до 15 000 ₽','Бесплатная консультация на 60 минут','Индивидуальный ритуал открытия дорог на год'], friendJC:2500 },
+  { name:'Бергельмир', pct:15, main:'Вершина клуба: подарки до 1 000 000 ₽',
+    friends:[40,25000], own:300000, ownPlus:[15,20000],
+    perks:['Скидка 15% на обучение'], gifts:['Индивидуальное обучение у мастера ценностью до 1 000 000 ₽','5 000 ЙотунКоинов на счёт','Артефакт из коллекции стоимостью до 15 000 ₽','Бесплатная консультация на 60 минут','Ритуал открытия дорог','Персональный артефакт, созданный лично для тебя'], friendJC:3000 }
 ];
 
+function plural(n, a, b, c){ var m = n % 10, h = n % 100; return (m === 1 && h !== 11) ? a : (m >= 2 && m <= 4 && (h < 12 || h > 14)) ? b : c; }
 function rub(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
 function num(n){ return n.toLocaleString('ru-RU'); }
 function li(t){ return '<li>' + t + '</li>'; }
 
 /* постоянные привилегии рангом выше включают всё, что было раньше */
 function allPerks(i){
-  var out = ['<b>Скидка ' + RANKS[i].pct + '%</b> на всю продукцию — артефакты, ритуалы, консультации'];
+  var out = ['<b>Скидка ' + RANKS[i].pct + '%</b> на всю продукцию: артефакты, ритуалы, консультации'];
   for(var k = 0; k <= i; k++) RANKS[k].perks.forEach(function(p){ out.push(p); });
   return out;
 }
 
 function body(i, me){
   var r = RANKS[i], h = '';
-  // условие
-  h += '<div class="r-blk"><h4>Условие получения</h4><ul>';
-  if(r.first) h += li('Первая оплаченная покупка с личным кабинетом');
+  // как открыть
+  h += '<div class="r-blk"><h4>Как открыть</h4><ul>';
+  if(r.first) h += li('Первая покупка с личным кабинетом — и ты в клубе');
   else {
-    h += li('<b>Через приглашения:</b> ' + r.friends[0] + ' друзей, каждый оплатил заказ от ' + rub(r.friends[1]));
+    h += li('<b>Пригласи ' + r.friends[0] + ' ' + plural(r.friends[0], 'друга', 'друга', 'друзей') + '</b> — каждый с покупкой от ' + rub(r.friends[1]));
     h += '<li class="or">или</li>';
-    h += li('<b>Через покупки:</b> ' + r.own + ' на общую сумму' + (r.ownNote ? ', ' + r.ownNote : '') +
-      (r.ownPlus ? ' + ' + r.ownPlus[0] + ' ' + (r.ownPlus[0] < 5 ? 'друга' : 'друзей') + ', каждый от ' + rub(r.ownPlus[1]) : ''));
+    h += li('<b>Сделай покупки на ' + rub(r.own) + '</b>' + (r.ownNote ? ' — ' + r.ownNote : '') +
+      (r.ownPlus ? ' и пригласи ' + r.ownPlus[0] + ' ' + plural(r.ownPlus[0], 'друга', 'друга', 'друзей') + ' с покупкой от ' + rub(r.ownPlus[1]) + ' каждый' : ''));
   }
   h += '</ul>' + progress(i, me) + '</div>';
-  // привилегии
-  h += '<div class="r-blk"><h4>Постоянные привилегии</h4><ul>' + allPerks(i).map(li).join('') + '</ul></div>';
-  // подарок (только если есть)
-  if(r.gifts.length) h += '<div class="r-blk"><h4>Подарок за ранг</h4><ul>' + r.gifts.map(li).join('') + '</ul><div class="note">Выдаётся один раз при получении ранга.</div></div>';
+  // навсегда
+  h += '<div class="r-blk"><h4>Остаётся с тобой навсегда</h4><ul>' + allPerks(i).map(li).join('') + '</ul></div>';
+  // подарки (только если есть)
+  if(r.gifts.length) h += '<div class="r-blk"><h4>Подарки при переходе</h4><ul>' + r.gifts.map(li).join('') + '</ul><div class="note">Вручаются один раз — в момент перехода на ранг.</div></div>';
   // ЙотунКоины за друзей
-  h += '<div class="r-blk"><h4>ЙотунКоины</h4><ul>' + li('<b>+' + num(r.friendJC) + ' JC</b> за каждого нового друга с первой покупкой от 10 000 ₽') + '</ul><div class="note">Начисляются через 14 дней после оплаты друга.</div></div>';
+  h += '<div class="r-blk"><h4>ЙотунКоины за друзей</h4><ul>' + li('<b>+' + num(r.friendJC) + ' JC</b> за каждого друга, который сделает первую покупку от 10 000 ₽') + '</ul><div class="note">Зачисляются через 14 дней после оплаты друга.</div></div>';
   return '<div class="r-in">' + h + '</div>';
 }
 
@@ -70,7 +71,7 @@ function progress(i, me){
     h += '<div class="prog">Через приглашения: ' + have + ' из ' + r.friends[0] + '<div class="bar"><i style="width:' + Math.min(100, have / r.friends[0] * 100) + '%"></i></div></div>';
   }
   if(n.own){
-    var need = parseInt(String(r.own).replace(/\D/g, ''), 10) || 0, got = Math.max(0, need - n.own.sumLeft);
+    var need = r.own || 0, got = Math.max(0, need - n.own.sumLeft);
     h += '<div class="prog">Через покупки: ' + rub(got) + ' из ' + rub(need) + '<div class="bar"><i style="width:' + (need ? Math.min(100, got / need * 100) : 0) + '%"></i></div></div>';
   }
   return h;
@@ -214,6 +215,7 @@ if(preview !== null) applyRank(preview);
 
 /* ── экран участника: статус и статистика (только по реальным данным кабинета) ── */
 function fmtRub(n){ return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
+function setLbl(id, t){ var b = document.getElementById(id); if(b && b.nextElementSibling) b.nextElementSibling.textContent = t; }
 function showMember(me){
   var g = document.getElementById('guest-hero'), m = document.getElementById('me'); if(!m) return;
   if(g) g.hidden = true; m.hidden = false;
@@ -221,8 +223,10 @@ function showMember(me){
   document.getElementById('me-rank').textContent = me.rank ? me.rank.name : '—';
   document.getElementById('me-pct').textContent = 'Скидка ' + pct + '% на всю продукцию — постоянно.';
   document.getElementById('ms-inv').textContent = num(st.invited || 0);
+  setLbl('ms-inv', plural(st.invited || 0, 'друг приглашён', 'друга приглашено', 'друзей приглашено'));
   document.getElementById('ms-fb').textContent = num(st.friendsBought || 0);
   document.getElementById('ms-art').textContent = num(st.ownArtifacts || 0);
+  var al = document.querySelector('#ms-art-btn > span'); if(al) al.firstChild.nodeValue = plural(st.ownArtifacts || 0, 'артефакт куплен ', 'артефакта куплено ', 'артефактов куплено ');
   document.getElementById('ms-sum').textContent = fmtRub(st.ownSum);
   document.getElementById('ms-pct').textContent = pct + '%';
   document.getElementById('ms-jc').textContent = num((me.jc && me.jc.balance) || 0) + ' JC';
@@ -238,7 +242,6 @@ function showMember(me){
 /* ── история покупок (раскрывается по нажатию на «артефактов куплено») ── */
 function fmtDate(d){ try{ return new Date(d).toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }); }catch(e){ return ''; } }
 function esc(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-function plural(n, a, b, c){ var m = n % 10, h = n % 100; return (m === 1 && h !== 11) ? a : (m >= 2 && m <= 4 && (h < 12 || h > 14)) ? b : c; }
 function countText(o){
   if(o.counted) return 'Зачислена в общую сумму покупок';
   var left = o.countsAt ? Math.ceil((new Date(o.countsAt) - Date.now()) / 864e5) : null;

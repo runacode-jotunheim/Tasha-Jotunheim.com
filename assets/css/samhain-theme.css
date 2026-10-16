@@ -1,0 +1,34 @@
+/* ══ Тема «Самайн» (оранжевая пилюля, 20.10–15.11) ══ */
+.pill-icon.orange{background:radial-gradient(circle at 35% 30%,#ffd29a,#ff8a1f 60%,#7a3a05)}
+html.sm-season .pill-trigger{background:linear-gradient(180deg,#ff2020 33%,#ff8a1f 33%,#ff8a1f 67%,#00ff41 67%)}
+
+#sm-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;display:none;background:#070302}
+html.samhain #sm-scene{display:block}
+html.samhain #matrix-canvas,html.samhain #mx{display:none!important}
+#sm-stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+#sm-stage picture,#sm-stage img{display:block;width:100%;height:100%}
+#sm-stage img{object-fit:cover;filter:saturate(1.05) brightness(.92)}
+.sm-glow{position:absolute;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,190,90,.55) 0%,rgba(255,120,30,.28) 35%,rgba(255,80,10,0) 70%);mix-blend-mode:screen;animation:smFlicker var(--d,3s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes smFlicker{0%,100%{opacity:.85;transform:translate(-50%,-50%) scale(1)}18%{opacity:.62}32%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}47%{opacity:.7}63%{opacity:.95}78%{opacity:.58;transform:translate(-50%,-50%) scale(.97)}}
+.sm-fog{position:absolute;left:-30%;right:-30%;height:42%;bottom:-6%;background:radial-gradient(ellipse at 30% 60%,rgba(120,70,50,.22),transparent 60%),radial-gradient(ellipse at 75% 70%,rgba(110,60,45,.18),transparent 55%);filter:blur(18px);animation:smFog 38s ease-in-out infinite alternate}
+.sm-fog.b{bottom:4%;height:30%;opacity:.7;animation-duration:52s;animation-direction:alternate-reverse}
+@keyframes smFog{from{transform:translateX(-6%)}to{transform:translateX(6%)}}
+#sm-shade{position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 50% 45%,rgba(0,0,0,.55),rgba(0,0,0,.18) 75%),linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 22%,rgba(0,0,0,0) 70%,rgba(0,0,0,.45))}
+#sm-leaves{position:absolute;inset:0;width:100%;height:100%}
+@media (prefers-reduced-motion:reduce){.sm-glow,.sm-fog{animation:none}}
+
+/* ── главная: акцент оранжевый, зелёные рамки → тёплые ── */
+html.samhain body{color:var(--accent)}
+html.samhain #main{position:relative;z-index:1}
+html.samhain .hero-photo-col img{opacity:0}
+html.samhain .hero-text-col{background:linear-gradient(to left,rgba(0,0,0,.6) 55%,transparent)!important}
+@media(max-width:700px){html.samhain .hero-text-col{background:linear-gradient(to bottom,rgba(0,0,0,.25),rgba(0,0,0,.55) 30%)!important}}
+html.samhain .hero-photo-col::after,html.samhain .hero-photo-col::before{display:none}
+html.samhain #main-nav,html.samhain nav{background:rgba(8,3,1,.82)}
+
+/* ── страница клуба: сигил тёмно-бордовый с оранжевым неоном ── */
+html.samhain .shade{background:radial-gradient(ellipse at 50% 40%,rgba(0,0,0,.45),rgba(0,0,0,.2) 75%)}
+html.samhain .wm-base{stroke:#3d0a10!important;opacity:.72!important}
+html.samhain .wm-gl{stroke:#ff7a1a!important;opacity:.22!important;stroke-width:26px!important}
+html.samhain .wm-hi{stroke:rgba(255,150,60,.25)!important}
+html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60px rgba(255,100,20,.08)}

@@ -145,10 +145,11 @@ var TINTS = [
   [255,200,60]  // Бергельмир
 ];
 var tint = TINTS[0];
-var curRank = 0, themeRed = false;
+var curRank = 0, themeRed = false, themeOrange = false;
+window.onSamhainTheme = function(on){ themeOrange = on; if(on) themeRed = false; else { try{ themeRed = localStorage.getItem('jv_theme') === 'red'; }catch(e){} } applyRank(curRank); };
 try{ themeRed = localStorage.getItem('jv_theme') === 'red'; }catch(e){}
 function applyRank(i){
-  i = Math.max(0, Math.min(7, i|0)); curRank = i; tint = themeRed ? [255,50,50] : TINTS[i];
+  i = Math.max(0, Math.min(7, i|0)); curRank = i; tint = themeOrange ? [255,140,38] : themeRed ? [255,50,50] : TINTS[i];
   document.documentElement.style.setProperty('--tint', tint.join(','));
   var f = document.getElementById('frame');
   if(f) f.className = 'frame' + (i === 7 ? ' f-gold' : i >= 4 ? ' f-hi' : '');

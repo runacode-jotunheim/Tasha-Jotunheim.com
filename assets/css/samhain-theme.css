@@ -37,8 +37,8 @@ html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60
 
 /* призрак (кликабельный, над контентом) */
 #sm-ghosts{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden}
-.sm-ghost{position:absolute;opacity:0;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 12px rgba(255,255,255,.55));animation:smGhost 9s ease-in-out forwards;-webkit-tap-highlight-color:transparent}
-.sm-ghost svg{display:block;width:100%;height:auto;animation:smBob 2.2s ease-in-out infinite}
+.sm-ghost{position:absolute;opacity:0;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 10px rgba(255,255,255,.3));animation:smGhost 9s ease-in-out forwards;-webkit-tap-highlight-color:transparent}
+.sm-ghost svg{display:block;width:100%;height:auto;opacity:.5;animation:smBob 2.2s ease-in-out infinite}
 .sm-ghost.l{left:-90px}
 .sm-ghost.r{right:-90px}
 .sm-ghost.r svg{transform:scaleX(-1)}
@@ -47,12 +47,12 @@ html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60
 .sm-ghost.bye{animation:smGhostBye 1.2s ease-in forwards}
 @keyframes smGhost{
   0%{opacity:0;transform:translateX(0)}
-  14%{opacity:.82;transform:translateX(var(--dx))}
-  50%{opacity:.78;transform:translateX(calc(var(--dx) * 1.08))}
-  86%{opacity:.82;transform:translateX(var(--dx))}
+  14%{opacity:1;transform:translateX(var(--dx))}
+  50%{opacity:.92;transform:translateX(calc(var(--dx) * 1.08))}
+  86%{opacity:1;transform:translateX(var(--dx))}
   100%{opacity:0;transform:translateX(0)}
 }
-@keyframes smGhostBye{from{opacity:.82;transform:translateX(var(--dx))}to{opacity:0;transform:translateX(0)}}
+@keyframes smGhostBye{from{opacity:1;transform:translateX(var(--dx))}to{opacity:0;transform:translateX(0)}}
 @keyframes smBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
 @keyframes smBobR{0%,100%{transform:scaleX(-1) translateY(0) rotate(-3deg)}50%{transform:scaleX(-1) translateY(-7px) rotate(3deg)}}
 .sm-say{position:absolute;bottom:88%;width:210px;padding:10px 13px;background:#fff;color:#1a0d0d;border-radius:16px;font:600 14px/1.35 Georgia,'Times New Roman',serif;text-align:left;box-shadow:0 4px 18px rgba(0,0,0,.45);opacity:0;transform:scale(.6);transition:opacity .25s,transform .25s cubic-bezier(.3,1.6,.5,1);pointer-events:none}

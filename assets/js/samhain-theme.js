@@ -191,17 +191,29 @@ function spawnGhost(){
   g.innerHTML = GHOST + '<div class="sm-say"></div>';
   g.setAttribute('role', 'button'); g.setAttribute('aria-label', 'Призрак Самайна');
   var kill = setTimeout(function(){ g.remove(); }, 9000);
+  var talkT = 0;
+  function bye(){ clearTimeout(talkT); g.classList.remove('talk'); g.classList.add('bye'); setTimeout(function(){ g.remove(); }, 1200); }
   g.addEventListener('click', function(e){
     e.stopPropagation();
-    if(g.classList.contains('talk')) return;
+    if(g.classList.contains('bye')) return;
+    if(g.classList.contains('talk')){ bye(); return; }   // повторный клик — убрать фразу
     clearTimeout(kill);
     g.querySelector('.sm-say').textContent = PHRASES[phraseI++ % PHRASES.length];
     g.classList.add('talk');
-    setTimeout(function(){ g.classList.remove('talk'); g.classList.add('bye'); setTimeout(function(){ g.remove(); }, 1200); }, 5000);
+    talkT = setTimeout(bye, 5000);
   });
   ghostLayer.appendChild(g);
 }
-function ghostLoop(){ clearTimeout(ghostT); ghostT = setTimeout(function(){ spawnGhost(); ghostLoop(); }, 10000 + Math.random() * 12000); }
+// первый — после 2.5 с без скролла; дальше не чаще раза в минуту и тоже только когда страница 2.5 с не листается
+var GHOST_EVERY = 60000, GHOST_IDLE = 2500, lastGhost = 0, lastScroll = Date.now();
+['scroll','wheel','touchmove','touchstart'].forEach(function(ev){ addEventListener(ev, function(){ lastScroll = Date.now(); }, {passive:true}); });
+function ghostLoop(){ clearInterval(ghostT); ghostT = setInterval(function(){
+  var now = Date.now();
+  if(lastGhost && now - lastGhost < GHOST_EVERY) return;
+  if(now - lastScroll < GHOST_IDLE) return;
+  if(ghostLayer && ghostLayer.querySelector('.sm-ghost')) return;
+  spawnGhost(); if(ghostLayer && ghostLayer.querySelector('.sm-ghost')) lastGhost = now;
+}, 500); }
 
 /* перекраска зелёного в оранжевый: копия стилей страницы с заменой цветов + inline-стили */
 var RE = [[/rgba\(\s*0\s*,\s*255\s*,\s*65\s*,/g, 'rgba(255,140,38,'], [/#00ff41/gi, '#ff8c26'], [/#00cc35/gi, '#cc6a12'],
@@ -233,13 +245,13 @@ function apply(on){
     root.style.setProperty('--green', ACCENT); root.style.setProperty('--green-dim', ACCENT_DIM);
     root.style.setProperty('--accent', ACCENT);
     root.style.setProperty('--accent-dim', ACCENT_DIM);
-    ghostLoop(); setTimeout(spawnGhost, 2500);
+    lastScroll = Date.now(); ghostLoop();
     if(!raf && !(matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) raf = requestAnimationFrame(tick);
   } else {
     root.classList.remove('samhain'); setRecolor(false);
     root.style.removeProperty('--green'); root.style.removeProperty('--green-dim');
     if(raf){ cancelAnimationFrame(raf); raf = 0; }
-    clearTimeout(ghostT); if(ghostLayer) ghostLayer.innerHTML = '';
+    clearInterval(ghostT); if(ghostLayer) ghostLayer.innerHTML = '';
   }
   if(window.onSamhainTheme) window.onSamhainTheme(on);
 }

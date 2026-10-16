@@ -38,7 +38,7 @@ html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60
 /* призрак (кликабельный, над контентом) */
 #sm-ghosts{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden}
 .sm-ghost{position:absolute;opacity:0;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 10px rgba(255,255,255,.3));animation:smGhost 9s ease-in-out forwards;-webkit-tap-highlight-color:transparent}
-.sm-ghost svg{display:block;width:100%;height:auto;opacity:.5;animation:smBob 2.2s ease-in-out infinite}
+.sm-ghost svg{display:block;width:100%;height:auto;opacity:.65;animation:smBob 2.2s ease-in-out infinite}
 .sm-ghost.l{left:-90px}
 .sm-ghost.r{right:-90px}
 .sm-ghost.r svg{transform:scaleX(-1)}
@@ -61,7 +61,7 @@ html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60
 .sm-ghost.l .sm-say::after{left:16px;border-left-color:#fff}
 .sm-ghost.r .sm-say{right:62%;transform-origin:100% 100%}
 .sm-ghost.r .sm-say::after{right:16px;border-right-color:#fff}
-.sm-ghost.talk .sm-say{opacity:1;transform:scale(1)}
+.sm-ghost.talk .sm-say{opacity:.78;transform:scale(1)}
 @media(max-width:700px){.sm-say{width:170px;font-size:13px}}
 @media (prefers-reduced-motion:reduce){.sm-ghost svg{animation:none}}
 

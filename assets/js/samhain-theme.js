@@ -167,7 +167,12 @@ function apply(on){
 function addPill(){
   var box = document.getElementById('pillChoices'); if(!box || box.querySelector('.orange')) return;
   var b = document.createElement('div'); b.className = 'pill-btn'; b.title = 'Самайн';
-  b.setAttribute('onclick', "setTheme('orange')");
+  b.addEventListener('click', function(e){
+    e.stopPropagation(); lsSet('orange'); apply(true); box.classList.remove('open');
+  });
+  box.addEventListener('click', function(e){
+    var t = e.target.closest && e.target.closest('.pill-btn'); if(t && t !== b) apply(false);
+  }, true);
   b.innerHTML = '<div class="pill-icon orange"></div>';
   box.insertBefore(b, box.firstChild);
 }

@@ -47,16 +47,16 @@ function build(){
   leaves = document.createElement('canvas'); leaves.id = 'sm-leaves';
   scene.appendChild(fogA); scene.appendChild(fogB); scene.appendChild(shade); scene.appendChild(leaves);
   document.body.insertBefore(scene, document.body.firstChild);
-  // дуотон «пурпурный бордо»: тень → #3d0a1c → #6a1630 → свет #9e4060
+  // цвет сигила клуба: чёрный → #431410 (как видно на сигиле) → #73221a
   var fx = document.createElement('div');
   fx.setAttribute('aria-hidden','true');
   fx.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
   fx.innerHTML = '<svg width="0" height="0"><filter id="smWine" color-interpolation-filters="sRGB">'
     + '<feColorMatrix type="matrix" values=".3 .59 .11 0 0 .3 .59 .11 0 0 .3 .59 .11 0 0 0 0 0 1 0"/>'
     + '<feComponentTransfer>'
-    + '<feFuncR type="table" tableValues=".024 .239 .416 .62"/>'
-    + '<feFuncG type="table" tableValues=".004 .039 .086 .25"/>'
-    + '<feFuncB type="table" tableValues=".012 .11 .188 .376"/>'
+    + '<feFuncR type="table" tableValues="0 .28 .45 .5"/>'
+    + '<feFuncG type="table" tableValues="0 .083 .133 .15"/>'
+    + '<feFuncB type="table" tableValues="0 .067 .107 .12"/>'
     + '</feComponentTransfer></filter></svg>';
   document.body.appendChild(fx);
   addEventListener('resize', layout);

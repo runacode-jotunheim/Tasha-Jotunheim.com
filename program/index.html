@@ -44,6 +44,7 @@ button{font:inherit;color:inherit}
 
 /* шапка */
 .top{display:flex;align-items:center;padding:calc(18px + env(safe-area-inset-top)) 0 16px;border-bottom:1px solid var(--line)}
+.top .jnav{color:rgba(var(--tint),0.85)}
 .top a{font-family:'VT323',monospace;font-size:19px;letter-spacing:1px;text-decoration:none;color:rgba(var(--tint),0.8)}
 .link-btn{all:unset;cursor:pointer;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(var(--tint),0.85);padding:10px 0}
 .link-btn:hover{color:rgb(var(--tint))}
@@ -252,6 +253,7 @@ ul.plain li,ol.plain li{margin-top:6px}
   .meta .dot{display:none}
 }
 </style>
+<link rel="stylesheet" href="../assets/css/navback.css?v=1">
 </head>
 <body>
 <canvas id="mx" aria-hidden="true"></canvas>
@@ -261,7 +263,7 @@ ul.plain li,ol.plain li{margin-top:6px}
 
 <div class="wrap">
   <header class="top">
-    <a href="../">◀ Главная</a>
+    <div class="jnav"><a data-nav-back href="../">&#9664; Назад</a><a class="jnav-home" data-nav-home href="../" aria-label="Главная" title="Главная"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a></div>
   </header>
 
   <!-- 1. Первый экран (гость) -->
@@ -497,5 +499,6 @@ ul.plain li,ol.plain li{margin-top:6px}
 </div>
 <script src="program.js?v=17" charset="utf-8"></script>
 <script src="../assets/js/account.js?v=9" charset="utf-8"></script>
+<script src="../assets/js/navback.js?v=1"></script>
 </body>
 </html>

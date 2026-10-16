@@ -30,15 +30,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .nav-runacode:hover{color:var(--accent);border-color:var(--accent)}
 .nav-back{font-size:9px;letter-spacing:3px;color:rgba(0,255,65,0.5);text-decoration:none;text-transform:uppercase;transition:color .2s;white-space:nowrap}
 .nav-back:hover{color:var(--accent)}
+.nav-jnav{color:var(--accent);margin-right:16px;flex-shrink:0}
+.nav-jnav .jnav-home{width:30px;height:30px}
 @media(max-width:600px){
   nav{padding:0 12px}
   .nav-logo{font-size:9px;letter-spacing:0.5px;max-width:150px}
   .nav-runacode{font-size:9.5px;padding:3px 8px;margin-left:8px}
+  .nav-logo{display:none}
+  .nav-runacode{margin-left:0}
 }
 @media(max-width:380px){
   .nav-logo{max-width:110px}
   .nav-runacode{font-size:8px;padding:2px 6px;margin-left:6px}
   .nav-back{display:none}
+  .nav-jnav a:first-child{font-size:16px}
 }
 
 .section-wrap{position:relative;z-index:1;padding:60px 24px;max-width:1100px;margin:0 auto;width:100%}
@@ -278,6 +283,7 @@ body:active .cursor-sprite{transform:scale(0.88)}
 @keyframes cursorAnimMain{from{background-position:0 0}to{background-position:-512px 0}}
 @keyframes cursorAnimBusy{from{background-position:0 0}to{background-position:-1600px 0}}
 </style>
+<link rel="stylesheet" href="../assets/css/navback.css?v=1">
 </head>
 <body>
 <!-- CURSOR — Space Rangers style, same as index.html -->
@@ -290,9 +296,9 @@ body:active .cursor-sprite{transform:scale(0.88)}
 <canvas id="matrix-canvas"></canvas>
 
 <nav>
+  <div class="jnav nav-jnav"><a data-nav-back href="../">&#9664; Назад</a><a class="jnav-home" data-nav-home href="../" aria-label="Главная" title="Главная"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a></div>
   <a class="nav-logo" href="../index.html">Артефакты Йотунхейм</a>
   <a class="nav-runacode" href="https://runacode-jotunheim.ru" target="_blank" rel="noopener">Рунический код</a>
-  <a class="nav-back" href="../index.html#catalog">&#9664; Каталог</a>
   <div id="cart-btn" onclick="openCart()">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
     <span id="cart-count">0</span>
@@ -1744,5 +1750,6 @@ function submitToRobokassa(action, fields){
 calcShowStep('instrument');
 </script>
 
+<script src="../assets/js/navback.js?v=1"></script>
 </body>
 </html>

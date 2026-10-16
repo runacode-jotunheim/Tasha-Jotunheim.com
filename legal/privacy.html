@@ -30,6 +30,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 .legal-topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid rgba(0,255,65,0.12);flex-wrap:wrap}
 .legal-home{font-family:'Cinzel',serif;font-weight:700;letter-spacing:2px;font-size:13px;color:var(--accent);text-decoration:none;text-transform:uppercase;white-space:nowrap}
+.legal-jnav{color:var(--accent)}
 .legal-home:hover{text-shadow:0 0 10px var(--accent)}
 .legal-crumb{font-size:10px;letter-spacing:2px;color:rgba(0,255,65,0.35);text-transform:uppercase}
 
@@ -64,6 +65,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   .legal-body{font-size:13px}
 }
 </style>
+<link rel="stylesheet" href="../assets/css/navback.css?v=1">
 </head>
 <body>
 <script>
@@ -76,7 +78,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 })();
 </script>
 <div class="legal-topbar">
-  <a href="../index.html" class="legal-home">◀ Артефакты Йотунхейм</a>
+  <div class="jnav legal-jnav"><a data-nav-back href="../">&#9664; Назад</a><a class="jnav-home" data-nav-home href="../" aria-label="Главная" title="Главная"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a></div>
   <span class="legal-crumb">Документ 2 из 4</span>
 </div>
 <div class="legal-shell">
@@ -284,5 +286,6 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   </div>
   <div class="legal-footer-copy">&#9608; Артефакты Йотунхейм · 2026 · ИП Йотунхейм Таша Владимировна</div>
 </footer>
+<script src="../assets/js/navback.js?v=1"></script>
 </body>
 </html>

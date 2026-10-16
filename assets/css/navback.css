@@ -1,0 +1,6 @@
+/* «Назад» + «Домик» */
+.jnav{display:flex;align-items:center;gap:14px}
+.jnav a{display:inline-flex;align-items:center;gap:6px;color:inherit;text-decoration:none;font-family:'VT323',monospace;font-size:19px;letter-spacing:1px;line-height:1;cursor:pointer}
+.jnav .jnav-home{width:34px;height:34px;justify-content:center;border:1px solid currentColor;border-radius:50%;opacity:.85}
+.jnav .jnav-home svg{width:16px;height:16px}
+.jnav a:hover{text-shadow:0 0 10px currentColor}

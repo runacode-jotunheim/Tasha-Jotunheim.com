@@ -82,7 +82,9 @@ html.in-tg .sg-x{display:none}
 #sg-gate .g-b{display:inline-block;background:#2aabee;color:#fff;text-decoration:none;border-radius:12px;padding:13px 26px;font-family:'VT323',monospace;font-size:22px;letter-spacing:2px;text-transform:uppercase}
 #sg-gate .g-l{color:rgba(0,255,65,0.7);font-size:12px}
 #sg-gate .g-b2{background:transparent;border:1px solid rgba(0,255,65,0.55);color:var(--acc);border-radius:12px;padding:11px 24px;font-family:'VT323',monospace;font-size:20px;letter-spacing:2px;text-transform:uppercase;cursor:pointer}
-.sg-club{color:#ffb35c;border-color:rgba(255,179,92,0.45)}
+.sg-club-wrap{max-width:720px;margin:26px auto 0;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-size:12px;color:rgba(200,255,218,0.6)}
+.sg-club{display:inline-block;padding:6px 14px;border:1px solid rgba(255,179,92,0.5);border-radius:20px;color:#ffb35c;text-decoration:none;font-family:'VT323',monospace;font-size:16px;letter-spacing:1px}
+.sg-head .jnav{color:rgba(0,255,65,0.75)}
 .sg-tgbar{display:none;max-width:720px;margin:-8px auto 18px;padding:10px 14px;border:1px solid rgba(42,171,238,0.6);border-radius:12px;color:#8fd3ff;text-decoration:none;font-size:12px;text-align:center}
 .sg-tgbar.on{display:block}
 #sg-fs{display:none}
@@ -112,6 +114,7 @@ html.in-tg #sg-game.sg-immersive #sg-ov{padding-top:calc(10px + var(--tg-safe-ar
   .sg-foot{margin-top:8px}
 }
 </style>
+<link rel="stylesheet" href="../assets/css/navback.css?v=1">
 </head>
 <body>
 
@@ -123,7 +126,7 @@ html.in-tg #sg-game.sg-immersive #sg-ov{padding-top:calc(10px + var(--tg-safe-ar
   <a class="g-l" id="sg-gate-dl" href="https://telegram.org/apps" target="_blank" rel="noopener">Нет Telegram? Скачать</a>
   <a class="g-l" href="../index.html">&#9664; Вернуться на сайт</a>
 </div>
-<header class="sg-head"><a href="../index.html" class="sg-back">&#9664; На сайт</a></header>
+<header class="sg-head"><div class="jnav"><a data-nav-back href="../">&#9664; Назад</a><a class="jnav-home" data-nav-home href="../" aria-label="Главная" title="Главная"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a></div></header>
 
 <main class="sg-hub">
   <span class="sg-eye">&#9658; самайн 2026</span>
@@ -148,8 +151,8 @@ html.in-tg #sg-game.sg-immersive #sg-ov{padding-top:calc(10px + var(--tg-safe-ar
       </div>
     </button>
   </div>
-  <a class="sg-home sg-club" href="../program/">Клуб Йотунов — копи ЙотунКоины &#9654;</a>
-  <a class="sg-home" href="../index.html">&#9664; На сайт</a>
+  <div class="sg-club-wrap"><span>Заработай ЙотунКоины — потрать в клубе</span><a class="sg-club" href="../program/">Клуб йотунов &#9654;</a></div>
+  <a class="sg-home" data-nav-back href="../">&#9664; Назад</a>
 </main>
 
 <div id="sg-game">
@@ -179,6 +182,7 @@ html.in-tg #sg-game.sg-immersive #sg-ov{padding-top:calc(10px + var(--tg-safe-ar
 
 <script src="https://telegram.org/js/telegram-web-app.js?57" async></script>
 <script src="../assets/js/games-link.js?v=2"></script>
-<script src="samhain-games.js?v=25" charset="utf-8"></script>
+<script src="samhain-games.js?v=26" charset="utf-8"></script>
+<script src="../assets/js/navback.js?v=1"></script>
 </body>
 </html>

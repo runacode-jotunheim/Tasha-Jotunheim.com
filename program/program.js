@@ -318,8 +318,6 @@ function wire(){
   if(++tries < 20) setTimeout(wire, 500);
 }
 wire();
-})();
-
 /* ссылка «правила клуба» в FAQ раскрывает правила */
 (function(){ var l = document.querySelector('[data-open-rules]'), d = document.getElementById('rules-d'); if(l && d) l.addEventListener('click', function(){ d.open = true; }); })();
 
@@ -342,4 +340,5 @@ window.setTheme = function(t){
 (function(){
   var b = document.getElementById('scroll-top-btn'); if(!b) return;
   addEventListener('scroll', function(){ b.classList.toggle('show', scrollY > 600); }, { passive:true });
+})();
 })();

@@ -56,7 +56,7 @@ function body(i, me){
     h += li('<b>Сделай покупки на сайте на сумму ' + rub(r.own) + '</b>' + (r.ownNote ? ' — ' + r.ownNote : '') +
       (r.ownPlus ? ' и пригласи ' + r.ownPlus[0] + ' ' + plural(r.ownPlus[0], 'друга', 'друга', 'друзей') + ', каждый из которых совершит покупку от ' + rub(r.ownPlus[1]) : ''));
   }
-  h += '</ul>' + progress(i, me) + '</div>';
+  h += '</ul>' + progress(i, me) + '<a class="link-btn r-more" href="#rules" data-open-rules>Посмотреть условия</a></div>';
   // твои преимущества
   var perks = allPerks(i).slice(1);
   h += '<div class="r-blk"><h4>Что тебе доступно</h4><ul>' + li('<b>Постоянная скидка ' + r.pct + '%</b>: артефакты, ритуалы, консультации') + perks.map(li).join('') + '</ul><div class="note">Все привилегии предыдущих статусов сохраняются. Полученный статус не сгорает.</div></div>';
@@ -285,11 +285,11 @@ function loadRef(){
   row.innerHTML = '<span class="ref-state">Обновляем ссылку…</span>';
   fetch(A.apiBase + '/api/ref/link', { credentials:'include' }).then(function(r){ if(!r.ok) throw 0; return r.json(); }).then(function(j){
     if(!j || !j.url) throw 0;
-    row.innerHTML = '<input type="text" readonly aria-label="Реферальная ссылка"><button class="btn" type="button">Скопировать ссылку</button>';
+    row.innerHTML = '<input type="text" readonly aria-label="Реферальная ссылка"><button class="btn" type="button">Скопировать ссылку-приглашение</button>';
     var inp = row.querySelector('input'), b = row.querySelector('button');
     inp.value = j.url;
     b.onclick = function(){
-      var done = function(){ b.textContent = 'Скопировано'; setTimeout(function(){ b.textContent = 'Скопировать ссылку'; }, 1800); };
+      var done = function(){ b.textContent = 'Скопировано'; setTimeout(function(){ b.textContent = 'Скопировать ссылку-приглашение'; }, 1800); };
       if(navigator.clipboard) navigator.clipboard.writeText(j.url).then(done, function(){ inp.select(); try{ document.execCommand('copy'); done(); }catch(e){} });
       else { inp.select(); try{ document.execCommand('copy'); done(); }catch(e){} }
     };
@@ -305,10 +305,10 @@ var tries = 0;
 function wire(){
   var A = window.JotunAccount;
   if(A && A.enabled){
-    [].forEach.call(document.querySelectorAll('[data-cab]'), function(b){
-      b.hidden = false; b.textContent = (b.classList.contains('btn') ? '▶ ' : '') + (A.me ? 'Открыть личный кабинет' : 'Войти в личный кабинет'); b.onclick = A.open;
+    [].forEach.call(document.querySelectorAll('[data-cab],[data-cab-ref]'), function(b){
+      if(A.me && b.hasAttribute('data-cab')) b.textContent = (b.classList.contains('btn') ? '▶ ' : '') + 'Открыть личный кабинет';
+      b.onclick = function(e){ e.preventDefault(); A.open(); };
     });
-    [].forEach.call(document.querySelectorAll('[data-cab-ref]'), function(b){ b.hidden = false; b.onclick = A.open; });
     if(A.me && A.me !== meData){ meData = A.me; render(); if(preview === null && A.me.rank) applyRank(A.me.rank.index); showMember(A.me); if(innerWidth < 860 && openIdx < 0) setOpen(A.me.rank.index, true); }
     if(!A.me && tries < 30){ tries++; setTimeout(wire, 700); }
     return;
@@ -325,3 +325,5 @@ wire();
 [].forEach.call(document.querySelectorAll('[data-open-rank]'), function(l){
   l.addEventListener('click', function(){ var i = +l.getAttribute('data-open-rank'); setTimeout(function(){ setOpen(i); var el = document.querySelector('.rank[data-i="' + i + '"]'); if(el) el.scrollIntoView({ block:'start' }); }, 50); });
 });
+
+document.addEventListener('click', function(e){ var l = e.target.closest && e.target.closest('[data-open-rules]'); if(!l) return; var d = document.getElementById('rules-d'); if(d) d.open = true; });

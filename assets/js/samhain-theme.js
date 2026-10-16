@@ -9,7 +9,11 @@ var ACCENT = '#ff8c26', ACCENT_DIM = '#cc6a12';
 var BASE = (function(){ var s = document.currentScript && document.currentScript.src; return s ? s.replace(/assets\/js\/samhain-theme\.js.*$/, '') : '/'; })();
 
 function inSeason(){
-  try{ if(/[?&]samhain=1/.test(location.search)) return true; }catch(e){}
+  try{
+    if(/[?&]samhain=1/.test(location.search)) localStorage.setItem('sm_preview', '1');
+    if(/[?&]samhain=0/.test(location.search)) localStorage.removeItem('sm_preview');
+    if(localStorage.getItem('sm_preview') === '1') return true;
+  }catch(e){}
   var d = new Date(), m = d.getMonth() + 1, day = d.getDate();
   return (m === 10 && day >= 20) || (m === 11 && day <= 15);
 }
@@ -71,7 +75,7 @@ function layout(){
 
 /* ── листья ── */
 var L = [], ctx, dpr = 1, lastT = 0;
-var COLS = ['#ff8a1f', '#e0561a', '#b8321a', '#ffb347', '#8f2a14', '#d9741c'];
+var COLS = [['#c2410c','#ffb347'],['#9a2a10','#ff7a1a'],['#7c1d0e','#e0561a'],['#b45309','#fcd34d'],['#8f2a14','#f59e0b'],['#a83210','#ff9a3a']];
 function sizeLeaves(){
   if(!leaves) return;
   dpr = Math.min(2, devicePixelRatio || 1);
@@ -82,32 +86,48 @@ function sizeLeaves(){
   L.length = n;
 }
 function newLeaf(anywhere){
-  var s = 8 + Math.random() * 14;
+  var s = 11 + Math.random() * 15, cc = COLS[(Math.random() * COLS.length) | 0];
   return { x:Math.random() * innerWidth, y:anywhere ? Math.random() * innerHeight : -30, s:s,
     vy:14 + Math.random() * 22, sway:20 + Math.random() * 40, ph:Math.random() * 6.28, fr:.4 + Math.random() * .9,
     rot:Math.random() * 6.28, vr:(Math.random() - .5) * 1.6, flip:Math.random() * 6.28,
-    c:COLS[(Math.random() * COLS.length) | 0], a:.55 + Math.random() * .4, maple:Math.random() < .55 };
+    c:cc[0], c2:cc[1], a:.6 + Math.random() * .35, maple:Math.random() < .6 };
+}
+var MAPLE = [[0,-1],[.1,-.74],[.26,-.84],[.2,-.5],[.5,-.66],[.46,-.46],[.84,-.52],[.62,-.24],[.78,-.1],[.44,-.04],[.5,.16],[.16,.12],[.06,.42],[0,.42]];
+function leafPath(f){
+  var s = f.s;
+  ctx.beginPath();
+  if(f.maple){
+    var P = MAPLE;
+    ctx.moveTo(P[0][0] * s, P[0][1] * s);
+    for(var i = 1; i < P.length; i++) ctx.lineTo(P[i][0] * s, P[i][1] * s);
+    for(var j = P.length - 1; j >= 1; j--) ctx.lineTo(-P[j][0] * s, P[j][1] * s);
+  } else {
+    ctx.moveTo(0, -s);
+    ctx.bezierCurveTo(s * .55, -s * .55, s * .5, s * .35, 0, s * .62);
+    ctx.bezierCurveTo(-s * .5, s * .35, -s * .55, -s * .55, 0, -s);
+  }
+  ctx.closePath();
 }
 function drawLeaf(f){
   ctx.save();
   ctx.translate(f.x + Math.sin(f.ph) * f.sway, f.y);
   ctx.rotate(f.rot);
-  ctx.scale(1, Math.abs(Math.cos(f.flip)) * .8 + .2);
-  ctx.globalAlpha = f.a; ctx.fillStyle = f.c;
-  var s = f.s;
+  ctx.scale(Math.cos(f.flip) * .85 + (Math.cos(f.flip) >= 0 ? .15 : -.15), 1);
+  ctx.globalAlpha = f.a;
+  var s = f.s, g = ctx.createRadialGradient(0, -s * .1, s * .1, 0, 0, s * 1.1);
+  g.addColorStop(0, f.c2); g.addColorStop(1, f.c);
+  leafPath(f); ctx.fillStyle = g; ctx.fill();
+  ctx.lineWidth = .7; ctx.strokeStyle = 'rgba(70,20,5,.55)';
   ctx.beginPath();
   if(f.maple){
-    for(var i = 0; i < 5; i++){
-      var a = -Math.PI / 2 + i * (Math.PI * 2 / 5), a2 = a + Math.PI / 5;
-      ctx.lineTo(Math.cos(a) * s, Math.sin(a) * s);
-      ctx.lineTo(Math.cos(a2) * s * .42, Math.sin(a2) * s * .42);
-    }
+    ctx.moveTo(0, s * .8); ctx.lineTo(0, -s * .85);
+    ctx.moveTo(0, s * .05); ctx.lineTo(s * .7, -s * .45); ctx.moveTo(0, s * .05); ctx.lineTo(-s * .7, -s * .45);
+    ctx.moveTo(0, s * .2); ctx.lineTo(s * .42, s * .08); ctx.moveTo(0, s * .2); ctx.lineTo(-s * .42, s * .08);
   } else {
-    ctx.moveTo(0, -s); ctx.quadraticCurveTo(s * .65, 0, 0, s); ctx.quadraticCurveTo(-s * .65, 0, 0, -s);
+    ctx.moveTo(0, s * .9); ctx.lineTo(0, -s * .9);
+    for(var k = -2; k <= 2; k++){ var y = k * s * .28; ctx.moveTo(0, y); ctx.lineTo(s * .32, y - s * .2); ctx.moveTo(0, y); ctx.lineTo(-s * .32, y - s * .2); }
   }
-  ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = 'rgba(60,15,5,.5)'; ctx.lineWidth = .8;
-  ctx.beginPath(); ctx.moveTo(0, -s * .8); ctx.lineTo(0, s * 1.15); ctx.stroke();
+  ctx.stroke();
   ctx.restore();
 }
 function tick(t){

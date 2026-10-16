@@ -47,6 +47,18 @@ function build(){
   leaves = document.createElement('canvas'); leaves.id = 'sm-leaves';
   scene.appendChild(fogA); scene.appendChild(fogB); scene.appendChild(shade); scene.appendChild(leaves);
   document.body.insertBefore(scene, document.body.firstChild);
+  // дуотон «пурпурный бордо»: тень → #3d0a1c → #6a1630 → свет #9e4060
+  var fx = document.createElement('div');
+  fx.setAttribute('aria-hidden','true');
+  fx.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+  fx.innerHTML = '<svg width="0" height="0"><filter id="smWine" color-interpolation-filters="sRGB">'
+    + '<feColorMatrix type="matrix" values=".3 .59 .11 0 0 .3 .59 .11 0 0 .3 .59 .11 0 0 0 0 0 1 0"/>'
+    + '<feComponentTransfer>'
+    + '<feFuncR type="table" tableValues=".024 .239 .416 .62"/>'
+    + '<feFuncG type="table" tableValues=".004 .039 .086 .25"/>'
+    + '<feFuncB type="table" tableValues=".012 .11 .188 .376"/>'
+    + '</feComponentTransfer></filter></svg>';
+  document.body.appendChild(fx);
   addEventListener('resize', layout);
 }
 
@@ -87,16 +99,20 @@ function sizeLeaves(){
 }
 function newLeaf(anywhere){
   var s = 11 + Math.random() * 15, cc = COLS[(Math.random() * COLS.length) | 0];
-  return { x:Math.random() * innerWidth, y:anywhere ? Math.random() * innerHeight : -30, s:s,
+  var o = { x:Math.random() * innerWidth, y:anywhere ? Math.random() * innerHeight : -30, s:s,
     vy:14 + Math.random() * 22, sway:20 + Math.random() * 40, ph:Math.random() * 6.28, fr:.4 + Math.random() * .9,
     rot:Math.random() * 6.28, vr:(Math.random() - .5) * 1.6, flip:Math.random() * 6.28,
-    c:cc[0], c2:cc[1], a:.6 + Math.random() * .35, maple:Math.random() < .6 };
+    c:cc[0], c2:cc[1], a:.6 + Math.random() * .35, maple:false, star:false };
+  var r = Math.random(); if(r < .3) o.star = true; else if(r < .72) o.maple = true;
+  return o;
 }
 var MAPLE = [[0,-1],[.1,-.74],[.26,-.84],[.2,-.5],[.5,-.66],[.46,-.46],[.84,-.52],[.62,-.24],[.78,-.1],[.44,-.04],[.5,.16],[.16,.12],[.06,.42],[0,.42]];
 function leafPath(f){
   var s = f.s;
   ctx.beginPath();
-  if(f.maple){
+  if(f.star){
+    for(var q = 0; q < 5; q++){ var a1 = -Math.PI / 2 + q * Math.PI * 2 / 5, a2 = a1 + Math.PI / 5; ctx.lineTo(Math.cos(a1) * s, Math.sin(a1) * s); ctx.lineTo(Math.cos(a2) * s * .42, Math.sin(a2) * s * .42); }
+  } else if(f.maple){
     var P = MAPLE;
     ctx.moveTo(P[0][0] * s, P[0][1] * s);
     for(var i = 1; i < P.length; i++) ctx.lineTo(P[i][0] * s, P[i][1] * s);
@@ -117,7 +133,8 @@ function drawLeaf(f){
   var s = f.s, g = ctx.createRadialGradient(0, -s * .1, s * .1, 0, 0, s * 1.1);
   g.addColorStop(0, f.c2); g.addColorStop(1, f.c);
   leafPath(f); ctx.fillStyle = g; ctx.fill();
-  ctx.lineWidth = .7; ctx.strokeStyle = 'rgba(70,20,5,.55)';
+  if(f.star){ ctx.restore(); return; }
+  ctx.lineWidth = .45; ctx.strokeStyle = 'rgba(70,20,5,.16)';
   ctx.beginPath();
   if(f.maple){
     ctx.moveTo(0, s * .8); ctx.lineTo(0, -s * .85);
@@ -143,6 +160,22 @@ function tick(t){
   }
 }
 
+
+
+/* ── призраки: изредка выглядывают из-за деревьев по краям ── */
+var ghostT = 0;
+var GHOST = '<svg viewBox="0 0 60 80" aria-hidden="true"><path d="M30 3C15 3 6 15 6 31v40l6-6 6 7 6-7 6 7 6-7 6 7 6-7 6 6V31C54 15 45 3 30 3z" fill="rgba(255,255,255,.9)"/><ellipse cx="22" cy="30" rx="4" ry="6" fill="rgba(20,10,10,.55)"/><ellipse cx="38" cy="30" rx="4" ry="6" fill="rgba(20,10,10,.55)"/><ellipse cx="30" cy="46" rx="4" ry="5" fill="rgba(20,10,10,.35)"/></svg>';
+function spawnGhost(){
+  if(!scene || !document.documentElement.classList.contains('samhain') || document.hidden) return;
+  var left = Math.random() < .5, g = document.createElement('div');
+  var size = innerWidth < 700 ? 46 + Math.random() * 26 : 60 + Math.random() * 40;
+  g.className = 'sm-ghost ' + (left ? 'l' : 'r');
+  g.style.width = size + 'px'; g.style.top = (18 + Math.random() * 46) + '%';
+  g.style.setProperty('--dx', (left ? 1 : -1) * (size * (.9 + Math.random() * .8)) + 'px');
+  g.innerHTML = GHOST; scene.insertBefore(g, document.getElementById('sm-shade'));
+  setTimeout(function(){ g.remove(); }, 9000);
+}
+function ghostLoop(){ clearTimeout(ghostT); ghostT = setTimeout(function(){ spawnGhost(); ghostLoop(); }, 9000 + Math.random() * 14000); }
 
 /* перекраска зелёного в оранжевый: копия стилей страницы с заменой цветов + inline-стили */
 var RE = [[/rgba\(\s*0\s*,\s*255\s*,\s*65\s*,/g, 'rgba(255,140,38,'], [/#00ff41/gi, '#ff8c26'], [/#00cc35/gi, '#cc6a12'],
@@ -174,11 +207,13 @@ function apply(on){
     root.style.setProperty('--green', ACCENT); root.style.setProperty('--green-dim', ACCENT_DIM);
     root.style.setProperty('--accent', ACCENT);
     root.style.setProperty('--accent-dim', ACCENT_DIM);
+    ghostLoop(); setTimeout(spawnGhost, 2500);
     if(!raf && !(matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) raf = requestAnimationFrame(tick);
   } else {
     root.classList.remove('samhain'); setRecolor(false);
     root.style.removeProperty('--green'); root.style.removeProperty('--green-dim');
     if(raf){ cancelAnimationFrame(raf); raf = 0; }
+    clearTimeout(ghostT);
   }
   if(window.onSamhainTheme) window.onSamhainTheme(on);
 }

@@ -34,3 +34,22 @@ html.samhain .wm-base{stroke:#3d0a10!important;opacity:.72!important}
 html.samhain .wm-gl{stroke:#ff7a1a!important;opacity:.22!important;stroke-width:26px!important}
 html.samhain .wm-hi{stroke:rgba(255,150,60,.25)!important}
 html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60px rgba(255,100,20,.08)}
+
+/* призраки */
+.sm-ghost{position:absolute;opacity:0;filter:blur(.5px) drop-shadow(0 0 14px rgba(255,255,255,.6));animation:smGhost 8.5s ease-in-out forwards}
+.sm-ghost svg{display:block;width:100%;height:auto}
+.sm-ghost.l{left:-70px}
+.sm-ghost.r{right:-70px}
+.sm-ghost.r svg{transform:scaleX(-1)}
+@keyframes smGhost{
+  0%{opacity:0;transform:translate(0,0) rotate(0)}
+  18%{opacity:.55;transform:translate(var(--dx),-6px) rotate(4deg)}
+  45%{opacity:.48;transform:translate(calc(var(--dx) * 1.1),6px) rotate(-3deg)}
+  70%{opacity:.52;transform:translate(var(--dx),-4px) rotate(3deg)}
+  100%{opacity:0;transform:translate(0,0) rotate(0)}
+}
+@media (prefers-reduced-motion:reduce){.sm-ghost{display:none}}
+
+/* бордовый: песочные часы и портреты создателей */
+html.samhain #hourglassCanvas{filter:url(#smWine) brightness(1.25)}
+html.samhain .about-photo-slot img{filter:url(#smWine) contrast(1.1) brightness(1.15)}

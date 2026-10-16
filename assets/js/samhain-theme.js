@@ -282,5 +282,17 @@ window.setTheme = function(t){
 };
 
 addPill();
+/* Telegram (мини-приложение и его браузер) — своё хранилище: тему берём из startapp, иначе в сезон включаем Самайн по умолчанию */
+(function(){
+  var h = location.search + '&' + location.hash, sp = '';
+  var m = h.match(/tgWebAppStartParam=([\w-]+)/); if(m) sp = m[1];
+  if(!sp){ m = h.match(/tgWebAppData=([^&]+)/); if(m){ try{ var d = decodeURIComponent(m[1]); var s2 = d.match(/start_param=([\w-]+)/); if(s2) sp = s2[1]; }catch(e){} } }
+  if(!sp){ try{ sp = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.start_param) || ''; }catch(e){} }
+  var inTG = /tgWebApp/.test(h) || /Telegram/i.test(navigator.userAgent);
+  try{ if(inTG) sessionStorage.setItem('sm_tg', '1'); else if(sessionStorage.getItem('sm_tg') === '1') inTG = true; }catch(e){}
+  if(sp === 'orange') lsSet('orange');
+  else if(sp === 'nosm'){ if(lsGet() === 'orange' || !lsGet()) lsSet('green'); }
+  else if(inTG && !lsGet()) lsSet('orange');
+})();
 if(lsGet() === 'orange') apply(true);
 })();

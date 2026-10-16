@@ -478,6 +478,8 @@ function tgGate(){
   if(!url || testing) return;
   // компьютер — сразу играем в браузере; телефон — предлагаем Telegram, но не заставляем
   if(!TOUCH) return;
+  // передаём выбранную тему в Telegram (там своё хранилище): orange — Самайн, nosm — пользователь выбрал не Самайн
+  try{ var th = localStorage.getItem('jv_theme'); if(th === 'orange') url += '?startapp=orange'; else if(th && document.documentElement.classList.contains('sm-season')) url += '?startapp=nosm'; }catch(e){}
   var bar = $('sg-tgbar'); bar.href = url; bar.classList.add('on');
   var MODE_KEY = 'sg_mode';
   var saved = null; try{ saved = JSON.parse(localStorage.getItem(MODE_KEY) || 'null'); }catch(e){}

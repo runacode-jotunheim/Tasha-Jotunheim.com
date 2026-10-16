@@ -26,7 +26,7 @@ var RANKS = [
     perks:[], gifts:['3 500 ЙотунКоинов на счёт','Артефакт из коллекции до 15 000 ₽','Бесплатная консультация на 60 минут','Индивидуальный ритуал «Открытие дорог» на 1 год'], friendJC:2500 },
   { name:'Бергельмир', pct:15, main:'Имир + подарок на 1 000 000 ₽',
     friends:[40,25000], own:300000, ownPlus:[15,20000],
-    perks:['Скидка 15% на обучение'], gifts:['Подарок на 1 000 000 ₽','5 000 ЙотунКоинов на счёт','Артефакт из коллекции до 15 000 ₽','Бесплатная консультация на 60 минут','Ритуал «Открытие дорог»','Персональный артефакт, созданный лично для тебя'], friendJC:3000 }
+    perks:['Скидка 15% на обучение'], gifts:['Подарок на 1 000 000 ₽ — три месяца личного сопровождения Таши Йотунхейм','5 000 ЙотунКоинов на счёт','Артефакт из коллекции до 15 000 ₽','Бесплатная консультация на 60 минут','Ритуал «Открытие дорог»','Персональный артефакт, созданный лично для тебя'], friendJC:3000 }
 ];
 
 function plural(n, a, b, c){ var m = n % 10, h = n % 100; return (m === 1 && h !== 11) ? a : (m >= 2 && m <= 4 && (h < 12 || h > 14)) ? b : c; }
@@ -59,7 +59,7 @@ function body(i, me){
   h += '</ul>' + progress(i, me) + '</div>';
   // твои преимущества
   var perks = allPerks(i).slice(1);
-  h += '<div class="r-blk"><h4>Твои преимущества</h4><ul>' + li('<b>Постоянная скидка ' + r.pct + '%</b>: артефакты, ритуалы, консультации') + perks.map(li).join('') + '</ul><div class="note">Все привилегии предыдущих статусов сохраняются. Статус не сгорает.</div></div>';
+  h += '<div class="r-blk"><h4>Что тебе доступно</h4><ul>' + li('<b>Постоянная скидка ' + r.pct + '%</b>: артефакты, ритуалы, консультации') + perks.map(li).join('') + '</ul><div class="note">Все привилегии предыдущих статусов сохраняются. Полученный статус не сгорает.</div></div>';
   // подарок (только если есть)
   if(r.gifts.length) h += '<div class="r-blk"><h4>Подарок при получении статуса</h4><ul>' + r.gifts.map(li).join('').replace(/JC/g, JC) + '</ul><div class="note">Доступен 1 раз — при открытии новой ступени развития.</div></div>';
   return '<div class="r-in">' + h + '</div>';
@@ -320,3 +320,8 @@ wire();
 
 /* ссылка «правила клуба» в FAQ раскрывает правила */
 (function(){ var l = document.querySelector('[data-open-rules]'), d = document.getElementById('rules-d'); if(l && d) l.addEventListener('click', function(){ d.open = true; }); })();
+
+/* ссылки «условия подарка» открывают карточку статуса */
+[].forEach.call(document.querySelectorAll('[data-open-rank]'), function(l){
+  l.addEventListener('click', function(){ var i = +l.getAttribute('data-open-rank'); setTimeout(function(){ setOpen(i); var el = document.querySelector('.rank[data-i="' + i + '"]'); if(el) el.scrollIntoView({ block:'start' }); }, 50); });
+});

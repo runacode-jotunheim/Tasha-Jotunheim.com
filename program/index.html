@@ -172,6 +172,21 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
 }
 @media(max-width:480px){.ref-row{flex-direction:column;align-items:stretch}.ref-row .btn{width:100%}.hist .h-row{grid-template-columns:1fr auto}.hist .h-date{grid-column:1/-1}}
 
+.coins3{grid-template-columns:repeat(3,1fr)}
+ul.plain,ol.plain{margin-top:6px;padding-left:18px;font-size:13.5px;color:var(--dim)}
+ul.plain li,ol.plain li{margin-top:6px}
+.final{margin-top:clamp(56px,8vw,96px);padding:clamp(32px,5vw,56px) 16px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+.final h2{text-align:center}
+.final p{text-align:center;color:var(--dim);margin-top:10px}
+.final .tagline{margin-top:22px;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgb(var(--tint))}
+.tbl-note{margin-top:14px;font-size:12.5px;color:var(--faint);text-align:center}
+.r-keys{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--line);border-radius:6px}
+.r-key{padding:14px 16px}
+.r-key+.r-key{border-left:1px solid var(--line)}
+.r-key b{display:block;font-family:'VT323',monospace;font-weight:normal;font-size:30px;line-height:1;color:rgb(var(--tint))}
+.r-key b.gold{color:#ffd84a}
+.r-key>span{display:block;margin-top:6px;font-size:12px;color:var(--dim)}
+
 @media(max-width:860px){
   .hero{grid-template-columns:1fr;gap:10px}
   .sigil-box{display:none}
@@ -185,6 +200,11 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
   .coin-c,.coin-c+.coin-c{padding:20px 14px 18px 0;border-left:none}
   .coin-c:nth-child(even){padding-left:14px;border-left:1px solid var(--line)}
   .coin-c:nth-child(n+3){border-top:1px solid var(--line)}
+  .coins3{grid-template-columns:1fr}
+  .coins3 .coin-c,.coins3 .coin-c:nth-child(even){padding:18px 0;border-left:none}
+  .coins3 .coin-c+.coin-c{border-top:1px solid var(--line)}
+  .r-keys{grid-template-columns:1fr}
+  .r-key+.r-key{border-left:none;border-top:1px solid var(--line)}
   .r-in{grid-template-columns:1fr;gap:18px;padding:4px 4px 24px 14px}
 }
 @media(max-width:480px){
@@ -209,152 +229,194 @@ details .ans{padding:0 4px 20px;font-size:13.5px;color:var(--dim);max-width:760p
     <a href="../">◀ Главная</a>
   </header>
 
-  <!-- 1. Первый экран -->
+  <!-- 1. Первый экран (гость) -->
   <div class="hero" id="guest-hero">
     <div>
-      <div class="lbl hero-lbl">Jotunheim / Member club</div>
       <h1>Клуб Йотунов</h1>
       <div class="motto-m">Йотуны не ходят поодиночке</div>
-      <p class="sub">Привилегии, которые открываются с ростом ранга.</p>
-      <p class="desc">Постоянные скидки, специальные преимущества и новые возможности на каждом следующем уровне клуба.</p>
+      <p class="sub">Больше привилегий. Больше возможностей.</p>
+      <p class="desc">Клуб для тех, кто выбирает Йотунхейм снова и снова. Получай постоянные скидки, открывай новые привилегии и приглашай близких в мир артефактов и практик.</p>
+      <p class="desc">Твой статус определяет, какие преимущества доступны тебе сейчас и что откроется дальше — вплоть до подарка на 1 000 000 ₽.</p>
       <div class="actions">
         <a class="btn" href="#ranks">▶ Посмотреть привилегии</a>
-        <button class="link-btn" type="button" data-cab hidden>Войти в кабинет</button>
+        <button class="link-btn" type="button" data-cab hidden>Войти в личный кабинет</button>
       </div>
-      <div class="meta"><span><b>8</b> уровней доступа</span><span class="dot">·</span><span>подарки до <b>1 000 000 ₽</b></span></div>
+      <div class="meta"><span><b>8</b> статусов</span><span class="dot">·</span><span>Постоянные скидки</span><span class="dot">·</span><span>Бонусы за рекомендации</span></div>
     </div>
     <div class="sigil-box"><div class="motto">Йотуны не ходят поодиночке</div><svg class="sigil" viewBox="0 0 300 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"><circle cx="150" cy="150" r="146" stroke-opacity=".55"/><circle cx="150" cy="150" r="118" stroke-opacity=".55"/><g transform="translate(150.00 18.00) rotate(0.0)"><polyline points="-3.40,8.50 -3.40,-8.50"/><polyline points="-3.40,-1.70 3.40,-6.80"/><polyline points="-3.40,3.40 3.40,-1.70"/></g><g transform="translate(184.16 22.50) rotate(15.0)"><polyline points="-3.40,8.50 -3.40,-8.50 3.40,-1.70 3.40,8.50"/></g><g transform="translate(216.00 35.68) rotate(30.0)"><polyline points="-2.55,-8.50 -2.55,8.50"/><polyline points="-2.55,-3.40 2.55,0.00 -2.55,3.40"/></g><g transform="translate(243.34 56.66) rotate(45.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="-3.40,-8.50 3.40,-3.40"/><polyline points="-3.40,-3.40 3.40,1.70"/></g><g transform="translate(264.32 84.00) rotate(60.0)"><polyline points="-3.40,8.50 -3.40,-8.50 3.40,-4.25 -3.40,0.00 3.40,8.50"/></g><g transform="translate(277.50 115.84) rotate(75.0)"><polyline points="3.40,-5.10 -3.40,0.00 3.40,5.10"/></g><g transform="translate(282.00 150.00) rotate(90.0)"><polyline points="-4.25,-8.50 4.25,8.50"/><polyline points="4.25,-8.50 -4.25,8.50"/></g><g transform="translate(277.50 184.16) rotate(105.0)"><polyline points="-3.40,8.50 -3.40,-8.50 3.40,-4.25 -3.40,0.00"/></g><g transform="translate(264.32 216.00) rotate(120.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="3.40,-8.50 3.40,8.50"/><polyline points="-3.40,-3.40 3.40,3.40"/></g><g transform="translate(243.34 243.34) rotate(135.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="-3.40,-3.40 3.40,3.40"/></g><g transform="translate(216.00 264.32) rotate(150.0)"><polyline points="0.00,-8.50 0.00,8.50"/></g><g transform="translate(184.16 277.50) rotate(165.0)"><polyline points="0.85,-6.80 -3.40,-2.55 0.85,1.70"/><polyline points="-0.85,-1.70 3.40,2.55 -0.85,6.80"/></g><g transform="translate(150.00 282.00) rotate(180.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="0.00,-8.50 3.40,-5.10"/><polyline points="0.00,8.50 -3.40,5.10"/></g><g transform="translate(115.84 277.50) rotate(195.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="-3.40,-8.50 1.70,-3.40 3.40,-6.80"/><polyline points="-3.40,8.50 1.70,3.40 3.40,6.80"/></g><g transform="translate(84.00 264.32) rotate(210.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="-3.40,-6.80 0.00,-1.70 3.40,-6.80"/></g><g transform="translate(56.66 243.34) rotate(225.0)"><polyline points="1.70,-8.50 -3.40,-3.40 3.40,3.40 -1.70,8.50"/></g><g transform="translate(35.68 216.00) rotate(240.0)"><polyline points="0.00,-8.50 0.00,8.50"/><polyline points="-3.40,-3.40 0.00,-8.50 3.40,-3.40"/></g><g transform="translate(22.50 184.16) rotate(255.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="-3.40,-8.50 3.40,-4.25 -3.40,0.00 3.40,4.25 -3.40,8.50"/></g><g transform="translate(18.00 150.00) rotate(270.0)"><polyline points="-3.40,8.50 -3.40,-8.50 0.00,-3.40 3.40,-8.50 3.40,8.50"/></g><g transform="translate(22.50 115.84) rotate(285.0)"><polyline points="-3.40,-8.50 -3.40,8.50"/><polyline points="3.40,-8.50 3.40,8.50"/><polyline points="-3.40,-8.50 3.40,-1.70"/><polyline points="3.40,-8.50 -3.40,-1.70"/></g><g transform="translate(35.68 84.00) rotate(300.0)"><polyline points="-2.55,8.50 -2.55,-8.50 2.55,-3.40"/></g><g transform="translate(56.66 56.66) rotate(315.0)"><polyline points="0.00,-5.10 3.40,0.00 0.00,5.10 -3.40,0.00 0.00,-5.10"/></g><g transform="translate(84.00 35.68) rotate(330.0)"><polyline points="-3.40,8.50 3.40,0.85 0.00,-4.25 -3.40,0.85 3.40,8.50"/></g><g transform="translate(115.84 22.50) rotate(345.0)"><polyline points="-3.40,-8.50 3.40,8.50 3.40,-8.50 -3.40,8.50 -3.40,-8.50"/></g><g class="bind" stroke-width="2.2"><line x1="150.00" y1="75.00" x2="98.28" y2="126.72"/><line x1="150.00" y1="75.00" x2="201.72" y2="126.72"/><line x1="98.28" y1="126.72" x2="177.93" y2="206.38"/><line x1="201.72" y1="126.72" x2="122.07" y2="206.38"/><line x1="150.00" y1="75.00" x2="150.00" y2="225.00"/><line x1="110.84" y1="114.16" x2="150.00" y2="153.31"/><line x1="150.00" y1="122.59" x2="177.93" y2="150.52"/><line x1="122.07" y1="150.52" x2="122.07" y2="206.38"/><line x1="177.93" y1="150.52" x2="177.93" y2="206.38"/></g></svg></div>
   </div>
 
-  <!-- 1b. Экран участника (вместо первого экрана) -->
+  <!-- 1b. Личный кабинет (участник, вместо первого экрана) -->
   <div class="me" id="me" hidden>
-    <div class="lbl">Твой статус в клубе</div>
+    <div class="lbl">Твой статус</div>
     <h1 id="me-rank">—</h1>
     <p class="sub" id="me-pct"></p>
     <div class="me-stats">
-      <div class="ms"><b id="ms-inv">—</b><span>приглашено друзей</span></div>
-      <div class="ms"><b id="ms-fb">—</b><span>из них с покупкой</span></div>
-      <button class="ms ms-btn" type="button" id="ms-art-btn" aria-expanded="false" aria-controls="hist"><b id="ms-art">—</b><span>артефактов куплено <i class="hist-ico">История ▾</i></span></button>
-      <div class="ms"><b id="ms-sum">—</b><span>общая сумма покупок</span></div>
-      <div class="ms"><b id="ms-pct">—</b><span>текущая скидка</span></div>
+      <div class="ms"><b id="ms-pct">—</b><span>постоянная скидка</span></div>
       <div class="ms"><b id="ms-jc" class="gold">—</b><span>баланс ЙотунКоинов</span></div>
+      <div class="ms"><b id="ms-inv">—</b><span>твои приглашения</span></div>
+      <div class="ms"><b id="ms-fb">—</b><span>покупки приглашённых</span></div>
+      <div class="ms"><b id="ms-sum">—</b><span>общая сумма покупок</span></div>
+      <button class="ms ms-btn" type="button" id="ms-art-btn" aria-expanded="false" aria-controls="hist"><b id="ms-art">—</b><span>артефактов куплено <i class="hist-ico">История ▾</i></span></button>
     </div>
     <div class="hist" id="hist" hidden></div>
-    <p class="me-note">Покупки засчитываются через 14 дней после оплаты.</p>
+    <p class="me-note">Информация обновляется по мере подтверждения покупок и начисления бонусов.</p>
     <div class="me-next" id="me-next"></div>
     <div class="me-ref">
-      <div class="lbl">Твоя ссылка для друзей</div>
+      <div class="lbl">Твоя ссылка-приглашение</div>
       <div class="ref-row" id="ref-row"><span class="ref-state">Обновляем ссылку…</span></div>
-      <div class="ref-hint">Ссылка действует 48 часов с момента, как ты её скопировал. Другу — скидка 15% на первый артефакт от 10 000 ₽ или 5 000 ₽ на консультацию.</div>
+      <div class="ref-hint">Ссылка действует 48 часов с момента копирования. Другу — скидка 15% на первый артефакт от 10 000 ₽ или скидка 5 000 ₽ на консультацию.</div>
     </div>
     <div class="actions">
-      <button class="btn" type="button" id="me-open">▶ Открыть кабинет</button>
+      <button class="btn" type="button" id="me-open">▶ Открыть личный кабинет</button>
       <a class="link-btn" href="#ranks">Посмотреть привилегии</a>
     </div>
   </div>
 
-  <!-- 2. Как это работает -->
+  <!-- 2. Как работает клуб -->
   <section id="how" class="fade">
     <div class="sec-head">
-      <div><div class="lbl">Как это работает</div><h2>Три шага</h2></div>
-      <p>Ранг растёт через твои покупки или через приглашения — достаточно одного из двух путей.</p>
+      <div><div class="lbl">Как работает клуб</div><h2>Три шага к новым привилегиям</h2></div>
+      <p>Статус растёт за твои покупки или за покупки приглашённых — достаточно одного из двух путей.</p>
     </div>
     <div class="steps">
       <div class="step">
         <div class="num">01</div>
-        <h3>Войди в клуб</h3>
-        <p>Создай личный кабинет при оформлении заказа или войди в уже созданный.</p>
-        <span class="cond">Ранг Мини-Йотун и скидка 3% действуют с первой покупки.</span>
+        <h3>Стань участником</h3>
+        <p>Совершай покупки в Йотунхейме и получай свой первый статус в клубе.</p>
+        <span class="cond">Отметь «Создать кабинет» при оформлении заказа — статус Мини-Йотун и скидка 3% с первой покупки.</span>
       </div>
       <div class="step">
         <div class="num">02</div>
-        <h3>Приглашай друзей</h3>
-        <p>Делись личной реферальной ссылкой с теми, кому интересен Йотунхейм.</p>
-        <span class="cond">Ссылка действует 48 часов. Другу — скидка 15% на первый артефакт от 10 000 ₽ или 5 000 ₽ на консультацию; скидка хранится в его кабинете 7 дней.</span>
+        <h3>Открывай новые возможности</h3>
+        <p>Твои покупки и покупки приглашённых тобой участников помогают открыть следующий статус. С каждым новым статусом доступны дополнительные преимущества.</p>
       </div>
       <div class="step">
         <div class="num">03</div>
-        <h3>Открывай новые привилегии</h3>
-        <p>Повышай ранг покупками и приглашениями — с каждым рангом открываются новые преимущества.</p>
-        <span class="cond">За каждого друга с первой покупкой от 10 000 ₽ — от 1 000 до 3 000 ЙотунКоинов в зависимости от твоего ранга, через 14 дней после его оплаты.</span>
+        <h3>Пользуйся преимуществами</h3>
+        <p>Получай постоянную скидку, накапливай ЙотунКоины и используй доступные привилегии при следующих заказах.</p>
       </div>
     </div>
   </section>
 
-  <!-- 3. Ранги -->
+  <!-- 3. Статусы -->
   <section id="ranks" class="fade">
     <div class="sec-head">
-      <div><div class="lbl">Ранги и привилегии</div><h2>Восемь рангов</h2></div>
-      <p>Каждый ранг сохраняет привилегии предыдущих. Полученный ранг остаётся навсегда.</p>
+      <div><div class="lbl">Твой статус</div><h2>У каждого статуса свои преимущества</h2></div>
+      <p>В клубе восемь статусов. Каждый следующий открывает новые возможности, сохраняя привилегии, полученные ранее, — а на вершине ждёт подарок на 1 000 000 ₽. Выбери статус, чтобы узнать, что он открывает и что нужно для его получения.</p>
     </div>
     <ul class="ranks" id="ranks-list"></ul>
+    <p class="tbl-note">Текущий статус и доступные преимущества отображаются в личном кабинете.</p>
   </section>
 
   <!-- 4. ЙотунКоины -->
   <section id="coins" class="fade">
     <div class="sec-head">
-      <div><div class="lbl">Валюта клуба</div><h2>ЙотунКоины (<span class="jc">JC</span>)</h2></div>
-      <p>Накапливаются в личном кабинете и оплачивают часть следующего заказа.</p>
+      <div><div class="lbl">ЙотунКоины (<span class="jc">JC</span>)</div><h2>Бонусы, которые работают на следующие покупки</h2></div>
+      <p>ЙотунКоины — внутренняя бонусная валюта клуба. Получай их за покупки приглашённых участников и в подарок при открытии статусов, используй для оплаты следующих заказов.</p>
     </div>
-    <div class="coins">
-      <div class="coin-c"><b>1 <span class="jc">JC</span> = 1 ₽</b><span>Курс фиксированный</span></div>
+    <div class="coins coins3">
+      <div class="coin-c"><b>1 <span class="jc">JC</span> = 1 ₽</b><span>фиксированный курс</span></div>
+      <div class="coin-c"><b>1 000 – 3 000 <span class="jc">JC</span></b><span>за покупку приглашённого участника — в зависимости от твоего статуса</span></div>
       <div class="coin-c"><b>до 50%</b><span>следующего заказа можно оплатить ЙотунКоинами</span></div>
-      <div class="coin-c"><b>Друзья и ранги</b><span>Начисляются за приглашённых друзей с покупкой и в подарок за ранги — там, где это предусмотрено</span></div>
-      <div class="coin-c"><b>12 месяцев</b><span>срок действия; ЙотунКоины из игр — до конца календарного месяца</span></div>
     </div>
+    <p class="tbl-note" style="text-align:left">Бонус за подходящую покупку приглашённого участника начисляется один раз — после 14 дней с момента оплаты. Баланс и срок действия бонусов видны в личном кабинете.</p>
     <details class="more">
-      <summary>Правила ЙотунКоинов</summary>
+      <summary>Как работают ЙотунКоины</summary>
       <div class="ans">
         <ul class="rules-list">
           <li>1 ЙотунКоин = 1 ₽. ЙотунКоинами можно оплатить не больше 50% суммы заказа.</li>
-          <li>За приглашённого друга ЙотунКоины начисляются один раз — после его первой оплаченной покупки от 10 000 ₽, через 14 дней после оплаты. Сумма зависит от твоего ранга на момент начисления.</li>
-          <li>Подарочные ЙотунКоины за ранг начисляются один раз при получении ранга.</li>
-          <li>ЙотунКоины за друзей и ранги действуют 12 месяцев с даты начисления.</li>
-          <li>ЙотунКоины из игр Йотунхейма начисляются только участникам клуба, действуют до конца календарного месяца; не больше 500 в неделю и 2 000 в месяц.</li>
+          <li>За приглашённого участника ЙотунКоины начисляются один раз — после его первой оплаченной покупки от 10 000 ₽, через 14 дней после оплаты. Сумма зависит от твоего статуса на момент начисления.</li>
+          <li>Подарочные ЙотунКоины за статус начисляются один раз при его получении.</li>
+          <li>ЙотунКоины за приглашённых и за статусы действуют 12 месяцев с даты начисления.</li>
+          <li>ЙотунКоины из игр Йотунхейма начисляются только участникам клуба и действуют до конца календарного месяца — не больше 500 в неделю и 2 000 в месяц.</li>
         </ul>
       </div>
     </details>
   </section>
 
-  <!-- 5. FAQ -->
+  <!-- 5. Приглашай своих -->
+  <section id="invite" class="fade">
+    <div class="sec-head">
+      <div><div class="lbl">Приглашай своих</div><h2>Делись Йотунхеймом и получай бонусы</h2></div>
+      <p>У каждого участника есть персональная ссылка для приглашения. Отправь её тому, кому могут быть близки артефакты и практики Йотунхейма.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <h3>Твой друг получает на выбор</h3>
+        <ul class="plain">
+          <li>Скидку 15% на первый артефакт стоимостью от 10 000 ₽</li>
+          <li>Скидку 5 000 ₽ на консультацию</li>
+        </ul>
+      </div>
+      <div class="step">
+        <h3>Ты получаешь</h3>
+        <ul class="plain">
+          <li>ЙотунКоины за подходящую покупку приглашённого участника</li>
+          <li>Прогресс к следующему статусу</li>
+          <li>Возможность открывать новые привилегии клуба</li>
+        </ul>
+      </div>
+      <div class="step">
+        <h3>Как воспользоваться приглашением</h3>
+        <ol class="plain">
+          <li>Скопируй персональную ссылку в личном кабинете.</li>
+          <li>Отправь её другу.</li>
+          <li>Друг зарегистрируется по ссылке и воспользуется предложением в течение 7 дней после регистрации.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="tbl-note" style="text-align:left">Ссылка действует 48 часов с момента копирования. Условия применения скидки и начисления бонусов — в правилах клуба.</p>
+    <div class="actions"><button class="btn" type="button" data-cab-ref hidden>▶ Получить свою ссылку</button></div>
+  </section>
+
+  <!-- 7. FAQ -->
   <section id="faq" class="fade">
     <div class="sec-head">
-      <div><div class="lbl">Вопросы и ответы</div><h2>Коротко о главном</h2></div>
+      <div><div class="lbl">Частые вопросы</div><h2>Коротко о главном</h2></div>
       <p>Сроки, ограничения и совместимость бонусов.</p>
     </div>
     <div class="faq">
-      <details><summary>Как вступить в Клуб Йотунов?</summary><div class="ans"><p>Отметь «Создать кабинет» при оформлении заказа. После первой покупки у тебя ранг Мини-Йотун и постоянная скидка 3% на всю продукцию.</p></div></details>
-      <details><summary>Как повысить свой ранг?</summary><div class="ans"><p>Двумя путями — достаточно любого: через собственные покупки на общую сумму или через приглашённых друзей, каждый из которых оплатил заказ не меньше указанной суммы. Условия каждого ранга — в разделе «Восемь рангов». Покупки засчитываются через 14 дней после оплаты.</p></div></details>
-      <details><summary>Когда начисляются бонусы за приглашённых друзей?</summary><div class="ans"><p>Через 14 дней после оплаты первой покупки друга от 10 000 ₽ — это срок возврата. За каждого друга бонус начисляется один раз. Сумма — от 1 000 до 3 000 ЙотунКоинов, в зависимости от твоего ранга.</p></div></details>
-      <details><summary>Как долго действует реферальная ссылка?</summary><div class="ans"><p>48 часов с момента, когда ты её скопировал. Время считается одинаково для всех, часовой пояс и регион друга на срок не влияют. Новая ссылка появляется в кабинете сама — обновлять её вручную не нужно.</p></div></details>
-      <details><summary>Какие условия действуют для скидки приглашённого участника?</summary><div class="ans"><p>Друг выбирает одно: скидку 15% на первый артефакт стоимостью от 10 000 ₽ или 5 000 ₽ на консультацию. Скидка действует 7 дней после регистрации по ссылке, только на первый заказ и только один раз. Свою ссылку использовать нельзя.</p></div></details>
-      <details><summary>Когда начинают начисляться ЙотунКоины?</summary><div class="ans"><p>После выполнения условий: за первую покупку приглашённого друга от 10 000 ₽ и в подарок за ранги, где это предусмотрено. При вступлении в клуб ЙотунКоины не начисляются.</p></div></details>
-      <details><summary>Как долго действуют ЙотунКоины?</summary><div class="ans"><p>12 месяцев с даты начисления. ЙотунКоины из игр — до конца календарного месяца.</p></div></details>
-      <details><summary>Можно ли совмещать скидки и оплату ЙотунКоинами?</summary><div class="ans"><p>Да: скидка ранга и оплата ЙотунКоинами работают вместе, ЙотунКоины покрывают до 50% заказа. Промокоды из игр участникам клуба не суммируются со скидкой ранга.</p></div></details>
+      <details><summary>Как получить первый статус?</summary><div class="ans"><p>После первой покупки ты становишься участником клуба и получаешь статус Мини-Йотун с постоянной скидкой 3%. Для этого отметь «Создать кабинет» при оформлении заказа.</p></div></details>
+      <details><summary>Как открыть следующий статус?</summary><div class="ans"><p>Статус повышается при выполнении одного из условий: по собственным покупкам или по покупкам приглашённых участников. Точные условия — в карточке каждого статуса. Покупки засчитываются через 14 дней после оплаты.</p></div></details>
+      <details><summary>Сохраняются ли предыдущие привилегии?</summary><div class="ans"><p>Да. При открытии нового статуса все ранее полученные привилегии сохраняются, а сам статус остаётся с тобой навсегда.</p></div></details>
+      <details><summary>Как работает скидка для приглашённого друга?</summary><div class="ans"><p>Друг получает скидку 15% на первый артефакт стоимостью от 10 000 ₽ или скидку 5 000 ₽ на консультацию. Предложение действует 7 дней после регистрации по твоей ссылке — один раз, на первый заказ.</p></div></details>
+      <details><summary>Когда начисляются ЙотунКоины?</summary><div class="ans"><p>Бонус за подходящую покупку приглашённого участника начисляется через 14 дней после оплаты. Размер бонуса зависит от твоего статуса — от 1 000 до 3 000 <span class="jc">JC</span>.</p></div></details>
+      <details><summary>Можно ли оплатить заказ ЙотунКоинами полностью?</summary><div class="ans"><p>Нет. ЙотунКоинами можно оплатить до 50% следующего заказа. Один ЙотунКоин равен одному рублю.</p></div></details>
+      <details><summary>Как долго действуют бонусы?</summary><div class="ans"><p>ЙотунКоины за покупки приглашённых участников и за статусы действуют 12 месяцев. Игровые бонусы действуют до конца календарного месяца.</p></div></details>
+      <details><summary>Где посмотреть все условия?</summary><div class="ans"><p>Полные правила клуба, условия получения статусов, начисления бонусов и использования скидок — в разделе <a href="#rules" data-open-rules>правил клуба</a>.</p></div></details>
     </div>
   </section>
 
-  <!-- 6. Полные правила -->
+  <!-- Полные правила -->
   <section id="rules" class="fade" style="padding-top:40px">
-    <details class="more">
-      <summary>Полные правила программы</summary>
+    <details class="more" id="rules-d">
+      <summary>Правила клуба</summary>
       <div class="ans">
         <ol class="rules-list">
           <li>Участником клуба становится покупатель, создавший личный кабинет и оплативший хотя бы один заказ.</li>
-          <li>Ранг определяется по одному из двух путей: сумме собственных покупок или числу приглашённых друзей, каждый из которых оплатил заказ не меньше суммы, указанной для ранга. Покупки и друзья засчитываются через 14 дней после оплаты.</li>
-          <li>Полученный ранг сохраняется навсегда. Привилегии предыдущих рангов сохраняются; подарки за ранг выдаются один раз.</li>
-          <li>Реферальная ссылка действует 48 часов; часовой пояс на срок не влияет. Скидка приглашённого — на первый оплаченный заказ, 7 дней после регистрации, один раз на человека. Совпадения почты, телефона и Telegram с пригласившим проверяются.</li>
-          <li>Скидка ранга и оплата ЙотунКоинами совмещаются; ЙотунКоины покрывают не больше 50% заказа. Промокоды из игр не суммируются со скидкой ранга.</li>
+          <li>Статус определяется по одному из двух путей: сумме собственных покупок или числу приглашённых участников, каждый из которых оплатил заказ не меньше суммы, указанной для статуса. Покупки засчитываются через 14 дней после оплаты.</li>
+          <li>Полученный статус сохраняется навсегда. Привилегии предыдущих статусов сохраняются; подарки за статус выдаются один раз.</li>
+          <li>Реферальная ссылка действует 48 часов с момента копирования; часовой пояс на срок не влияет. Скидка приглашённого — на первый оплаченный заказ, 7 дней после регистрации, один раз на человека. Совпадения почты, телефона и Telegram с пригласившим проверяются.</li>
+          <li>Скидка статуса и оплата ЙотунКоинами совмещаются; ЙотунКоины покрывают не больше 50% заказа. Промокоды из игр не суммируются со скидкой статуса.</li>
         </ol>
         <p style="margin-top:12px">Юридические условия: <a href="../legal/oferta.html">оферта</a>, <a href="../legal/privacy.html">политика конфиденциальности</a>.</p>
       </div>
     </details>
   </section>
 
+  <!-- 8. Финал -->
+  <div class="final fade">
+    <h2>Твой следующий статус ближе, чем кажется</h2>
+    <p>Пользуйся привилегиями клуба, приглашай своих и открывай новые возможности в Йотунхейме.</p>
+    <div class="actions" style="justify-content:center"><button class="btn" type="button" data-cab hidden>▶ Войти в личный кабинет</button></div>
+    <p class="tagline">Клуб Йотунов. Привилегии, которые остаются с тобой.</p>
+  </div>
+
   <footer class="foot"><span>Jotunheim / Клуб Йотунов</span><a href="../">tasha-jotunheim.com</a></footer>
 </div>
 
-<script src="program.js?v=12" charset="utf-8"></script>
+<script src="program.js?v=13" charset="utf-8"></script>
 <script src="../assets/js/account.js?v=8" charset="utf-8"></script>
 </body>
 </html>

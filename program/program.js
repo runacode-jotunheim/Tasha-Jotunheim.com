@@ -44,8 +44,11 @@ function allPerks(i){
 
 function body(i, me){
   var r = RANKS[i], h = '';
-  // как перейти
-  h += '<div class="r-blk"><h4>Как перейти на этот уровень</h4><ul>';
+  // ключевое: скидка и бонус за приглашённого
+  h += '<div class="r-keys"><div class="r-key"><b>' + r.pct + '%</b><span>постоянная скидка на всю продукцию</span></div>' +
+       '<div class="r-key"><b class="gold">+' + num(r.friendJC) + ' ' + JC + '</b><span>за покупку приглашённого участника от 10 000 ₽</span></div></div>';
+  // как открыть
+  h += '<div class="r-blk"><h4>Как открыть статус</h4><ul>';
   if(r.first) h += li('Сделай первую покупку на нашем сайте с личным кабинетом');
   else {
     h += li('<b>Пригласи ' + r.friends[0] + ' ' + plural(r.friends[0], 'друга', 'друга', 'друзей') + '</b>, каждый из которых совершит покупку от ' + rub(r.friends[1]) + ' на нашем сайте');
@@ -54,12 +57,11 @@ function body(i, me){
       (r.ownPlus ? ' и пригласи ' + r.ownPlus[0] + ' ' + plural(r.ownPlus[0], 'друга', 'друга', 'друзей') + ', каждый из которых совершит покупку от ' + rub(r.ownPlus[1]) : ''));
   }
   h += '</ul>' + progress(i, me) + '</div>';
-  // постоянно
-  h += '<div class="r-blk"><h4>Остаётся с тобой постоянно</h4><ul>' + allPerks(i).map(li).join('') + '</ul><div class="note">Уровень не сгорает.</div></div>';
-  // подарки (только если есть)
-  if(r.gifts.length) h += '<div class="r-blk"><h4>Подарки при переходе</h4><ul>' + r.gifts.map(li).join('').replace(/JC/g, JC) + '</ul><div class="note">Доступны 1 раз — при открытии новой ступени развития.</div></div>';
-  // ЙотунКоины за друзей
-  h += '<div class="r-blk"><h4>ЙотунКоины</h4><ul>' + li('<b>+' + num(r.friendJC) + ' ' + JC + '</b> за каждого друга от тебя, совершившего покупку на сайте на сумму от 10 000 ₽') + '</ul><div class="note">Зачисляются через 14 дней после оплаты друга.</div></div>';
+  // твои преимущества
+  var perks = allPerks(i).slice(1);
+  h += '<div class="r-blk"><h4>Твои преимущества</h4><ul>' + li('<b>Постоянная скидка ' + r.pct + '%</b>: артефакты, ритуалы, консультации') + perks.map(li).join('') + '</ul><div class="note">Все привилегии предыдущих статусов сохраняются. Статус не сгорает.</div></div>';
+  // подарок (только если есть)
+  if(r.gifts.length) h += '<div class="r-blk"><h4>Подарок при получении статуса</h4><ul>' + r.gifts.map(li).join('').replace(/JC/g, JC) + '</ul><div class="note">Доступен 1 раз — при открытии новой ступени развития.</div></div>';
   return '<div class="r-in">' + h + '</div>';
 }
 
@@ -86,7 +88,7 @@ function render(){
   var cur = meData && meData.rank ? meData.rank.index : -1;
   list.innerHTML = RANKS.map(function(r, i){
     var tag = '';
-    if(cur === i) tag = '<span class="r-tag">Твой ранг</span>';
+    if(cur === i) tag = '<span class="r-tag">Твой статус</span>';
     else if(cur > i) tag = '<span class="r-tag done">Достигнут</span>';
     else if(cur >= 0 && i === cur + 1) tag = '<span class="r-tag">Следующий</span>';
     return '<li class="rank' + (cur === i ? ' cur' : '') + '" data-i="' + i + '">' +
@@ -222,10 +224,11 @@ function showMember(me){
   if(g) g.hidden = true; m.hidden = false;
   var st = me.stats || {}, pct = me.rank ? me.rank.pct : 0;
   document.getElementById('me-rank').textContent = me.rank ? me.rank.name : '—';
-  document.getElementById('me-pct').textContent = 'Скидка ' + pct + '% на всю продукцию — постоянно.';
+  document.getElementById('me-pct').textContent = 'Постоянная скидка ' + pct + '% на всю продукцию.';
   document.getElementById('ms-inv').textContent = num(st.invited || 0);
-  setLbl('ms-inv', plural(st.invited || 0, 'друг приглашён', 'друга приглашено', 'друзей приглашено'));
+  setLbl('ms-inv', plural(st.invited || 0, 'приглашённый участник', 'приглашённых участника', 'приглашённых участников'));
   document.getElementById('ms-fb').textContent = num(st.friendsBought || 0);
+  setLbl('ms-fb', plural(st.friendsBought || 0, 'приглашённый с покупкой', 'приглашённых с покупкой', 'приглашённых с покупкой'));
   document.getElementById('ms-art').textContent = num(st.ownArtifacts || 0);
   var al = document.querySelector('#ms-art-btn > span'); if(al) al.firstChild.nodeValue = plural(st.ownArtifacts || 0, 'артефакт куплен ', 'артефакта куплено ', 'артефактов куплено ');
   document.getElementById('ms-sum').textContent = fmtRub(st.ownSum);
@@ -233,8 +236,8 @@ function showMember(me){
   document.getElementById('ms-jc').innerHTML = num((me.jc && me.jc.balance) || 0) + ' ' + JC;
   var nx = document.getElementById('me-next');
   if(me.next && RANKS[me.next.rank]){
-    nx.innerHTML = '<h4>Следующий ранг</h4><div class="nm">' + RANKS[me.next.rank].name + '</div>' + progress(me.next.rank, me);
-  } else nx.innerHTML = '<h4>Ранг</h4><div class="nm">Высший ранг клуба</div>';
+    nx.innerHTML = '<h4>До следующего статуса</h4><div class="nm">' + RANKS[me.next.rank].name + '</div>' + progress(me.next.rank, me);
+  } else nx.innerHTML = '<h4>Статус</h4><div class="nm">Высший статус клуба</div>';
   document.getElementById('me-open').onclick = window.JotunAccount.open;
   wireHistory();
   loadRef();
@@ -303,9 +306,10 @@ function wire(){
   var A = window.JotunAccount;
   if(A && A.enabled){
     [].forEach.call(document.querySelectorAll('[data-cab]'), function(b){
-      b.hidden = false; b.textContent = A.me ? 'Открыть кабинет' : 'Войти в кабинет'; b.onclick = A.open;
+      b.hidden = false; b.textContent = (b.classList.contains('btn') ? '▶ ' : '') + (A.me ? 'Открыть личный кабинет' : 'Войти в личный кабинет'); b.onclick = A.open;
     });
-    if(A.me && A.me !== meData){ meData = A.me; render(); if(preview === null && A.me.rank) applyRank(A.me.rank.index); showMember(A.me); }
+    [].forEach.call(document.querySelectorAll('[data-cab-ref]'), function(b){ b.hidden = false; b.onclick = A.open; });
+    if(A.me && A.me !== meData){ meData = A.me; render(); if(preview === null && A.me.rank) applyRank(A.me.rank.index); showMember(A.me); if(innerWidth < 860 && openIdx < 0) setOpen(A.me.rank.index, true); }
     if(!A.me && tries < 30){ tries++; setTimeout(wire, 700); }
     return;
   }
@@ -313,3 +317,6 @@ function wire(){
 }
 wire();
 })();
+
+/* ссылка «правила клуба» в FAQ раскрывает правила */
+(function(){ var l = document.querySelector('[data-open-rules]'), d = document.getElementById('rules-d'); if(l && d) l.addEventListener('click', function(){ d.open = true; }); })();

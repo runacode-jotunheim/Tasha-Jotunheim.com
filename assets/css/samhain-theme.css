@@ -35,21 +35,38 @@ html.samhain .wm-gl{stroke:#ff7a1a!important;opacity:.22!important;stroke-width:
 html.samhain .wm-hi{stroke:rgba(255,150,60,.25)!important}
 html.samhain .frame{box-shadow:inset 0 0 0 1px rgba(255,140,40,.25),inset 0 0 60px rgba(255,100,20,.08)}
 
-/* призраки */
-.sm-ghost{position:absolute;opacity:0;filter:blur(.5px) drop-shadow(0 0 14px rgba(255,255,255,.6));animation:smGhost 8.5s ease-in-out forwards}
-.sm-ghost svg{display:block;width:100%;height:auto}
-.sm-ghost.l{left:-70px}
-.sm-ghost.r{right:-70px}
+/* призрак (кликабельный, над контентом) */
+#sm-ghosts{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden}
+.sm-ghost{position:absolute;opacity:0;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 12px rgba(255,255,255,.55));animation:smGhost 9s ease-in-out forwards;-webkit-tap-highlight-color:transparent}
+.sm-ghost svg{display:block;width:100%;height:auto;animation:smBob 2.2s ease-in-out infinite}
+.sm-ghost.l{left:-90px}
+.sm-ghost.r{right:-90px}
 .sm-ghost.r svg{transform:scaleX(-1)}
+.sm-ghost.r svg{animation-name:smBobR}
+.sm-ghost.talk{animation-play-state:paused}
+.sm-ghost.bye{animation:smGhostBye 1.2s ease-in forwards}
 @keyframes smGhost{
-  0%{opacity:0;transform:translate(0,0) rotate(0)}
-  18%{opacity:.55;transform:translate(var(--dx),-6px) rotate(4deg)}
-  45%{opacity:.48;transform:translate(calc(var(--dx) * 1.1),6px) rotate(-3deg)}
-  70%{opacity:.52;transform:translate(var(--dx),-4px) rotate(3deg)}
-  100%{opacity:0;transform:translate(0,0) rotate(0)}
+  0%{opacity:0;transform:translateX(0)}
+  14%{opacity:.82;transform:translateX(var(--dx))}
+  50%{opacity:.78;transform:translateX(calc(var(--dx) * 1.08))}
+  86%{opacity:.82;transform:translateX(var(--dx))}
+  100%{opacity:0;transform:translateX(0)}
 }
-@media (prefers-reduced-motion:reduce){.sm-ghost{display:none}}
+@keyframes smGhostBye{from{opacity:.82;transform:translateX(var(--dx))}to{opacity:0;transform:translateX(0)}}
+@keyframes smBob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+@keyframes smBobR{0%,100%{transform:scaleX(-1) translateY(0) rotate(-3deg)}50%{transform:scaleX(-1) translateY(-7px) rotate(3deg)}}
+.sm-say{position:absolute;bottom:88%;width:210px;padding:10px 13px;background:#fff;color:#1a0d0d;border-radius:16px;font:600 14px/1.35 Georgia,'Times New Roman',serif;text-align:left;box-shadow:0 4px 18px rgba(0,0,0,.45);opacity:0;transform:scale(.6);transition:opacity .25s,transform .25s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
+.sm-say::after{content:'';position:absolute;top:100%;border:9px solid transparent;border-top-color:#fff}
+.sm-ghost.l .sm-say{left:62%;transform-origin:0 100%}
+.sm-ghost.l .sm-say::after{left:16px;border-left-color:#fff}
+.sm-ghost.r .sm-say{right:62%;transform-origin:100% 100%}
+.sm-ghost.r .sm-say::after{right:16px;border-right-color:#fff}
+.sm-ghost.talk .sm-say{opacity:1;transform:scale(1)}
+@media(max-width:700px){.sm-say{width:170px;font-size:13px}}
+@media (prefers-reduced-motion:reduce){.sm-ghost svg{animation:none}}
 
 /* бордовый: песочные часы и портреты создателей */
 html.samhain #hourglassCanvas{filter:url(#smWine) drop-shadow(0 0 6px rgba(255,122,26,.45))}
 html.samhain .about-photo-slot img{filter:url(#smWine)}
+/* курсор-спрайт: зелёный → оранжевый */
+html.samhain .cursor-sprite{filter:hue-rotate(-95deg) saturate(1.4)}

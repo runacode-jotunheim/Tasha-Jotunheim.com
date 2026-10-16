@@ -162,20 +162,46 @@ function tick(t){
 
 
 
-/* ── призраки: изредка выглядывают из-за деревьев по краям ── */
-var ghostT = 0;
-var GHOST = '<svg viewBox="0 0 60 80" aria-hidden="true"><path d="M30 3C15 3 6 15 6 31v40l6-6 6 7 6-7 6 7 6-7 6 7 6-7 6 6V31C54 15 45 3 30 3z" fill="rgba(255,255,255,.9)"/><ellipse cx="22" cy="30" rx="4" ry="6" fill="rgba(20,10,10,.55)"/><ellipse cx="38" cy="30" rx="4" ry="6" fill="rgba(20,10,10,.55)"/><ellipse cx="30" cy="46" rx="4" ry="5" fill="rgba(20,10,10,.35)"/></svg>';
+/* ── призрак: выглядывает то слева, то справа; по клику говорит фразу ── */
+var ghostT = 0, ghostLeft = Math.random() < .5, ghostLayer = null, phraseI = Math.floor(Math.random() * 5);
+var PHRASES = [
+  'Бу! Завеса между мирами сегодня тоньше паутинки…',
+  'Зажги свечу в окне — чтобы свои нашли дорогу домой.',
+  'Мёртвые не забыты. Я, например, заглянул в гости!',
+  'Благословен будь! Пусть урожай наполнит твоё сердце.',
+  'Счастливого Самайна! Только не пугайся — я добрый.'
+];
+var GHOST = '<svg viewBox="0 0 80 100" aria-hidden="true">'
+  + '<path d="M12 38C12 16 26 4 40 4s28 12 28 34c0 20-6 34-14 44-6 8-14 12-24 15 6-8 8-14 4-19C22 72 12 58 12 38z" fill="#fff"/>'
+  + '<path d="M16 54c-9-2-12-9-9-14 4 5 8 7 12 8z" fill="#fff"/>'
+  + '<ellipse cx="30" cy="34" rx="5" ry="7" fill="#1b0d0d"/><ellipse cx="50" cy="34" rx="5" ry="7" fill="#1b0d0d"/>'
+  + '<circle cx="31.6" cy="31.5" r="1.7" fill="#fff"/><circle cx="51.6" cy="31.5" r="1.7" fill="#fff"/>'
+  + '<ellipse cx="23" cy="45" rx="4" ry="2.4" fill="#ffb3b3" opacity=".55"/><ellipse cx="57" cy="45" rx="4" ry="2.4" fill="#ffb3b3" opacity=".55"/>'
+  + '<path d="M34 46q6 7 12 0" fill="none" stroke="#1b0d0d" stroke-width="2.4" stroke-linecap="round"/></svg>';
 function spawnGhost(){
   if(!scene || !document.documentElement.classList.contains('samhain') || document.hidden) return;
-  var left = Math.random() < .5, g = document.createElement('div');
-  var size = innerWidth < 700 ? 46 + Math.random() * 26 : 60 + Math.random() * 40;
+  if(ghostLayer && ghostLayer.querySelector('.sm-ghost')) return;
+  if(!ghostLayer){ ghostLayer = document.createElement('div'); ghostLayer.id = 'sm-ghosts'; document.body.appendChild(ghostLayer); }
+  ghostLeft = !ghostLeft;
+  var left = ghostLeft, g = document.createElement('div');
+  var size = innerWidth < 700 ? 54 + Math.random() * 16 : 82 + Math.random() * 22;
   g.className = 'sm-ghost ' + (left ? 'l' : 'r');
-  g.style.width = size + 'px'; g.style.top = (18 + Math.random() * 46) + '%';
-  g.style.setProperty('--dx', (left ? 1 : -1) * (size * (.9 + Math.random() * .8)) + 'px');
-  g.innerHTML = GHOST; scene.insertBefore(g, document.getElementById('sm-shade'));
-  setTimeout(function(){ g.remove(); }, 9000);
+  g.style.width = size + 'px'; g.style.top = (22 + Math.random() * 40) + '%';
+  g.style.setProperty('--dx', (left ? 1 : -1) * (size * 1.25) + 'px');
+  g.innerHTML = GHOST + '<div class="sm-say"></div>';
+  g.setAttribute('role', 'button'); g.setAttribute('aria-label', 'Призрак Самайна');
+  var kill = setTimeout(function(){ g.remove(); }, 9000);
+  g.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(g.classList.contains('talk')) return;
+    clearTimeout(kill);
+    g.querySelector('.sm-say').textContent = PHRASES[phraseI++ % PHRASES.length];
+    g.classList.add('talk');
+    setTimeout(function(){ g.classList.remove('talk'); g.classList.add('bye'); setTimeout(function(){ g.remove(); }, 1200); }, 5000);
+  });
+  ghostLayer.appendChild(g);
 }
-function ghostLoop(){ clearTimeout(ghostT); ghostT = setTimeout(function(){ spawnGhost(); ghostLoop(); }, 9000 + Math.random() * 14000); }
+function ghostLoop(){ clearTimeout(ghostT); ghostT = setTimeout(function(){ spawnGhost(); ghostLoop(); }, 10000 + Math.random() * 12000); }
 
 /* перекраска зелёного в оранжевый: копия стилей страницы с заменой цветов + inline-стили */
 var RE = [[/rgba\(\s*0\s*,\s*255\s*,\s*65\s*,/g, 'rgba(255,140,38,'], [/#00ff41/gi, '#ff8c26'], [/#00cc35/gi, '#cc6a12'],
@@ -213,7 +239,7 @@ function apply(on){
     root.classList.remove('samhain'); setRecolor(false);
     root.style.removeProperty('--green'); root.style.removeProperty('--green-dim');
     if(raf){ cancelAnimationFrame(raf); raf = 0; }
-    clearTimeout(ghostT);
+    clearTimeout(ghostT); if(ghostLayer) ghostLayer.innerHTML = '';
   }
   if(window.onSamhainTheme) window.onSamhainTheme(on);
 }

@@ -145,8 +145,10 @@ var TINTS = [
   [255,200,60]  // Бергельмир
 ];
 var tint = TINTS[0];
+var curRank = 0, themeRed = false;
+try{ themeRed = localStorage.getItem('jv_theme') === 'red'; }catch(e){}
 function applyRank(i){
-  i = Math.max(0, Math.min(7, i|0)); tint = TINTS[i];
+  i = Math.max(0, Math.min(7, i|0)); curRank = i; tint = themeRed ? [255,50,50] : TINTS[i];
   document.documentElement.style.setProperty('--tint', tint.join(','));
   var f = document.getElementById('frame');
   if(f) f.className = 'frame' + (i === 7 ? ' f-gold' : i >= 4 ? ' f-hi' : '');
@@ -200,7 +202,7 @@ function applyRank(i){
 })();
 var preview = null;
 try{ var q = new URLSearchParams(location.search).get('rank'); if(q !== null && q !== '') preview = +q; }catch(e){}
-if(preview !== null) applyRank(preview);
+applyRank(preview !== null ? preview : 0);
 
 /* ── плавное появление разделов ── */
 (function(){
@@ -327,3 +329,17 @@ wire();
 });
 
 document.addEventListener('click', function(e){ var l = e.target.closest && e.target.closest('[data-open-rules]'); if(!l) return; var d = document.getElementById('rules-d'); if(d) d.open = true; });
+
+/* ── пилюля: зелёная / красная матрица (как на главной, общий выбор) ── */
+window.togglePills = function(){ var c = document.getElementById('pillChoices'); if(c) c.classList.toggle('open'); };
+window.setTheme = function(t){
+  themeRed = (t === 'red');
+  try{ localStorage.setItem('jv_theme', t); }catch(e){}
+  applyRank(curRank);
+  var c = document.getElementById('pillChoices'); if(c) c.classList.remove('open');
+};
+/* ── кнопка «наверх» ── */
+(function(){
+  var b = document.getElementById('scroll-top-btn'); if(!b) return;
+  addEventListener('scroll', function(){ b.classList.toggle('show', scrollY > 600); }, { passive:true });
+})();

@@ -202,6 +202,24 @@ ul.plain li,ol.plain li{margin-top:6px}
 .gift h2{text-align:center;color:#ffd84a;text-shadow:0 0 16px rgba(255,216,74,0.35)}
 .gift p{margin-top:14px;color:var(--dim);font-size:14.5px}
 
+/* пилюля и «наверх» — как на главной */
+#theme-toggle{position:fixed;bottom:28px;right:28px;z-index:500;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pill-trigger{width:28px;height:54px;border-radius:14px;background:linear-gradient(180deg,#ff2020 50%,#00ff41 50%);border:1px solid rgba(255,255,255,0.3);display:block;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 0 14px rgba(0,255,65,0.25),0 0 14px rgba(255,32,32,0.2);transition:box-shadow .3s}
+.pill-trigger:hover{box-shadow:0 0 22px rgba(0,255,65,0.4),0 0 22px rgba(255,32,32,0.3)}
+.pill-trigger::before{content:'';position:absolute;top:50%;left:2px;right:2px;height:1px;background:rgba(0,0,0,0.45);transform:translateY(-50%)}
+.pill-trigger::after{content:'';position:absolute;left:3px;top:5px;bottom:5px;width:38%;border-radius:8px;background:rgba(255,255,255,0.3);filter:blur(1px)}
+.pill-choices{display:flex;flex-direction:column;gap:8px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .3s,transform .3s}
+.pill-choices.open{opacity:1;pointer-events:auto;transform:translateY(0)}
+.pill-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,0.75);transition:transform .2s}
+.pill-btn:hover{transform:scale(1.12)}
+.pill-icon{width:18px;height:11px;border-radius:50%}
+.pill-icon.green{background:radial-gradient(circle at 35% 30%,#7fffb0,#00ff41 60%,#007a1f)}
+.pill-icon.red{background:radial-gradient(circle at 35% 30%,#ff9090,#ff2020 60%,#7a0f0f)}
+#scroll-top-btn{position:fixed;bottom:28px;left:20px;z-index:500;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,0.85);border:1px solid rgba(var(--tint),0.35);color:rgb(var(--tint));font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(var(--tint),0.15);opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,box-shadow .3s}
+#scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+#scroll-top-btn:hover{box-shadow:0 0 20px rgba(var(--tint),0.35)}
+@media(max-width:520px){#theme-toggle{right:12px;bottom:20px}#scroll-top-btn{width:42px;height:42px;left:12px;bottom:26px}}
+
 @media(max-width:860px){
   .hero{grid-template-columns:1fr;gap:10px}
   .sigil-box{display:none}
@@ -469,7 +487,15 @@ ul.plain li,ol.plain li{margin-top:6px}
   <footer class="foot"><span>Jotunheim / Клуб Йотунов</span><a href="../">tasha-jotunheim.com</a></footer>
 </div>
 
-<script src="program.js?v=15" charset="utf-8"></script>
+<button id="scroll-top-btn" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Наверх">&#9650;</button>
+<div id="theme-toggle">
+  <div class="pill-choices" id="pillChoices">
+    <div class="pill-btn" onclick="setTheme('red')" title="Красная матрица"><div class="pill-icon red"></div></div>
+    <div class="pill-btn" onclick="setTheme('green')" title="Зелёная матрица"><div class="pill-icon green"></div></div>
+  </div>
+  <div class="pill-trigger" onclick="togglePills()"></div>
+</div>
+<script src="program.js?v=16" charset="utf-8"></script>
 <script src="../assets/js/account.js?v=9" charset="utf-8"></script>
 </body>
 </html>

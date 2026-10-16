@@ -231,7 +231,7 @@ function showAccount(){
       '<div class="acc-ref-t" id="acc-ref-t">Друг получит 15% на первый заказ, ты — 1 000 ' + JC + ' после его покупки.</div>' +
       '<div class="acc-sec">ранги</div>' +
       '<div class="acc-ranks">' + ranks + '</div>' +
-      '<div class="acc-foot">' + tgLine + '<button class="acc-link" id="acc-logout" type="button">Выйти</button></div>' +
+      '<div class="acc-foot">' + tgLine + '<a class="acc-link" href="/program/">О клубе</a><button class="acc-link" id="acc-logout" type="button">Выйти</button></div>' +
     '</div>');
   api('GET', '/api/ref/link').then(function(l){
     if(!l.url) return;

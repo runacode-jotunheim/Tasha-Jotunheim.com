@@ -204,11 +204,12 @@ function spawnGhost(){
   });
   ghostLayer.appendChild(g);
 }
-// первый — после 2.5 с без скролла; дальше не чаще раза в минуту и тоже только когда страница 2.5 с не листается
-var GHOST_EVERY = 60000, GHOST_IDLE = 2500, lastGhost = 0, lastScroll = Date.now();
+// первый — через 20 с после открытия страницы (и 2.5 с без скролла); дальше не чаще раза в минуту и тоже только когда страница 2.5 с не листается
+var GHOST_EVERY = 60000, GHOST_IDLE = 2500, GHOST_FIRST = 20000, lastGhost = 0, lastScroll = Date.now(), ghostStart = Date.now();
 ['scroll','wheel','touchmove','touchstart'].forEach(function(ev){ addEventListener(ev, function(){ lastScroll = Date.now(); }, {passive:true}); });
 function ghostLoop(){ clearInterval(ghostT); ghostT = setInterval(function(){
   var now = Date.now();
+  if(now - ghostStart < GHOST_FIRST) return;            // первый раз — не раньше чем через 20 с
   if(lastGhost && now - lastGhost < GHOST_EVERY) return;
   if(now - lastScroll < GHOST_IDLE) return;
   if(ghostLayer && ghostLayer.querySelector('.sm-ghost')) return;
@@ -245,7 +246,7 @@ function apply(on){
     root.style.setProperty('--green', ACCENT); root.style.setProperty('--green-dim', ACCENT_DIM);
     root.style.setProperty('--accent', ACCENT);
     root.style.setProperty('--accent-dim', ACCENT_DIM);
-    lastScroll = Date.now(); ghostLoop();
+    lastScroll = ghostStart = Date.now(); ghostLoop();
     if(!raf && !(matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) raf = requestAnimationFrame(tick);
   } else {
     root.classList.remove('samhain'); setRecolor(false);

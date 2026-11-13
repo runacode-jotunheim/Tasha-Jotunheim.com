@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 // куда ведут все кнопки «Записаться» — личный Телеграм Таши
-var TG = 'https://t.me/JotunSpirit';
+var TG = 'https://t.me/tasha_jotunheim';
 [].forEach.call(document.querySelectorAll('[data-tg]'), function(a){ a.href = TG; });
 
 var tint = [0,255,65], themeRed = false, themeOrange = false;

@@ -196,3 +196,4 @@ html.samhain .photo::after{display:none}
 /* тема Самайна: текст тёплый, без зелёного */
 html.samhain{--txt:#fbeadb;--dim:rgba(255,226,200,0.72);--faint:rgba(255,226,200,0.46)}
 .hero h1{font-size:clamp(40px,6vw,68px)}
+.legal-note{margin-top:40px;font-size:11.5px;line-height:1.6;color:var(--faint);text-align:center;max-width:720px;margin-left:auto;margin-right:auto}

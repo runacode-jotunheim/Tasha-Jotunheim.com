@@ -190,3 +190,4 @@ html.samhain .photo::after{display:none}
   .star .m,.star .m:nth-child(even){padding:14px 0 4px;border-left:none}
   .star .m+.m{border-top:1px solid rgba(255,216,74,0.2)}
 }
+.star .star-why{margin-top:12px;padding-left:14px;border-left:2px solid rgba(255,216,74,0.5);color:var(--txt);font-size:13.5px;max-width:680px}

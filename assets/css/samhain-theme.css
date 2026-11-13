@@ -70,3 +70,4 @@ html.samhain #hourglassCanvas{filter:url(#smWine) drop-shadow(0 0 6px rgba(255,1
 html.samhain .about-photo-slot img{filter:url(#smWine)}
 /* курсор-спрайт: зелёный → оранжевый */
 html.samhain .cursor-sprite{filter:hue-rotate(-95deg) saturate(1.4)}
+html.samhain .mg-name{color:#fbeadb}

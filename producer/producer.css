@@ -41,7 +41,7 @@ button{font:inherit;color:inherit}
 .link-btn:hover{color:rgb(var(--tint))}
 
 /* первый экран */
-.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center;padding:clamp(56px,10vw,120px) 0 clamp(50px,8vw,96px)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:48px;align-items:center;padding:clamp(56px,10vw,120px) 0 clamp(50px,8vw,96px)}
 h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,7.4vw,80px);line-height:1.04;letter-spacing:2px;text-transform:uppercase;color:rgb(var(--tint));text-shadow:0 0 18px rgba(var(--tint),0.35);margin:16px 0 20px}
 .hero .sub{font-size:clamp(16px,2.2vw,19px);line-height:1.5;color:var(--txt);max-width:520px}
 .hero .desc{margin-top:12px;font-size:14px;color:var(--dim);max-width:500px}
@@ -64,10 +64,11 @@ h2{font-family:var(--serif);font-weight:900;font-size:clamp(26px,4.4vw,42px);lin
 .sec-head p{color:var(--dim);font-size:14px;max-width:500px}
 
 .steps{display:grid;grid-template-columns:repeat(3,1fr)}
-.step{padding:26px 26px 6px 0}
+.step{padding:26px 26px 6px 0;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline}
+.step>p{grid-column:2}
 .step+.step{padding-left:26px;border-left:1px solid var(--line)}
-.step .num{font-family:'VT323',monospace;font-size:18px;letter-spacing:2px;color:rgba(var(--tint),0.75)}
-.step h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.3;letter-spacing:1px;text-transform:uppercase;color:var(--txt);margin:10px 0 10px}
+.step .num{font-family:'VT323',monospace;font-size:22px;line-height:1;letter-spacing:2px;color:rgba(var(--tint),0.75)}
+.step h3{font-family:var(--serif);font-weight:700;font-size:18px;line-height:1.3;letter-spacing:1px;text-transform:uppercase;color:var(--txt);margin:0 0 10px}
 .step p{font-size:13.5px;color:var(--dim)}
 .step .cond{display:block;margin-top:10px;font-size:12.5px;color:var(--faint)}
 
@@ -118,7 +119,7 @@ ul.plain li,ol.plain li{margin-top:6px}
 
 .motto-h{font-family:var(--mono);font-size:13px;letter-spacing:4px;text-transform:uppercase;color:rgb(var(--tint));text-shadow:0 0 10px rgba(var(--tint),0.6);margin:-4px 0 20px}
 .accent{color:rgb(var(--tint));letter-spacing:1px}
-.photo{justify-self:center;width:100%;max-width:340px;aspect-ratio:3/4;border:1px solid rgba(var(--tint),0.35);border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(var(--tint),0.12);position:relative}
+.photo{justify-self:center;width:100%;max-width:440px;aspect-ratio:3/4;border:1px solid rgba(var(--tint),0.35);border-radius:8px;overflow:hidden;box-shadow:0 0 40px rgba(var(--tint),0.12);position:relative}
 .photo img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;filter:grayscale(1) contrast(1.05) brightness(.9)}
 .photo::after{content:'';position:absolute;inset:0;background:rgba(var(--tint),0.18);mix-blend-mode:color;pointer-events:none}
 html.samhain .photo img{filter:url(#smWine)}
@@ -164,10 +165,10 @@ html.samhain .photo::after{display:none}
 .tg-note{margin-top:14px;font-size:12.5px;color:var(--faint)}
 @media(max-width:860px){
   .hero{grid-template-columns:1fr;gap:28px}
-  .photo{max-width:260px;justify-self:start;aspect-ratio:4/5}
+  .photo{max-width:none;width:100%;justify-self:stretch;aspect-ratio:4/5}
   .sec-head{grid-template-columns:1fr;gap:8px}
   .steps{grid-template-columns:1fr}
-  .step,.step+.step{padding:22px 0;border-left:none}
+  .step,.step+.step{padding:18px 0;border-left:none}
   .step+.step{border-top:1px solid var(--line)}
   .pains{grid-template-columns:1fr}
   .pains li,.pains li:nth-child(even){border-left:none;padding-left:28px}
@@ -192,3 +193,6 @@ html.samhain .photo::after{display:none}
 }
 .star .star-why{margin-top:12px;padding-left:14px;border-left:2px solid rgba(255,216,74,0.5);color:var(--txt);font-size:13.5px;max-width:680px}
 .star .star-more{margin-top:18px;font-size:13px;color:var(--dim);max-width:760px}
+/* тема Самайна: текст тёплый, без зелёного */
+html.samhain{--txt:#fbeadb;--dim:rgba(255,226,200,0.72);--faint:rgba(255,226,200,0.46)}
+.hero h1{font-size:clamp(40px,6vw,68px)}

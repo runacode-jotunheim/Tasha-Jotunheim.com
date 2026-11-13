@@ -561,6 +561,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 .footer-legal-note{font-size:9px;letter-spacing:.5px;color:rgba(0,255,65,0.25);text-transform:none;line-height:1.6;max-width:480px;margin:10px auto 0;text-align:center;padding:0 20px}
 .footer-irklink{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:2px;color:rgba(0,255,65,0.35);text-decoration:none;border:1px solid rgba(0,255,65,0.15);border-radius:20px;padding:5px 14px;transition:all .2s;cursor:none}
 .footer-irklink:hover{color:var(--accent);border-color:var(--accent)}
+.mg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:900px;margin:0 auto}
+.mg-card{padding:26px 24px;display:flex;flex-direction:column;text-align:left}
+.mg-meta{font-size:10px;letter-spacing:3px;color:var(--accent-dim);text-transform:uppercase}
+.mg-name{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(16px,2vw,20px);letter-spacing:1.5px;color:#e8ffe9;text-transform:uppercase;margin:10px 0 10px;line-height:1.3}
+.mg-desc{font-size:13px;line-height:1.7;color:rgba(200,255,218,0.68)}
+.mg-foot{margin-top:auto;padding-top:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.mg-price{font-family:'VT323',monospace;font-size:34px;line-height:1;color:var(--accent);text-shadow:0 0 10px rgba(0,255,65,0.35)}
+.mg-note{max-width:900px;margin:18px auto 0;font-size:12px;line-height:1.7;color:rgba(200,255,218,0.5);text-align:center}
+@media(max-width:700px){.mg-grid{grid-template-columns:1fr}.mg-foot .hero-cta{width:100%;text-align:center}}
 
 @keyframes mabon-shake{
   0%,100%{transform:translateX(0)}
@@ -1622,6 +1631,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
 </div>
 
 
+<div class="section-wrap" id="consult">
+  <span class="section-eye reveal">&#9658; личная работа</span>
+  <h2 class="section-title reveal">Консультации Таши</h2>
+  <div class="mg-grid reveal">
+    <div class="mg-card glass">
+      <div class="mg-meta">Созвон · 1 час</div>
+      <div class="mg-name">Консультация</div>
+      <div class="mg-desc">Личный разбор твоего вопроса с Ташей на созвоне.</div>
+      <div class="mg-foot"><span class="mg-price">20&nbsp;000&nbsp;₽</span><a href="https://t.me/tasha_jotunheim" target="_blank" rel="noopener" class="hero-cta" style="font-size:14px;padding:10px 22px">&#9654; Записаться</a></div>
+    </div>
+    <div class="mg-card glass">
+      <div class="mg-meta">1 месяц · после консультации</div>
+      <div class="mg-name">Ведение по вопросу</div>
+      <div class="mg-desc">Месяц, в который Таша ведёт тебя по твоему вопросу после консультации: отвечает на вопросы и сопровождает по ситуации.</div>
+      <div class="mg-foot"><span class="mg-price">100&nbsp;000&nbsp;₽</span><a href="https://t.me/tasha_jotunheim" target="_blank" rel="noopener" class="hero-cta" style="font-size:14px;padding:10px 22px">&#9654; Записаться</a></div>
+    </div>
+  </div>
+  <p class="mg-note reveal">Ритуалы и любые дополнительные магические работы оплачиваются отдельно — стоимость под запрос.</p>
+</div>
+
+
 <div class="section-wrap" id="contacts">
   <span class="section-eye reveal">&#9658; связаться</span>
   <h2 class="section-title reveal">Контакты</h2>
@@ -1639,7 +1669,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:400;display:flex;align-items:cen
     <a href="https://www.instagram.com/tasha.jotunheim/" target="_blank" rel="noopener">Нельзяграм*</a>
     <a href="https://vk.ru/tasha.jotunheim" target="_blank" rel="noopener">VK</a>
   </div>
-  <a href="https://runacode-jotunheim.ru" target="_blank" class="footer-irklink">&#9654; Узнать свой Индивидуальный Рунический Код</a>
+  <a href="https://runacode-jotunheim.ru" target="_blank" class="footer-irklink">&#9654; Узнать свой Индивидуальный Рунический Код</a><br>
+  <a href="producer/" class="footer-irklink">&#9654; Таша Йотунхейм — продюсер проявленности</a>
   <div class="footer-copy" style="margin-top:16px">&#9608; Артефакты Йотунхейм · 2026 · ИП Йотунхейм Таша Владимировна</div>
   <div class="footer-links" style="margin-top:14px">
     <a href="legal/oferta.html">Оферта</a>

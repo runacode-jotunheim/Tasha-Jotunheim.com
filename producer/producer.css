@@ -191,3 +191,4 @@ html.samhain .photo::after{display:none}
   .star .m+.m{border-top:1px solid rgba(255,216,74,0.2)}
 }
 .star .star-why{margin-top:12px;padding-left:14px;border-left:2px solid rgba(255,216,74,0.5);color:var(--txt);font-size:13.5px;max-width:680px}
+.star .star-more{margin-top:18px;font-size:13px;color:var(--dim);max-width:760px}
